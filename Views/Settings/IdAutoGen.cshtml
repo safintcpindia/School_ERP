@@ -1,0 +1,175 @@
+@*
+    ======================================================================
+    VIEW: Settings / IdAutoGen.cshtml
+    PURPOSE: User interface rendering for the Settings module.
+    ======================================================================
+*@
+@{
+    Layout = "_Layout";
+}
+
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+        <h4 class="fw-bold mb-0">ID Auto Generation</h4>
+    </div>
+    <button class="btn btn-primary" onclick="openAddModal()">
+        <i class="ti ti-cloud me-1"></i> Save
+    </button>
+</div>
+
+<div class="col-xl-12">
+    <div class="card">
+       @*  <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+            <h5 class="card-title">ID Auto Generation</h5>
+            <button class="btn btn-primary">Save</button>
+        </div> *@
+        <div class="card-body">
+            <h6 class="mb-3">Student Admission No. Auto Generation</h6>
+            <div class="bg-light rounded-3 p-3 mb-3">           
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="mb-3">
+                        <label for="input-label" class="form-label"> Auto Admission No.</label>
+                        <div>
+                            <div class="form-check form-check-inline mb-2">
+                                <input type="radio" id="customRadiocolor1" name="customRadiocolor" class="form-check-input" checked>
+                                <label class="form-check-label" for="customRadiocolor1">Disabled</label>
+                            </div>
+                            <div class="form-check form-check-inline  mb-2">
+                                <input type="radio" id="customRadiocolor2" name="customRadiocolor" class="form-check-input">
+                                <label class="form-check-label" for="customRadiocolor2">Enabled</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Admission No. Prefix</label>
+                        <input type="text" value="EDITH" class="form-control">
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Admission No. Digit</label>
+                        <select name="" id="" class="form-select form-control">
+                            <option value="">Select</option>
+                            <option value="" selected>1</option>
+                            <option value="">2</option>
+                            <option value="">3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Admission Start From</label>
+                        <input type="text" value="0001" class="form-control">
+                    </div>
+                </div>
+                    <div class="col-lg-12 col-md-12">
+                        <div class="mb-3">
+                            <label for="choices-multiple-remove-button" class="form-label text-muted">ID Text</label>
+                            <select class="form-control" id="choices-multiple-remove-button" data-choices data-choices-removeItem name="choices-multiple-remove-button" multiple>
+                                <option value="Choice 1">Class</option>
+                                <option value="Choice 2">Section</option>                                
+                            </select>
+                        </div>
+                    </div>
+                @* <div class="col-xl-12">
+                    <label for="" class="form-label">ID Text</label>
+                    <select id="mySelect" multiple="multiple" style="width: 100%">
+                        <option value="1">Class</option>
+                        <option value="2">Section</option>
+                    </select>
+                </div> *@
+            </div>
+            </div>
+            
+            <h6 class="mb-3">Staff ID Auto Generation</h6>
+            <div class="bg-light rounded-3 p-3">
+                <div class="row">
+                <div class="col-xl-12">
+                    <div class="mb-3">
+                        <label for="input-label" class="form-label"> Auto Staff ID</label>
+                        <div>
+                            <div class="form-check form-check-inline mb-2">
+                                <input type="radio" id="customRadiocolor1" name="customRadiocolor" class="form-check-input" checked>
+                                <label class="form-check-label" for="customRadiocolor1">Disabled</label>
+                            </div>
+                            <div class="form-check form-check-inline  mb-2">
+                                <input type="radio" id="customRadiocolor2" name="customRadiocolor" class="form-check-input">
+                                <label class="form-check-label" for="customRadiocolor2">Enabled</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Staff ID Prefix </label>
+                        <input type="text" value="EDITH" class="form-control">
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Staff No. Digit</label>
+                        <select name="" id="" class="form-select form-control">
+                            <option value="">Select</option>
+                            <option value="" selected>1</option>
+                            <option value="">2</option>
+                            <option value="">3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Staff ID Start From</label>
+                        <input type="text" value="0001" class="form-control">
+                    </div>
+                </div>
+
+                @* <div class="col-xl-12">
+                <label for="" class="form-label">ID Text</label>
+                <select id="mySelect" multiple="multiple" style="width: 100%">
+                <option value="1">Role</option>
+                <option value="2">Designation</option>
+                </select>
+                </div> *@
+
+                    <div class="col-lg-12 col-md-12">
+                        <div class="mb-3">
+                            <label for="choices-multiple-remove-button" class="form-label text-muted">ID Text</label>
+                            <select class="form-control" id="choices-multiple-remove-button" data-choices data-choices-removeItem name="choices-multiple-remove-button" multiple>
+                                <option value="Choice 1">Role</option>
+                                <option value="Choice 2">Designation</option>
+                                <option value="Choice 3">Department</option>                                
+                            </select>
+                        </div>
+                    </div>
+                @* <div class="col-xl-12">
+                    <label for="" class="form-label">ID Text</label>
+                    <select id="mySelect2" multiple="multiple" style="width: 100%">
+                        <option value="1">Role</option>
+                        <option value="2">Designation</option>
+                        <option value="2">Department</option>
+                    </select>
+                </div> *@
+
+                @* <div class="col-xl-6">
+                <div class="mb-3 form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" name="name" value="" />  Role
+                </div>
+                <div class="mb-3 form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" name="name" value="" />  Designation
+                </div>
+                <div class="mb-3 form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" name="name" value="" />  Designation
+                </div>
+                </div> *@
+            </div>
+            </div>
+            @*  <div class="text-end mt-3">
+            <button class="btn btn-primary">Save</button>
+            </div> *@
+        </div>
+    </div>
+
+</div>

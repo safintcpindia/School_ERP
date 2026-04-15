@@ -1,0 +1,71 @@
+@*
+    ======================================================================
+    VIEW: Settings / Logo.cshtml
+    PURPOSE: User interface rendering for the Settings module.
+    ======================================================================
+*@
+@{
+    Layout = "_Layout";
+}
+
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+        <h4 class="fw-bold mb-0">Upload Logo</h4>
+    </div>
+   @*  <button class="btn btn-primary" onclick="openAddModal()">
+        <i class="ti ti-plus me-1"></i> Add
+    </button> *@
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            @* <div class="card-header">
+                <h5 class="card-title">Upload Logo</h5>
+            </div> *@
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="card p-3">
+                            <h6>Print Logo</h6>
+                            <div class="bg-light img-size mb-2" style="height: 100px;"></div>
+                            <span class="text-primary">(170 <i class="ti ti-x"></i> 184)</span>
+                            <div class='file mt-2'>
+                                <label for='txtPrintLogo'>
+                                    <i class="ti ti-cloud-upload"></i> Update
+                                </label>
+                                <input id='txtPrintLogo' type='file' class="d-none" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="card p-3">
+                            <h6>Admin Logo</h6>
+                            <div class="bg-light img-size mb-2" style="height: 100px;"></div>
+                            <span class="text-primary">(290 <i class="ti ti-x"></i> 51)</span>
+                            <div class='file mt-2'>
+                                <label for='txtAdminLogo'>
+                                    <i class="ti ti-cloud-upload"></i> Update
+                                </label>
+                                <input id='txtAdminLogo' type='file' class="d-none" />
+                            </div>
+                        </div>
+                    </div>                    
+                    <div class="col-xl-4">
+                        <div class="card p-3">
+                            <h6>Admin Small Logo</h6>
+                            <div class="bg-light img-size mb-2" style="height: 100px;"></div>
+                            <span class="text-primary">(32 <i class="ti ti-x"></i> 32)</span>
+                            <div class='file mt-2'>
+                                <label for='txtAdminSmallLogo'>
+                                    <i class="ti ti-cloud-upload"></i> Update
+                                </label>
+                                <input id='txtAdminSmallLogo' type='file' class="d-none" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

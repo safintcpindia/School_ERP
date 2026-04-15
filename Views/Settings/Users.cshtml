@@ -1,0 +1,383 @@
+@*
+    ======================================================================
+    VIEW: Settings / Users.cshtml
+    PURPOSE: User interface rendering for the Settings module.
+    ======================================================================
+*@
+@model SchoolERP.Net.Models.UsersPageViewModel
+@{
+    Layout = "_Layout";
+}
+
+<style>
+    .choices__list--dropdown .choices__item--selectable, .choices__list[aria-expanded] .choices__item--selectable{
+        padding-right:0;
+    }
+</style>
+
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+        <h4 class="fw-bold mb-0">Users</h4>
+    </div>
+    <div>
+    <button class="btn btn-primary" onclick="openAddModal()">
+        <i class="ti ti-plus me-1"></i> Add User
+    </button>
+     <button class="btn btn-info" onclick="openAddModal()">
+        <i class="ti ti-pencil me-1"></i> Edit User
+    </button>
+        <button class="btn btn-danger" onclick="openAddModal()">
+            <i class="ti ti-trash me-1"></i> Delete
+        </button>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-xl-12">
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="row align-items-end">
+                    <div class="col-md-2">
+                        <label class="form-label">Financial Year</label>
+                        <select class="form-control" data-choices name="choices-single-default" id="choices-single-default">
+                            <option value="">Year</option>
+                            <option value="Choice 1">2024-25</option>
+                            <option value="Choice 2">2025-26</option>                            
+                        </select>
+                        @* <select class="form-select">
+                            <option value="value">Financial Year</option>
+                            <option value="value">2024-25</option>
+                            <option value="value">2025-26</option>
+                        </select> *@
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Organization</label>
+                        <select class="form-control" data-choices name="choices-single-default" id="choices-single-default">
+                            <option value="">Organization</option>
+                            <option value="Choice 1">Org 1</option>
+                            <option value="Choice 2">Org 2</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">City</label>
+                        <select class="form-control" data-choices name="choices-single-default" id="choices-single-default">
+                            <option value="">City</option>
+                            <option value="Choice 1">Indore</option>
+                            <option value="Choice 2">Bhopal</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">State</label>
+                        <select class="form-control" data-choices name="choices-single-default" id="choices-single-default">
+                            <option value="">State</option>
+                            <option value="Choice 1">Gujarat</option>
+                            <option value="Choice 2">Uttar Pradesh</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 px-0">
+                        <label class="form-label"></label>
+                        <button class="btn btn-primary w-100"><i class="ti ti-search me-1"></i> Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <h4 class="card-title mb-0">User List</h4>
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <div class="input-icon-start position-relative">
+                            <span class="input-icon-addon">
+                                <i class="ti ti-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search Users...">
+                        </div>
+                    </div>
+                </div>             
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Created On</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model.Users)
+                            {
+                                <tr>
+                                    <td>@user.UserID</td>
+                                    <td>@user.Username</td>
+                                    <td>@user.FullName</td>
+                                    <td>@user.Email</td>
+                                    <td><span class="badge bg-light text-dark">@user.RoleNames</span></td>
+                                    <td>@user.CreatedOn.ToString("dd-MM-yyyy")</td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" 
+                                                   @(user.IsActive ? "checked" : "") 
+                                                   onchange="toggleStatus(@user.UserID, this.checked)">
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="dropdown">
+                                            <a class="btn btn-icon btn-sm" href="#" data-bs-toggle="dropdown">
+                                                <i class="ti ti-dots-vertical"></i>
+                                            </a>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a class="dropdown-item" href="javascript:void(0);" 
+                                                       onclick="openEditModal(@Json.Serialize(user))">
+                                                       <i class="ti ti-edit me-1"></i> Edit
+                                                    </a>
+                                                </li>
+                                                @* <li>
+                                                    <a class="dropdown-item text-danger" href="javascript:void(0);">
+                                                        <i class="ti ti-trash me-1"></i> Delete
+                                                    </a>
+                                                </li> *@
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mb-0" id="modalTitle">Add User</h5>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="saveUser()">Save changes</button>                    
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId" value="0">
+                    <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">User Type Type</label>
+                            <select class="form-select form-control">
+                            <option>Select</option>
+                            <option>User</option>
+                            <option>Admin</option>                            
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Role</label>
+                        <select class="form-select form-control" id="roleId" required>
+                            <option value="">Select Role</option>
+                            @foreach (var role in Model.Roles)
+                            {
+                                <option value="@role.RoleID">@role.RoleName</option>
+                            }
+                        </select>
+                    </div>
+
+
+                        @* <div class="col-md-6 mb-3">
+                        <label class="form-label">Employee Name</label>
+                        <select class="form-select">
+                            <option>Select</option>
+                            <option>Mehul Shah</option>
+                            <option>Pravin Tambe</option>
+                        </select>
+                    </div> *@
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">User ID</label>
+                            <input type="text" class="form-control" id="email">
+                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" id="email">
+                    </div>
+                    
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Mobile Number</label>
+                            <input type="number" class="form-control" id="email">
+                        </div>
+
+                        @* <div class="col-md-4 mb-3">
+                        <label class="form-label">Dashboard</label>
+                        <select class="form-select">
+                            <option>Select</option>
+                            <option>Employee</option>
+                            <option>Admin</option>                            
+                        </select>
+                    </div>
+                        <div class="col-md-4 mb-3">
+                        <label class="form-label">Permission</label>
+                        <select class="form-select">
+                            <option>Select</option>
+                            <option>Reject</option>
+                            <option>Pending</option>
+                        </select>
+                    </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Approved</label>
+                            <select class="form-select">
+                                <option>Select</option>
+                                <option>Pending</option>
+                                <option>Reject</option>
+                            </select>
+                        </div> *@
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Back Days Allow</label>
+                            <input type="number" class="form-control" id="email">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" class="form-control">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" class="form-control">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">End Date</label>
+                            <input type="date" class="form-control">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">End Time</label>
+                            <input type="time" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" id="passwordLabel">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password">
+                            <small class="text-muted" id="passwordHelp">Leave blank to keep existing password when editing.</small>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control">
+                        </div>                    
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="name" id="lg" value="" />
+                        <label class="form-check-label" for="lg">Login with OTP</label>
+                    </div>
+                    
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+        const searchInput = document.getElementById('searchInput');
+        const usersTable = document.getElementById('usersTable');
+
+        // Search Filter
+        searchInput.addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            const rows = usersTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            for (let row of rows) {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            }
+        });
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'Add User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '0';
+            document.getElementById('passwordLabel').innerHTML = 'Password <span class="text-danger">*</span>';
+            document.getElementById('passwordHelp').style.display = 'none';
+            document.getElementById('password').required = true;
+            userModal.show();
+        }
+
+        function openEditModal(user) {
+            document.getElementById('modalTitle').innerText = 'Edit User';
+            document.getElementById('userId').value = user.userID;
+            document.getElementById('username').value = user.username;
+            document.getElementById('fullName').value = user.fullName;
+            document.getElementById('email').value = user.email;
+            document.getElementById('roleId').value = user.roleID;
+            document.getElementById('password').value = '';
+            document.getElementById('passwordLabel').innerText = 'New Password';
+            document.getElementById('passwordHelp').style.display = 'block';
+            document.getElementById('password').required = false;
+            userModal.show();
+        }
+
+        function saveUser() {
+            const form = document.getElementById('userForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const data = {
+                userID: parseInt(document.getElementById('userId').value),
+                username: document.getElementById('username').value,
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                roleID: parseInt(document.getElementById('roleId').value),
+                password: document.getElementById('password').value
+            };
+
+            fetch('/Settings/SaveUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => console.error('Error:', err));
+        }
+
+        function toggleStatus(userId, isActive) {
+            fetch(`/Settings/ToggleStatus?userId=${userId}&isActive=${isActive}`, {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    alert(data.message);
+                    location.reload();
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                location.reload();
+            });
+        }
+    </script>
+}

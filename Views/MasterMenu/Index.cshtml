@@ -1,0 +1,402 @@
+@*
+    ======================================================================
+    VIEW: MasterMenu / Index.cshtml
+    PURPOSE: User interface rendering for the MasterMenu module.
+    ======================================================================
+*@
+@model SchoolERP.Net.Models.MenusPageViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Menu Management";
+}
+
+
+    <!-- Page Header -->
+    <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+            <h4 class="fw-bold mb-0">Menu Management</h4>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <button class="btn btn-primary shadow-sm" id="btnAddMenu" onclick="openAddModal()">
+                <i class="fas fa-plus me-2"></i>Add
+            </button>
+            <button id="btnEdit" class="btn btn-info shadow-sm" disabled onclick="editSelected()">
+                <i class="fas fa-edit me-2"></i>Edit
+            </button>
+            <button id="btnDelete" class="btn btn-danger shadow-sm" disabled onclick="deleteSelected()">
+                <i class="fas fa-trash me-2"></i>Delete
+            </button>
+        </div>
+    </div>
+
+    <!-- Menus Table Card -->
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-items-center mb-0" id="menusTable">
+                            <thead>
+                                <tr class="bg-light">
+                                    <th style="width: 50px;">Select</th>
+                                    <th>Menu Name / Label</th>
+                                    <th>Menu Key</th>
+                                    <th>URL / Route</th>
+                                    <th>Parent</th>
+                                    <th>Order</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var menu in Model.Menus)
+                                {
+                                    <tr class="item-row" onclick="selectItem(@menu.MenuID, this)" style="cursor: pointer;">
+                                        <td class="ps-4 text-center">
+                                            <input type="radio" name="selectedMenu" class="form-check-input" value="@menu.MenuID">
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm me-2 @(menu.ParentID == null ? "bg-primary-soft" : "bg-info-soft")">
+                                                    <i class="fas @(menu.ParentID == null ? "fa-folder-open text-primary" : "fa-file text-info")"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0 fs-14">@menu.MenuName</h6>
+                                                    <span class="text-xs text-muted small">@menu.DisplayLabel</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@menu.MenuKey</td>
+                                        <td>
+                                            <code class="text-xs text-primary font-weight-bold">@menu.MenuURL</code>
+                                        </td>
+                                        <td>
+                                            @if (string.IsNullOrEmpty(menu.ParentMenuName))
+                                            {
+                                                <span class="badge bg-light text-dark text-xs border">None (Root)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-sm text-dark fw-semibold">@menu.ParentMenuName</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary-soft text-secondary rounded-pill px-3">@menu.DisplayOrder</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch d-flex justify-content-center mb-0" onclick="event.stopPropagation()">
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                       checked="@menu.IsActive"
+                                                       onchange="toggleStatus(@menu.MenuID, this.checked)" 
+                                                       id="statusSwitch_@menu.MenuID">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- Add/Edit Menu Modal -->
+<div class="modal fade" id="menuModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-bottom bg-light d-flex align-items-center">
+                <h5 class="modal-title fw-bold mb-0" id="modalTitle">
+                    <i class="fas fa-plus-circle me-2 text-primary"></i>Add New Menu
+                </h5>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary px-3" id="btnCancel" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-primary px-3 shadow-sm" onclick="saveMenu()" id="btnSaveMenu">
+                        <i class="fas fa-save me-1"></i> Save Menu
+                    </button>
+                    <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="modal-body p-4">
+                <form id="menuForm">
+                    <input type="hidden" id="txtMenuId" value="0">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-sm">Menu Name <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-tag text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0" id="txtMenuName" required maxlength="20" placeholder="e.g. FeesCollection">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-sm">Display Label (Multilingual)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-language text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0" id="txtDisplayLabel" maxlength="200" placeholder="e.g. Fees Collection">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-sm">Menu Key</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-key text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0" id="txtMenuKey" maxlength="50" placeholder="e.g. FEES_COLLECTION">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-sm">Menu Icon <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-image text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0" id="txtMenuIcon" required maxlength="50" placeholder="e.g. ti ti-users">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-sm">Target URL / Route <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-link text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0" id="txtMenuURL" required maxlength="300" placeholder="e.g. /Fees/Index">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-7">
+                            <label class="form-label fw-semibold text-sm">Parent Menu</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-folder-tree text-muted"></i></span>
+                                <select class="form-select border-start-0" id="ddlParentId">
+                                    <option value="">None (Root Menu)</option>
+                                    @foreach (var p in Model.ParentMenus)
+                                    {
+                                        <option value="@p.MenuID">@p.MenuName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label fw-semibold text-sm">Display Order</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-sort-numeric-down text-muted"></i></span>
+                                <input type="number" class="form-control border-start-0" id="txtDisplayOrder" value="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch p-2 ps-5 bg-light rounded text-sm">
+                        <input class="form-check-input" type="checkbox" id="isActive" checked>
+                        <label class="form-check-label fw-bold" for="isActive">Primary Activation Status</label>
+                        <p class="text-xs text-muted mb-0">Inactive menus are hidden from navigation but remain in database.</p>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Notification Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+    <div id="statusToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const menuModal = new bootstrap.Modal(document.getElementById('menuModal'));
+        const toastEl = document.getElementById('statusToast');
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        let selectedMenuId = 0;
+
+        function showToast(message, isSuccess) {
+            toastEl.className = `toast align-items-center border-0 text-white ${isSuccess ? 'bg-success' : 'bg-danger'}`;
+            document.getElementById('toastMessage').textContent = message;
+            toast.show();
+        }
+
+        function selectItem(id, row) {
+            selectedMenuId = id;
+            document.querySelectorAll('.item-row').forEach(r => r.classList.remove('bg-light'));
+            row.classList.add('bg-light');
+            row.querySelector('input[type="radio"]').checked = true;
+            document.getElementById('btnEdit').disabled = false;
+            document.getElementById('btnDelete').disabled = false;
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle me-2 text-primary"></i>Add New Menu';
+            document.getElementById('menuForm').reset();
+            document.getElementById('txtMenuId').value = "0";
+            document.getElementById('isActive').checked = true;
+            menuModal.show();
+        }
+
+        async function editSelected() {
+            if (selectedMenuId === 0) return;
+            try {
+                const response = await fetch(`/MasterMenu/GetMenu?menuId=${selectedMenuId}`);
+                const res = await response.json();
+                
+                if (res.success) {
+                    const m = res.menu;
+                    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit me-2 text-primary"></i>Edit Menu';
+                    document.getElementById('txtMenuId').value = m.menuID;
+                    document.getElementById('txtMenuName').value = m.menuName;
+                    document.getElementById('txtDisplayLabel').value = m.displayLabel || '';
+                    document.getElementById('txtMenuKey').value = m.menuKey || '';
+                    document.getElementById('txtMenuURL').value = m.menuURL;
+                    document.getElementById('txtMenuIcon').value = m.menuIcon;
+                    document.getElementById('ddlParentId').value = m.parentID || '';
+                    document.getElementById('txtDisplayOrder').value = m.displayOrder;
+                    document.getElementById('isActive').checked = m.isActive;
+                    menuModal.show();
+                } else {
+                    showToast(res.message, false);
+                }
+            } catch (err) {
+                showToast('Error loading menu details', false);
+            }
+        }
+
+        async function deleteSelected() {
+            if (selectedMenuId === 0) return;
+            showToast('Delete function not implemented by backend API yet.', false);
+        }
+
+        async function saveMenu() {
+            const form = document.getElementById('menuForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const data = {
+                menuID: parseInt(document.getElementById('txtMenuId').value),
+                menuName: document.getElementById('txtMenuName').value.trim(),
+                displayLabel: document.getElementById('txtDisplayLabel').value.trim(),
+                menuKey: document.getElementById('txtMenuKey').value.trim(),
+                menuIcon: document.getElementById('txtMenuIcon').value.trim(),
+                menuURL: document.getElementById('txtMenuURL').value.trim(),
+                parentID: document.getElementById('ddlParentId').value ? parseInt(document.getElementById('ddlParentId').value) : null,
+                displayOrder: parseInt(document.getElementById('txtDisplayOrder').value),
+                isActive: document.getElementById('isActive').checked
+            };
+
+            const btn = document.getElementById('btnSaveMenu');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
+
+            try {
+                const response = await fetch('/MasterMenu/Save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const res = await response.json();
+
+                if (res.success) {
+                    showToast(res.message, true);
+                    menuModal.hide();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast(res.message, false);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save me-1"></i> Save Menu';
+                }
+            } catch (err) {
+                showToast('Error saving menu', false);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save me-1"></i> Save Menu';
+            }
+        }
+
+        async function toggleStatus(menuId, isActive) {
+            try {
+                const response = await fetch(`/MasterMenu/ToggleStatus?menuId=${menuId}&isActive=${isActive}`, { method: 'POST' });
+                const res = await response.json();
+                if (res.success) {
+                    showToast(isActive ? 'Menu activated' : 'Menu deactivated', true);
+                } else {
+                    showToast(res.message, false);
+                    location.reload();
+                }
+            } catch (err) {
+                showToast('Error updating status', false);
+                location.reload();
+            }
+        }
+    </script>
+}
+@* 
+<style>
+    .stat-card {
+        border-radius: 15px;
+        transition: all 0.25s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .stat-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.4rem;
+    }
+    .shadow-primary { box-shadow: 0 4px 15px rgba(94, 114, 228, 0.3); }
+    .shadow-success { box-shadow: 0 4px 15px rgba(45, 206, 137, 0.3); }
+    .shadow-info { box-shadow: 0 4px 15px rgba(17, 201, 225, 0.3); }
+    
+    .bg-gradient-primary { background: linear-gradient(310deg, #5e72e4, #825ee4); }
+    .bg-gradient-success { background: linear-gradient(310deg, #2dce89, #2dcecc); }
+    .bg-gradient-info { background: linear-gradient(310deg, #11cdef, #1171ef); }
+
+    .avatar-sm {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+    .bg-primary-soft { background-color: rgba(94, 114, 228, 0.1); }
+    .bg-info-soft { background-color: rgba(17, 201, 225, 0.1); }
+    .bg-secondary-soft { background-color: rgba(133, 135, 150, 0.1); }
+
+    .hover-bg-primary-soft:hover { background-color: rgba(94, 114, 228, 0.1); }
+    
+    .text-xxs { font-size: 0.7rem; }
+    
+    .table thead th {
+        border-bottom-width: 1px;
+        background-color: #f8f9fa;
+        color: #67748e !important;
+    }
+    
+    .menu-row { transition: background-color 0.2s; }
+    .menu-row:hover { background-color: rgba(0,0,0,0.01); }
+
+    .form-switch .form-check-input { width: 3em; height: 1.5em; cursor: pointer; }
+
+    .modal-content { border-radius: 20px; }
+    .modal-header { border-radius: 20px 20px 0 0; }
+    
+    .search-icon-input {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #adb5bd;
+        z-index: 5;
+    }
+</style> *@

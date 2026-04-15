@@ -1,0 +1,1043 @@
+[
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CompanyApiController",
+    "Method": "Delete",
+    "RelativePath": "api/CompanyApi/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CompanyApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/CompanyApi/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "includeDeleted",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CompanyApiController",
+    "Method": "GetByID",
+    "RelativePath": "api/CompanyApi/GetByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CompanyApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/CompanyApi/ToggleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CompanyApiController",
+    "Method": "Upsert",
+    "RelativePath": "api/CompanyApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstCompanyUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CurrencyApiController",
+    "Method": "Delete",
+    "RelativePath": "api/CurrencyApi/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CurrencyApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/CurrencyApi/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "includeDeleted",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CurrencyApiController",
+    "Method": "GetByID",
+    "RelativePath": "api/CurrencyApi/GetByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CurrencyApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/CurrencyApi/ToggleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.CurrencyApiController",
+    "Method": "Upsert",
+    "RelativePath": "api/CurrencyApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstCurrencyUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.EmailConfigApiController",
+    "Method": "Get",
+    "RelativePath": "api/EmailConfigApi/Get",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.EmailConfigApiController",
+    "Method": "Upsert",
+    "RelativePath": "api/EmailConfigApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstEmailConfigUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.LanguageApiController",
+    "Method": "Delete",
+    "RelativePath": "api/LanguageApi/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.LanguageApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/LanguageApi/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "includeDeleted",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.LanguageApiController",
+    "Method": "GetByID",
+    "RelativePath": "api/LanguageApi/GetByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.LanguageApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/LanguageApi/ToggleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.LanguageApiController",
+    "Method": "Upsert",
+    "RelativePath": "api/LanguageApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstLanguageUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.MasterMenuApiController",
+    "Method": "GetAllMenus",
+    "RelativePath": "api/MasterMenuApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.MasterMenuApiController",
+    "Method": "GetMenuById",
+    "RelativePath": "api/MasterMenuApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.MasterMenuApiController",
+    "Method": "Save",
+    "RelativePath": "api/MasterMenuApi/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MenuUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.MasterMenuApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/MasterMenuApi/toggle-status",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "menuId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.OrganisationApiController",
+    "Method": "Delete",
+    "RelativePath": "api/OrganisationApi/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.OrganisationApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/OrganisationApi/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "includeDeleted",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.OrganisationApiController",
+    "Method": "GetByID",
+    "RelativePath": "api/OrganisationApi/GetByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.OrganisationApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/OrganisationApi/ToggleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.OrganisationApiController",
+    "Method": "Upsert",
+    "RelativePath": "api/OrganisationApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.OrganisationUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PaymentMethodApiController",
+    "Method": "Delete",
+    "RelativePath": "api/PaymentMethodApi/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PaymentMethodApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/PaymentMethodApi/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "includeDeleted",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PaymentMethodApiController",
+    "Method": "GetById",
+    "RelativePath": "api/PaymentMethodApi/GetById/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PaymentMethodApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/PaymentMethodApi/ToggleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PaymentMethodApiController",
+    "Method": "Upsert",
+    "RelativePath": "api/PaymentMethodApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstPaymentMethodUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoleApiController",
+    "Method": "GetAllRoles",
+    "RelativePath": "api/RoleApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoleApiController",
+    "Method": "GetRoleById",
+    "RelativePath": "api/RoleApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoleApiController",
+    "Method": "GetPermissions",
+    "RelativePath": "api/RoleApi/{id}/permissions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoleApiController",
+    "Method": "Save",
+    "RelativePath": "api/RoleApi/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstRoleUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoleApiController",
+    "Method": "SavePermissions",
+    "RelativePath": "api/RoleApi/save-permissions",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstRolePermissionSaveRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoleApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/RoleApi/toggle-status",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roleId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SessionApiController",
+    "Method": "Delete",
+    "RelativePath": "api/SessionApi/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SessionApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/SessionApi/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "includeDeleted",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SessionApiController",
+    "Method": "GetByID",
+    "RelativePath": "api/SessionApi/GetByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SessionApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/SessionApi/ToggleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SessionApiController",
+    "Method": "Upsert",
+    "RelativePath": "api/SessionApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstSessionUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SettingsApiController",
+    "Method": "GetTranslations",
+    "RelativePath": "api/SettingsApi/translations/{language}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "language",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SettingsApiController",
+    "Method": "UpdateTranslation",
+    "RelativePath": "api/SettingsApi/translations/update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "SchoolERP.Net.Models.TranslationUpdateModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SmsConfigApiController",
+    "Method": "GetConfig",
+    "RelativePath": "api/SmsConfigApi/Get",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SmsConfigApiController",
+    "Method": "UpsertConfig",
+    "RelativePath": "api/SmsConfigApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstSmsConfigUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "GetAllUsers",
+    "RelativePath": "api/user",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "GetUserById",
+    "RelativePath": "api/user/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "GetUserRoleIds",
+    "RelativePath": "api/user/{id}/roles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "GetRoles",
+    "RelativePath": "api/user/roles-dropdown",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "Save",
+    "RelativePath": "api/user/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.UserUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "SaveWizard",
+    "RelativePath": "api/user/save-wizard",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.UserUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/user/toggle-status",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "GetUserTypes",
+    "RelativePath": "api/user/types-dropdown",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "Unlock",
+    "RelativePath": "api/user/unlock/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "GetWizardData",
+    "RelativePath": "api/user/wizard-data",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "roleIds",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UsersApiController",
+    "Method": "CreateUser",
+    "RelativePath": "api/UsersApi/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.UserUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UsersApiController",
+    "Method": "Login",
+    "RelativePath": "api/UsersApi/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserTypeApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/UserTypeApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserTypeApiController",
+    "Method": "GetById",
+    "RelativePath": "api/UserTypeApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserTypeApiController",
+    "Method": "Save",
+    "RelativePath": "api/UserTypeApi/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.MstUserTypeUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserTypeApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/UserTypeApi/toggle-status",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "typeId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UtilityApiController",
+    "Method": "GetDashboardSummary",
+    "RelativePath": "api/UtilityApi/dashboard-summary",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UtilityApiController",
+    "Method": "SetLanguage",
+    "RelativePath": "api/UtilityApi/set-language",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "language",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

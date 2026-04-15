@@ -1,0 +1,125 @@
+@*
+    ======================================================================
+    VIEW: Settings / StudentProfile.cshtml
+    PURPOSE: User interface rendering for the Settings module.
+    ======================================================================
+*@
+@{
+    Layout = "_Layout";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+        <h4 class="fw-bold mb-0">Student Profile Update</h4>
+    </div>
+    <button class="btn btn-primary">Save</button>
+</div>
+<!-- End Page Header -->
+<!-- start row -->
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
+                <h6 class="card-title">Allow Editable Form Fields</h6>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" class="form-check-input" name="allow">
+                        <label for="" class="form-check-label">Disabled</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" class="form-check-input" name="allow">
+                        <label for="" class="form-check-label">Enable</label>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <!-----Student Pane---->
+                    <div class="tab-pane active" id="std">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            Roll Number
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input float-end" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Middle Name
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input float-end" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-----Parent Pane---->
+                    <div class="tab-pane" id="stf">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            Designation
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input float-end" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Department
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input float-end" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+            <!-- end card-body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+
+</div>
+<!-- end row -->

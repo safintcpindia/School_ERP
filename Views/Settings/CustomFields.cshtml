@@ -1,0 +1,135 @@
+@*
+    ======================================================================
+    VIEW: Settings / CustomFields.cshtml
+    PURPOSE: User interface rendering for the Settings module.
+    ======================================================================
+*@
+@{
+    Layout = "_Layout";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+        <h4 class="fw-bold mb-0">Custom Fields</h4>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-2">
+        <a href="new-appointment.html" class="btn btn-primary d-inline-flex align-items-center">
+            <i class="ti ti-cloud me-1"></i>Save
+        </a>
+    </div>
+</div>
+<!-- End Page Header -->
+<!-- start row -->
+
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0">Add Custom Field</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row  row-gap-3">
+                                    <div class="col-xl-6">
+                                        <label for="" class="form-label">Field Belongs To *</label>
+                                        <select name="" id="" class="form-select">
+                        <option>Select</option>
+                        <option>Student</option>
+                        <option>Staff</option>
+                      </select>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <label for="" class="form-label">Field Type *</label>
+                                        <select name="" id="" class="form-select">
+                        <option>Select</option>
+                        <option>Input</option>
+                        <option>Number</option>
+                        <option>Textarea</option>
+                        <option>Dropdown</option>
+                        <option>Multiselect</option>
+                      </select>
+                                    </div>
+
+                                    <div class="col-xl-6">
+                                        <label for="" class="form-label">Field Name *</label>
+                                        <input type="text" class="form-control">
+                                    </div>
+
+                                   
+                                    <div class="col-xl-6">
+                                        <label for class="form-label">Bootstrap Grid - Max is 12</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">col-md-</span>
+                                            <input type="number" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12">
+                                        <label for class="form-label">Field Values (Separate By Comma)</label>
+                                        <input type="text" class="form-control">
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <label for class="form-label">Validation</label>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input">Required
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <label for class="form-label">Visibility</label>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input">On Table
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end card-body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                    <div class="col-xl-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0">Custom Field List</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        Student
+      </button>
+                                        </h2>
+                                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <!-- LEFT SIDE -->
+                                                <div class="left dropzone p-0 border-0 mb-0">
+                                                    <div class="item" draggable="true">Scholar Num</div>
+                                                    <div class="item" draggable="true">Enrollment</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        Staff
+      </button>
+                                        </h2>
+                                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                No Menu
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- end card-body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+
+                    <!-- end col -->
+                </div>
+                <!-- end row -->

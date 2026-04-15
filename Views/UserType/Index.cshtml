@@ -1,0 +1,158 @@
+@*
+    ======================================================================
+    VIEW: UserType / Index.cshtml
+    PURPOSE: User interface rendering for the UserType module.
+    ======================================================================
+*@
+@model SchoolERP.Net.Models.MstUserManagementPageViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "User Type Management";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+            <h4 class="fw-bold mb-0">User Type Management</h4>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <button class="btn btn-primary shadow-sm" id="btnAddUserType" onclick="openAddModal()">
+                <i class="fas fa-plus me-2"></i>Add User Type
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom-0">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <h5 class="mb-0 fw-bold text-dark">Master User Types</h5>
+                        <div class="position-relative">
+                            <i class="fas fa-search search-icon-input"></i>
+                            <input type="text" class="form-control form-control-sm ps-4" id="txtSearchInput" placeholder="Search types...">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive">
+                        <table class="table align-items-center mb-0" id="typesTable">
+                            <thead>
+                                <tr class="bg-light">
+                                    <th class="ps-4">Type Code</th>
+                                    <th>Display Name</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Created On</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var type in Model.UserTypes)
+                                {
+                                    <tr class="item-row">
+                                        <td class="ps-4">
+                                            <span class="badge bg-primary-soft text-primary fw-bold">@type.TypeCode</span>
+                                        </td>
+                                        <td><h6 class="mb-0 text-sm fw-bold">@type.TypeName</h6></td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <input class="form-check-input" type="checkbox" checked="@type.IsActive" onchange="toggleStatus(@type.UserTypeID, this.checked)">
+                                            </div>
+                                        </td>
+                                        <td class="text-center"><span class="text-xs">@type.CreatedOn.ToString("dd MMM yyyy")</span></td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-icon border-0 text-primary" onclick="openEditModal(@type.UserTypeID)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-bottom bg-light d-flex align-items-center">
+                <h5 class="modal-title fw-bold mb-0" id="modalTitle">Add User Type</h5>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btnCancel" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-primary shadow-sm" id="btnSave" onclick="saveItem()">Save Changes</button>
+                    <button type="button" class="btn-close ms-2" data-bs-dismiss="modal"></button>
+                </div>
+            </div>
+            <div class="modal-body p-4">
+                <form id="itemForm">
+                    <input type="hidden" id="txtItemId" value="0">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Type Code (System Code)</label>
+                        <input type="text" class="form-control" id="txtTypeCode" required placeholder="e.g. TEACHER">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Type Name (Display Name)</label>
+                        <input type="text" class="form-control" id="txtTypeName" required placeholder="e.g. Teacher">
+                    </div>
+                    <div class="form-check form-switch p-2 ps-5 bg-light rounded">
+                        <input class="form-check-input" type="checkbox" id="isActive" checked>
+                        <label class="form-check-label fw-bold" for="isActive">Active</label>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const itemModal = new bootstrap.Modal(document.getElementById('itemModal'));
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add User Type';
+            document.getElementById('itemForm').reset();
+            document.getElementById('txtItemId').value = "0";
+            itemModal.show();
+        }
+
+        async function openEditModal(id) {
+            const resp = await fetch(`/UserType/GetUserType?typeId=${id}`);
+            const res = await resp.json();
+            if (res.success) {
+                document.getElementById('modalTitle').textContent = 'Edit User Type';
+                document.getElementById('txtItemId').value = res.userType.userTypeID;
+                document.getElementById('txtTypeCode').value = res.userType.typeCode;
+                document.getElementById('txtTypeName').value = res.userType.typeName;
+                document.getElementById('isActive').checked = res.userType.isActive;
+                itemModal.show();
+            }
+        }
+
+        async function saveItem() {
+            // Maps UI parameters to MstUserTypeUpsertRequest schema
+            const data = {
+                userTypeID: parseInt(document.getElementById('txtItemId').value),
+                typeCode: document.getElementById('txtTypeCode').value.trim(),
+                typeName: document.getElementById('txtTypeName').value.trim(),
+                isActive: document.getElementById('isActive').checked
+            };
+            const resp = await fetch('/UserType/Save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const res = await resp.json();
+            if (res.success) location.reload(); else alert(res.message);
+        }
+
+        async function toggleStatus(id, isActive) {
+            await fetch(`/UserType/ToggleStatus?typeId=${id}&isActive=${isActive}`, { method: 'POST' });
+        }
+    </script>
+}

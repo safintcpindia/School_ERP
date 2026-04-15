@@ -1,0 +1,617 @@
+@*
+    ======================================================================
+    VIEW: Role Management Index
+    PURPOSE: Provides a single-page interface to view all master roles,
+             toggle their active statuses, and create/edit roles.
+             Contains a highly dynamic javascript-based hierarchical tree
+             view for mapping modules permissions sequentially alongside role saves.
+    FEATURES:
+    - Master table rendering mapped from MstUserManagementPageViewModel
+    - Split-modal design (Left: Metadata, Right: Matrix checks)
+    - AJAX-based form submission for both Roles and Permissions
+    ======================================================================
+*@
+@model SchoolERP.Net.Models.MstUserManagementPageViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Role Management";
+}
+
+<link rel="stylesheet" href="~/css/treeview.css" />
+<style>
+    /* ── Combined Role + Permission form ── */
+    .role-form-panel {
+        background: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+        min-width: 300px;
+        max-width: 340px;
+        display: flex;
+        flex-direction: column;
+    }
+    .perm-panel {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .modal-split-body {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+    }
+    #rolePermModal .modal-content {
+        height: 92vh;
+        display: flex;
+        flex-direction: column;
+    }
+    #rolePermModal .modal-body {
+        flex: 1;
+        min-height: 0;
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    .perm-tree-scroll {
+        flex: 1;
+        overflow-y: auto;
+    }
+    .perm-checkbox { width: 18px; height: 18px; cursor: pointer; }
+    .perm-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #6c757d; display: block; margin-bottom: 4px; }
+
+    /* section header inside left panel */
+    .panel-section-title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.3rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    /* perm toolbar */
+    .perm-toolbar {
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.5rem 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+    }
+    .perm-toolbar .text-hint {
+        font-size: 0.72rem;
+        color: #6c757d;
+    }
+</style>
+
+
+    <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+            <h4 class="fw-bold mb-0">Role Management</h4>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <button class="btn btn-primary shadow-sm" id="btnAddRole" onclick="openRoleForm(0)">
+                <i class="fas fa-plus me-2"></i>Add Role
+            </button>
+            <button class="btn btn-info shadow-sm" id="btnEditRole" disabled onclick="">
+                <i class="fas fa-edit me-2"></i>Edit Role
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom-0">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <h6 class="mb-0">Master Roles</h6>
+                        <div class="position-relative d-flex border rounded align-items-center px-3">
+                            <i class="fas fa-search search-icon-input"></i>
+                            <input type="text" class="form-control border-0 ps-2" id="txtSearchInput" placeholder="Search roles...">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="rolesTable">
+                            <thead>
+                                <tr>                                    
+                                    <th>Role Name</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Created On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var role in Model.Roles)
+                                {
+                                    <tr>
+                                        <td>@role.RoleName</td>
+                                        <td>@role.RoleDesc</td>
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" @(role.IsActive ? "checked" : "") onchange="toggleStatus(@role.RoleID, this.checked)">
+                                            </div>
+                                        </td>
+                                        <td>@role.CreatedOn.ToString("dd MMM yyyy")</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-icon border-0 text-primary" onclick="openRoleForm(@role.RoleID)" title="Edit Role & Permissions">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     COMBINED ROLE + PERMISSIONS MODAL
+═══════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="rolePermModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold mb-0">                    
+                    <span id="modalHeadTitle">Add Role</span>
+                </h5>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveAll" onclick="saveAll()">
+                        <i class="fas fa-save me-1"></i>Save
+                    </button>                    
+                </div>
+            </div>
+
+            <!-- Split body: LEFT = role details | RIGHT = permissions -->
+            <div class="modal-body">
+                <div class="modal-split-body">
+
+                    <!-- ── LEFT: Role Details Panel ── -->
+                    <div class="role-form-panel p-4">                        
+                        <input type="hidden" id="txtRoleId" value="0">
+                        <div class="mb-3">
+                            <label class="form-label small">Role Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="txtRoleName"
+                                   placeholder="e.g. SuperAdmin" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small">Description</label>
+                            <textarea class="form-control" id="txtRoleDesc" rows="4"
+                                      placeholder="Explain the role's scope..."></textarea>
+                        </div>
+
+                        <div class="form-check form-switch bg-light rounded mb-4">
+                            <input class="form-check-input" type="checkbox" id="chkIsActive" checked>
+                            <label class="form-check-label fw-semibold small" for="chkIsActive">Active</label>
+                        </div>
+
+                        <!-- Save status indicator inside panel -->
+                        <div id="roleSaveStatus" class="d-none">
+                            <div class="alert alert-success py-2 px-3 small mb-0" id="roleSaveOk">
+                                <i class="fas fa-check-circle me-1"></i><span id="roleSaveOkMsg">Role saved.</span>
+                            </div>
+                            <div class="alert alert-danger py-2 px-3 small mb-0 d-none" id="roleSaveErr">
+                                <i class="fas fa-exclamation-circle me-1"></i><span id="roleSaveErrMsg"></span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-3 border-top">
+                            <p class="text-muted" style="font-size:0.72rem;">
+                                <i class="fas fa-info-circle me-1 text-primary"></i>
+                                Configure permissions on the right, then click <strong>Save Changes</strong> to apply both together.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ── RIGHT: Permissions Panel ── -->
+                    <div class="perm-panel">
+                        <div class="perm-toolbar bg-white border-0 mb-0">
+                            <span class="text-hint"><i class="fas fa-info-circle me-1"></i>Toggle entire modules using the folder icons</span>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary" id="btnCheckAll" onclick="toggleAllChecks(true)">Check All</button>
+                                <button class="btn btn-sm btn-outline-secondary" id="btnUncheckAll" onclick="toggleAllChecks(false)">Uncheck All</button>
+                            </div>
+                        </div>
+
+                        <div class="perm-tree-scroll p-3">
+                            <div class="tree-grid-container">
+                                <table class="tree-grid">
+                                    <thead>
+                                        <tr id="treeHeaderRow">
+                                            <th class="id-column">ID</th>
+                                            <th>Menu Name</th>
+                                            @* Dynamic permission columns injected by JS *@
+                                        </tr>
+                                    </thead>
+                                    <tbody id="treeGridBody">
+                                        <tr>
+                                            <td colspan="10" class="text-center py-5 text-muted">
+                                                <i class="fas fa-spinner fa-spin fa-lg me-2"></i>Loading permissions...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Permission save status -->
+                        <div id="permSaveStatus" class="d-none px-3 py-2 border-top small">
+                            <span class="text-success d-none" id="permSaveOk"><i class="fas fa-check-circle me-1"></i>Permissions saved.</span>
+                            <span class="text-danger d-none" id="permSaveErr"><i class="fas fa-exclamation-circle me-1"></i><span id="permSaveErrMsg"></span></span>
+                        </div>
+                    </div>
+
+                </div><!-- /modal-split-body -->
+            </div><!-- /modal-body -->
+
+            <!-- Footer -->
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const rolePermModal = new bootstrap.Modal(document.getElementById('rolePermModal'));
+
+        /* ─────────────────────────────────────────────────────────
+           Open form for Add (id=0) or Edit (id>0)
+        ───────────────────────────────────────────────────────── */
+        async function openRoleForm(id) {
+            // Reset form & status banners
+            document.getElementById('txtRoleId').value = id;
+            document.getElementById('txtRoleName').value = '';
+            document.getElementById('txtRoleDesc').value = '';
+            document.getElementById('chkIsActive').checked = true;
+            hideStatus();
+
+            document.getElementById('modalHeadTitle').textContent = id === 0 ? 'Add Role' : 'Edit Role';
+
+            // Render permission tree (use roleId=0 for brand new role → all unchecked)
+            loadPermissions(id);
+
+            // If editing, fetch role data and pre-fill
+            if (id > 0) {
+                const resp = await fetch(`/Role/GetRole?roleId=${id}`);
+                const res = await resp.json();
+                if (res.success) {
+                    document.getElementById('txtRoleName').value = res.role.roleName;
+                    document.getElementById('txtRoleDesc').value = res.role.roleDesc || '';
+                    document.getElementById('chkIsActive').checked = res.role.isActive;
+                }
+            }
+
+            rolePermModal.show();
+        }
+
+        /* ─────────────────────────────────────────────────────────
+           Save Role → then save Permissions (single click)
+        ───────────────────────────────────────────────────────── */
+        async function saveAll() {
+            const roleName = document.getElementById('txtRoleName').value.trim();
+            if (!roleName) {
+                showError('role', 'Role Name is required.');
+                return;
+            }
+
+            const btn = document.getElementById('btnSaveAll');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+
+            try {
+                // ── Step 1: Save Role ──────────────────────────────
+                // Serializes left-panel details first to generate an authoritative RoleID
+                const roleData = {
+                    roleID: parseInt(document.getElementById('txtRoleId').value),
+                    roleName: roleName,
+                    roleDesc: document.getElementById('txtRoleDesc').value.trim(),
+                    isActive: document.getElementById('chkIsActive').checked
+                };
+
+                const roleResp = await fetch('/Role/Save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(roleData)
+                });
+                const roleRes = await roleResp.json();
+
+                if (!roleRes.success) {
+                    showError('role', roleRes.message);
+                    return;
+                }
+
+                // Capture the authoritative RoleID (new or existing)
+                const savedRoleId = roleRes.roleId || parseInt(document.getElementById('txtRoleId').value);
+                document.getElementById('txtRoleId').value = savedRoleId;
+                showOk('role', roleRes.message || 'Role saved successfully.');
+
+                // ── Step 2: Save Permissions ───────────────────────
+                // Pulls all checked permutations on the right panel into a JSON struct for bulk insertion against the RoleID
+                const selected = [];
+                document.querySelectorAll('.perm-checkbox:checked').forEach(cb => {
+                    selected.push({
+                        menuID: parseInt(cb.dataset.menu),
+                        permissionID: parseInt(cb.dataset.perm)
+                    });
+                });
+
+                const permResp = await fetch('/Role/SavePermissions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ roleID: savedRoleId, selectedPermissions: selected })
+                });
+                const permRes = await permResp.json();
+
+                if (!permRes.success) {
+                    showError('perm', permRes.message);
+                    return;
+                }
+
+                showOk('perm', 'Permissions saved successfully.');
+
+                // Close after short delay and refresh list
+                setTimeout(() => {
+                    rolePermModal.hide();
+                    location.reload();
+                }, 900);
+
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save me-2"></i>Save Changes';
+            }
+        }
+
+        /* ─────────────────────────────────────────────────────────
+           Toggle Status (inline in table)
+        ───────────────────────────────────────────────────────── */
+        async function toggleStatus(id, isActive) {
+            await fetch(`/Role/ToggleStatus?roleId=${id}&isActive=${isActive}`, { method: 'POST' });
+        }
+
+        /* ─────────────────────────────────────────────────────────
+           Load & render permission tree
+        ───────────────────────────────────────────────────────── */
+        async function loadPermissions(roleId) {
+            const body = document.getElementById('treeGridBody');
+            body.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">
+                <i class="fas fa-spinner fa-spin fa-lg me-2"></i>Loading permissions...</td></tr>`;
+
+            try {
+                const resp = await fetch(`/Role/GetPermissions?roleId=${roleId}`);
+                if (!resp.ok) throw new Error(`Server returned ${resp.status}: ${resp.statusText}`);
+                
+                const res = await resp.json();
+                if (res.success) {
+                    renderTree(res.data);
+                } else {
+                    body.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Error: ${res.message || 'Failed to load permissions'}</td></tr>`;
+                }
+            } catch (err) {
+                console.error('LoadPermissions Error:', err);
+                body.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Network or Script Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderTree(matrix) {
+            const body = document.getElementById('treeGridBody');
+            body.innerHTML = '';
+
+            if (!matrix || !Array.isArray(matrix) || matrix.length === 0) {
+                body.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">
+                    <i class="fas fa-info-circle me-2"></i>No menu permissions found in the system. Check if menus and permissions are seeded.</td></tr>`;
+                return;
+            }
+
+            const menus = {};
+            const uniquePerms = [];
+            const permIdsSeen = new Set();
+
+            matrix.forEach(item => {
+                // Handle possible case sensitivity (camelCase vs PascalCase)
+                const mID = item.menuID || item.menuId;
+                const mName = item.menuName || item.MenuName;
+                const pID = item.parentID || item.parentId;
+                const permID = item.permissionID || item.permissionId;
+                const permName = item.permissionName || item.PermissionName;
+                const lbl = item.displayLabel || item.DisplayLabel || permName;
+                const hasAcc = item.hasAccess || item.HasAccess || false;
+
+                if (!menus[mID]) {
+                    // Structure nodes into Parent/Child groups.
+                    menus[mID] = {
+                        id: mID,
+                        name: mName,
+                        parentID: pID,
+                        permissions: {}
+                    };
+                }
+                // Flags if this specific access block is assigned or blank.
+                menus[mID].permissions[permID] = hasAcc;
+
+                if (!permIdsSeen.has(permID)) {
+                    permIdsSeen.add(permID);
+                    uniquePerms.push({
+                        id: permID,
+                        label: lbl,
+                        name: permName
+                    });
+                }
+            });
+
+            uniquePerms.sort((a, b) => {
+                if (a.name === 'View') return -1;
+                if (b.name === 'View') return 1;
+                return a.id - b.id;
+            });
+
+            const headerRow = document.getElementById('treeHeaderRow');
+            headerRow.innerHTML = `<th class="id-column">ID</th><th>Menu Name</th>`;
+            uniquePerms.forEach(p => {
+                headerRow.innerHTML += `<th class="matrix-col">${p.label}</th>`;
+            });
+
+            const menuArray = Object.values(menus);
+            const rootMenus = menuArray.filter(m => !m.parentID);
+
+            const buildRows = (list, depth = 0) => {
+                list.forEach((m, index) => {
+                    const children = menuArray.filter(c => c.parentID === m.id);
+                    const isParent = children.length > 0;
+                    const isLast = index === list.length - 1;
+
+                    const tr = document.createElement('tr');
+                    tr.className = `tree-row depth-${depth} ${isParent ? 'parent-node collapsed' : 'leaf-node'}`;
+                    tr.dataset.id = m.id;
+                    if (m.parentID) tr.dataset.parentId = m.parentID;
+
+                    let html = `<td class="id-column">${m.id}</td>`;
+
+                    let toggleHtml = isParent
+                        ? `<span class="tree-toggle" onclick="toggleNode(${m.id}, event)"><i class="fas fa-plus"></i></span>`
+                        : `<span style="width:20px;display:inline-block;"></span>`;
+
+                    html += `<td class="tree-cell">`;
+                    for (let i = 0; i < depth; i++) {
+                        html += `<span class="tree-indent"><span class="tree-line-v"></span></span>`;
+                    }
+                    if (depth > 0) {
+                        html += `<span class="tree-indent">
+                                    <span class="tree-line-v ${isLast ? 'last' : ''}"></span>
+                                    <span class="tree-line-h"></span>
+                                 </span>`;
+                    }
+
+                    html += `<input type="checkbox" class="row-master-check me-2" onchange="onToggleRow(this, ${m.id})">`;
+                    html += toggleHtml;
+                    html += `<i class="fas ${isParent ? 'fa-folder folder' : 'fa-file-alt file'} tree-icon"></i>`;
+                    html += `<span class="tree-label">${m.name}</span></td>`;
+
+                    uniquePerms.forEach(p => {
+                        const hasPerm = m.permissions[p.id];
+                        if (hasPerm !== undefined) {
+                            html += `<td class="matrix-col">
+                                <input type="checkbox" class="form-check-input perm-checkbox"
+                                       data-menu="${m.id}" data-perm="${p.id}" ${hasPerm ? 'checked' : ''}>
+                             </td>`;
+                        } else {
+                            html += `<td class="matrix-col">-</td>`;
+                        }
+                    });
+
+                    tr.innerHTML = html;
+                    body.appendChild(tr);
+
+                    if (isParent) buildRows(children, depth + 1);
+                });
+            };
+
+            buildRows(rootMenus);
+        }
+
+        function toggleNode(menuId, event) {
+            event.stopPropagation();
+            const row = document.querySelector(`.tree-row[data-id="${menuId}"]`);
+            const isExpanded = row.classList.contains('expanded');
+            row.classList.toggle('expanded');
+            row.classList.toggle('collapsed');
+            const icon = row.querySelector('.tree-toggle i');
+            icon.classList.toggle('fa-minus');
+            icon.classList.toggle('fa-plus');
+            const descendants = document.querySelectorAll(`.tree-row[data-parent-id="${menuId}"]`);
+            descendants.forEach(d => {
+                if (isExpanded) {
+                    hideDescendants(d.dataset.id);
+                    d.style.display = 'none';
+                } else {
+                    d.style.display = 'table-row';
+                }
+            });
+        }
+
+        function hideDescendants(parentId) {
+            document.querySelectorAll(`.tree-row[data-parent-id="${parentId}"]`).forEach(d => {
+                d.style.display = 'none';
+                hideDescendants(d.dataset.id);
+            });
+        }
+
+        function onToggleRow(cb, menuId) {
+            document.querySelectorAll(`.tree-row[data-id="${menuId}"] .perm-checkbox`).forEach(mcb => mcb.checked = cb.checked);
+            document.querySelectorAll(`.tree-row[data-parent-id="${menuId}"] .row-master-check`).forEach(childCb => {
+                childCb.checked = cb.checked;
+                onToggleRow(childCb, childCb.closest('.tree-row').dataset.id);
+            });
+        }
+
+        function toggleAllChecks(check) {
+            document.querySelectorAll('.perm-checkbox').forEach(cb => cb.checked = check);
+        }
+
+        /* ─────────────────────────────────────────────────────────
+           Status helpers
+        ───────────────────────────────────────────────────────── */
+        function hideStatus() {
+            document.getElementById('roleSaveStatus').classList.add('d-none');
+            document.getElementById('roleSaveOk').classList.remove('d-none');
+            document.getElementById('roleSaveErr').classList.add('d-none');
+            document.getElementById('permSaveStatus').classList.add('d-none');
+            document.getElementById('permSaveOk').classList.add('d-none');
+            document.getElementById('permSaveErr').classList.add('d-none');
+        }
+
+        function showOk(target, msg) {
+            if (target === 'role') {
+                document.getElementById('roleSaveStatus').classList.remove('d-none');
+                document.getElementById('roleSaveOk').classList.remove('d-none');
+                document.getElementById('roleSaveErr').classList.add('d-none');
+                document.getElementById('roleSaveOkMsg').textContent = msg;
+            } else {
+                document.getElementById('permSaveStatus').classList.remove('d-none');
+                document.getElementById('permSaveOk').classList.remove('d-none');
+                document.getElementById('permSaveErr').classList.add('d-none');
+            }
+        }
+
+        function showError(target, msg) {
+            if (target === 'role') {
+                document.getElementById('roleSaveStatus').classList.remove('d-none');
+                document.getElementById('roleSaveOk').classList.add('d-none');
+                document.getElementById('roleSaveErr').classList.remove('d-none');
+                document.getElementById('roleSaveErrMsg').textContent = msg;
+            } else {
+                document.getElementById('permSaveStatus').classList.remove('d-none');
+                document.getElementById('permSaveOk').classList.add('d-none');
+                document.getElementById('permSaveErr').classList.remove('d-none');
+                document.getElementById('permSaveErrMsg').textContent = msg;
+            }
+        }
+
+        /* ─────────────────────────────────────────────────────────
+           Table search
+        ───────────────────────────────────────────────────────── */
+        document.getElementById('txtSearchInput').addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('#rolesTable tbody .item-row').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+    </script>
+}

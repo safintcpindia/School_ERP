@@ -1,0 +1,144 @@
+@*
+    ======================================================================
+    VIEW: Settings / SystemFields.cshtml
+    PURPOSE: User interface rendering for the Settings module.
+    ======================================================================
+*@
+@{
+    Layout = "_Layout";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+        <h4 class="fw-bold mb-0">System Fields</h4>
+    </div>
+    <ul class="nav nav-pills gap-2">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="pill" href="#std">Student</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="pill" href="#stf">Staff</a>
+        </li>
+    </ul>
+</div>
+<!-- End Page Header -->
+<!-- start row -->
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <input type="text" class="form-control flex-fill me-3" placeholder="Search...">
+                    <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
+                        <button class="btn btn-icon btn-outline-primary" title="Copy">
+                            <i class="ti ti-copy fs-5"></i>
+                        </button>
+                        <button class="btn btn-icon btn-outline-secondary" title="Excel">
+                            <i class="ti ti-file-excel fs-5"></i>
+                        </button>
+                        <button class="btn btn-icon btn-outline-info" title="CSV">
+                            <i class="ti ti-file-barcode fs-5"></i>
+                        </button>
+                        <button class="btn btn-icon btn-outline-danger" title="Pdf">
+                            <i class="ti ti-file-type-pdf fs-5"></i>
+                        </button>
+                        <button class="btn btn-icon btn-outline-success" title="Print">
+                            <i class="ti ti-printer fs-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+
+                <div class="tab-content">
+
+                    <!-----Student Pane---->
+                    <div class="tab-pane active" id="std">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            Roll Number
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input float-end" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Middle Name
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input float-end" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-----Parent Pane---->
+                    <div class="tab-pane" id="stf">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            Designation
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input float-end" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Department
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input float-end" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+            <!-- end card-body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+
+</div>
+<!-- end row -->

@@ -1,0 +1,260 @@
+@*
+    ======================================================================
+    VIEW: Currencies / Index.cshtml
+    PURPOSE: User interface rendering for the Currencies module.
+    ======================================================================
+*@
+@model SchoolERP.Net.Models.MstCurrencyPageViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Currency Management";
+}
+
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+        <h4 class="fw-bold mb-0">Currency Management</h4>
+    </div>
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <button class="btn btn-primary shadow-sm" id="btnAddCurrency" onclick="openAddModal()">
+            <i class="fas fa-plus me-2"></i>Add
+        </button>
+        <button id="btnEdit" class="btn btn-success shadow-sm" disabled onclick="editSelected()">
+            <i class="fas fa-edit me-2"></i>Edit
+        </button>
+        <button id="btnDelete" class="btn btn-danger shadow-sm" disabled onclick="deleteSelected()">
+            <i class="fas fa-trash me-2"></i>Delete
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-items-center mb-0" id="currenciesTable">
+                        <thead>
+                            <tr class="bg-light">
+                                <th class="ps-4" style="width: 50px;">Select</th>
+                                <th>Title</th>
+                                <th>Code</th>
+                                <th>Symbol</th>
+                                <th class="text-end">Conv. Rate</th>
+                                <th class="text-center">Base</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Created On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.Currencies)
+                            {
+                                <tr class="item-row" onclick="selectItem(@c.CurrencyId, this)" style="cursor: pointer;">
+                                    <td class="ps-4 text-center">
+                                        <input type="radio" name="selectedCurrency" class="form-check-input" value="@c.CurrencyId">
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold">@c.CurrencyTitle</span>
+                                    </td>
+                                    <td>@c.CurrencyCode</td>
+                                    <td><span class="badge bg-info text-white">@c.CurrencySymbol</span></td>
+                                    <td class="text-end">@c.CurrencyConvRate.ToString("N4")</td>
+                                    <td class="text-center">
+                                        @if (c.CurrencyBase)
+                                        {
+                                            <span class="badge bg-primary">Base</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-flex justify-content-center" onclick="event.stopPropagation()">
+                                            <input class="form-check-input currency-status-switch" type="checkbox" @(c.IsActive ? "checked" : "") onchange="toggleStatus(@c.CurrencyId, this.checked)">
+                                        </div>
+                                    </td>
+                                    <td class="text-center"><span class="text-muted small">@c.CreatedOn.ToString("dd MMM yyyy")</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-bottom bg-light d-flex align-items-center">
+                <h5 class="modal-title fw-bold mb-0" id="modalTitle">Add Currency</h5>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-primary shadow-sm" id="btnSave" onclick="saveItem()">
+                        <i class="fas fa-save me-1"></i>Save Currency
+                    </button>
+                    <button type="button" class="btn-close ms-2" data-bs-dismiss="modal"></button>
+                </div>
+            </div>
+            <div class="modal-body p-4">
+                <form id="itemForm">
+                    <input type="hidden" id="txtItemId" value="0">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-semibold">Currency Title</label>
+                            <input type="text" class="form-control" id="txtCurrencyTitle" required placeholder="e.g. US Dollar">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Currency Code</label>
+                            <input type="text" class="form-control" id="txtCurrencyCode" required placeholder="e.g. USD">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Currency Symbol</label>
+                            <input type="text" class="form-control" id="txtCurrencySymbol" required placeholder="e.g. $">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-semibold">Conversion Rate</label>
+                            <input type="number" step="0.0001" class="form-control" id="txtCurrencyConvRate" required placeholder="e.g. 1.0000">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="chkCurrencyBase">
+                                <label class="form-check-label fw-bold" for="chkCurrencyBase">Base Currency</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="chkIsActive" checked>
+                                <label class="form-check-label fw-bold" for="chkIsActive">Active</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-text mt-2 text-info">
+                        <i class="fas fa-info-circle me-1"></i>Setting a currency as <strong>Base</strong> will unset existing base currency.
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const itemModal = new bootstrap.Modal(document.getElementById('itemModal'));
+        let selectedCurrencyId = 0;
+
+        function selectItem(id, row) {
+            selectedCurrencyId = id;
+            document.querySelectorAll('.item-row').forEach(r => r.classList.remove('bg-light'));
+            row.classList.add('bg-light');
+            row.querySelector('input[type="radio"]').checked = true;
+            document.getElementById('btnEdit').disabled = false;
+            document.getElementById('btnDelete').disabled = false;
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Currency';
+            document.getElementById('itemForm').reset();
+            document.getElementById('txtItemId').value = "0";
+            document.getElementById('chkIsActive').checked = true;
+            document.getElementById('chkCurrencyBase').checked = false;
+            itemModal.show();
+        }
+
+        async function editSelected() {
+            if (selectedCurrencyId === 0) return;
+            try {
+                const resp = await fetch(`/Currencies/GetCurrency?id=${selectedCurrencyId}`);
+                const res = await resp.json();
+                if (res.success) {
+                    document.getElementById('modalTitle').textContent = 'Edit Currency';
+                    document.getElementById('txtItemId').value = res.data.currencyId;
+                    document.getElementById('txtCurrencyTitle').value = res.data.currencyTitle;
+                    document.getElementById('txtCurrencyCode').value = res.data.currencyCode;
+                    document.getElementById('txtCurrencySymbol').value = res.data.currencySymbol;
+                    document.getElementById('txtCurrencyConvRate').value = res.data.currencyConvRate;
+                    document.getElementById('chkCurrencyBase').checked = res.data.currencyBase;
+                    document.getElementById('chkIsActive').checked = res.data.isActive;
+                    itemModal.show();
+                } else {
+                    alert(res.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error fetching currency details');
+            }
+        }
+
+        async function deleteSelected() {
+            if (selectedCurrencyId === 0) return;
+            if (!confirm('Are you sure you want to delete this currency? This action cannot be undone.')) return;
+
+            try {
+                const resp = await fetch(`/Currencies/Delete?id=${selectedCurrencyId}`, { method: 'POST' });
+                const res = await resp.json();
+                if (res.success) location.reload(); else alert(res.message);
+            } catch (err) {
+                console.error(err);
+                alert('Error deleting currency');
+            }
+        }
+
+        async function saveItem() {
+            const title = document.getElementById('txtCurrencyTitle').value.trim();
+            const code = document.getElementById('txtCurrencyCode').value.trim();
+            const symbol = document.getElementById('txtCurrencySymbol').value.trim();
+            const rate = document.getElementById('txtCurrencyConvRate').value;
+
+            if (!title || !code || !symbol || !rate) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            // Binds MstCurrencyUpsertRequest properties to modal inputs maintaining numerical precision
+            const data = {
+                currencyId: parseInt(document.getElementById('txtItemId').value),
+                currencyTitle: title,
+                currencyCode: code,
+                currencySymbol: symbol,
+                currencyConvRate: parseFloat(rate),
+                currencyBase: document.getElementById('chkCurrencyBase').checked,
+                isActive: document.getElementById('chkIsActive').checked
+            };
+
+            try {
+                const resp = await fetch('/Currencies/Save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const res = await resp.json();
+                if (res.success) location.reload(); else alert(res.message);
+            } catch (err) {
+                console.error(err);
+                alert('Error saving currency');
+            }
+        }
+
+        async function toggleStatus(id, isActive) {
+            try {
+                const resp = await fetch(`/Currencies/ToggleStatus?id=${id}&isActive=${isActive}`, { method: 'POST' });
+                const res = await resp.json();
+                if (res.success) {
+                    // Success
+                } else {
+                    alert(res.message);
+                    location.reload();
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error toggling status');
+                location.reload();
+            }
+        }
+    </script>
+}

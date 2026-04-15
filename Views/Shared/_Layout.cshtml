@@ -1,0 +1,567 @@
+@*
+    ======================================================================
+    VIEW: Shared / _Layout.cshtml
+    PURPOSE: User interface rendering for the Shared module.
+    ======================================================================
+*@
+@using SchoolERP.Net.Services
+
+@* 
+    INJECTED SERVICES:
+    - ILocalizationService: Hooks into high-speed MemoryCache to render standard UI tokens dynamically.
+    - IMenuService: Queries 'sp_Menus_GetAll' recursively to construct the access-controlled sidebar.
+*@
+@inject ILocalizationService Localizer
+@inject IMenuService MenuService
+<!DOCTYPE html>
+<html lang="@Localizer.GetCurrentLanguage()">
+
+<head>
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewData["Title"] - @Localizer.GetString("school_name")</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Dreams Technologies">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/assets/img/favicon.png">
+
+    <!-- Theme Config Js -->
+    <script src="~/assets/js/theme-script.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap-datetimepicker.min.css">
+
+    <!-- Daterangepikcer CSS -->
+    <link rel="stylesheet" href="~/assets/plugins/daterangepicker/daterangepicker.css">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
+
+    <!-- Tabler Icon CSS -->
+    <link rel="stylesheet" href="~/assets/plugins/tabler-icons/tabler-icons.min.css">
+
+    <!-- Simplebar CSS -->
+    <link rel="stylesheet" href="~/assets/plugins/simplebar/simplebar.min.css">
+
+    <!-- Choices CSS -->
+    <link rel="stylesheet" href="~/assets/plugins/choices.js/public/assets/styles/choices.min.css">
+
+
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="~/assets/css/style.css" id="app-style">
+
+    @RenderSection("Styles", required: false)
+
+</head>
+
+<body>
+
+    <!-- Begin Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Topbar Start -->
+        <header class="navbar-header">
+            <div class="page-container topbar-menu">
+                <div class="d-flex align-items-center gap-2">
+
+                    <!-- Logo -->
+                    <a href="index.html" class="logo">
+
+                        <!-- Logo Normal -->
+                        <span class="logo-light">
+                            <span class="logo-lg"><img src="assets/img/logo.svg" alt="logo"></span>
+                            <span class="logo-sm"><img src="assets/img/logo-small.svg" alt="small logo"></span>
+                        </span>
+
+                        <!-- Logo Dark -->
+                        <span class="logo-dark">
+                            <span class="logo-lg"><img src="assets/img/logo-white.svg" alt="dark logo"></span>
+                        </span>
+                    </a>
+
+                    <!-- Sidebar Mobile Button -->
+                    <a id="mobile_btn" class="mobile-btn" href="#sidebar">
+                        <i class="ti ti-menu-deep fs-24"></i>
+                    </a>
+
+                    <button class="sidenav-toggle-btn btn border-0 p-0 active" id="toggle_btn2">
+                        <i class="ti ti-arrow-right"></i>
+                    </button>
+
+                    <button class="me-3 fw-bold btn btn-primary" data-bs-toggle="modal" data-bs-target="#session-year">
+                        2024-2025 <i class="ti ti-pencil ms-1 fs-15 align-middle"></i>
+                    </button>
+
+                    @* <!-- Search -->
+                    <div class="me-auto d-flex align-items-center header-search d-lg-flex d-none">
+                        <!-- Search -->
+                        <div class="input-icon-start position-relative me-2">
+                            <span class="input-icon-addon">
+                                <i class="ti ti-search"></i>
+                            </span>
+                            <input type="text" id="txtGlobalSearch" class="form-control shadow-sm" placeholder="@Localizer.GetString("search_by_student_name")" style="width: 500px;">
+                            <!-- <span class="input-icon-addon text-dark shadow fs-18 d-inline-flex p-0 header-search-icon"><i class="ti ti-command"></i></span> -->
+                        </div>
+                        <!-- /Search -->
+                    </div> *@
+
+                </div>
+
+                <div class="d-flex align-items-center">
+
+                    <!-- Search for Mobile -->
+                    <div class="header-item d-flex d-lg-none me-2">
+                        <button class="topbar-link btn btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal" type="button">
+                            <i class="ti ti-search fs-16"></i>
+                        </button>
+                    </div>
+
+
+                   @*  <div class="header-item">
+                        <button class="me-3 fw-bold btn btn-primary" data-bs-toggle="modal" data-bs-target="#session-year">
+                            2024-2025 <i class="ti ti-pencil ms-1 fs-15 align-middle"></i>
+                        </button>
+                    </div> *@
+
+                    <!-- Appointment -->
+                    <div class="header-item">
+                        <div class="dropdown me-2">
+                            <a href="new-appointment.html" class="btn topbar-link"><i class="ti ti-calendar-due"></i></a>
+                        </div>
+                    </div>
+                    <!-- Appointment -->
+                    <!-- Settings -->
+                    <div class="header-item">
+                        <div class="dropdown me-2">
+                            <a href="profile-settings.html" class="btn topbar-link"><i class="ti ti-settings-2"></i></a>
+                        </div>
+                    </div>
+                    <!-- Settings -->
+                    <!-- Light/Dark Mode Button -->
+                    <div class="header-item d-none d-sm-flex me-2">
+                        <button class="topbar-link btn btn-icon topbar-link" id="light-dark-mode" type="button">
+                            <i class="ti ti-moon fs-16"></i>
+                        </button>
+                    </div>
+
+                    <!-- Language Switcher -->
+                    <div class="header-item">
+                        <div class="dropdown me-2">
+                            <button class="topbar-link btn btn-icon dropdown-toggle drop-arrow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="ti ti-language fs-18"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end p-2" style="max-height: 300px; overflow-y: auto;">
+                                @foreach (var lang in Localizer.GetAvailableLanguages().OrderBy(l => l))
+                                {
+                                    <li>
+                                        <form asp-controller="Language" asp-action="SetLanguage" method="post">
+                                            <input type="hidden" name="language" value="@lang" />
+                                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                            <button type="submit" class="dropdown-item @(Localizer.GetCurrentLanguage() == lang ? "active" : "")">
+                                                @System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(lang.Replace("_", " "))
+                                            </button>
+                                        </form>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <!-- Notification Dropdown -->
+                    <div class="header-item">
+                        <div class="dropdown me-3">
+
+                            <button class="topbar-link btn btn-icon topbar-link dropdown-toggle drop-arrow-none" data-bs-toggle="dropdown" data-bs-offset="0,24" type="button" aria-haspopup="false" aria-expanded="false">
+                                <i class="ti ti-bell-check fs-16 animate-ring"></i>
+                                <span class="notification-badge"></span>
+                            </button>
+
+                            <div class="dropdown-menu p-0 dropdown-menu-end dropdown-menu-lg" style="min-height: 300px;">
+
+                                <div class="p-2 border-bottom">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <h6 class="m-0 fs-16 fw-semibold"> @Localizer.GetString("notifications")</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Notification Body -->
+                                <div class="notification-body position-relative z-2 rounded-0" data-simplebar>
+
+                                    <!-- Item-->
+                                    <div class="dropdown-item notification-item py-3 text-wrap border-bottom" id="notification-1">
+                                        <div class="d-flex">
+                                            <div class="me-2 position-relative flex-shrink-0">
+                                                <img src="assets/img/doctors/doctor-01.jpg" class="avatar-md rounded-circle" alt="">
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0 fw-medium text-dark">Dr. Smith</p>
+                                                <p class="mb-1 text-wrap">
+                                                    updated the <span class="fw-medium text-dark">surgery</span> schedule.
+                                                </p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fs-12"><i class="ti ti-clock me-1"></i>4 min ago</span>
+                                                    <div class="notification-action d-flex align-items-center float-end gap-2">
+                                                        <a href="javascript:void(0);" class="notification-read rounded-circle bg-danger" data-bs-toggle="tooltip" title="" data-bs-original-title="Make as Read" aria-label="Make as Read"></a>
+                                                        <button class="btn rounded-circle p-0" data-dismissible="#notification-1">
+                                                            <i class="ti ti-x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Item-->
+                                    <div class="dropdown-item notification-item py-3 text-wrap border-bottom" id="notification-2">
+                                        <div class="d-flex">
+                                            <div class="me-2 position-relative flex-shrink-0">
+                                                <img src="assets/img/doctors/doctor-06.jpg" class="avatar-md rounded-circle" alt="">
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0 fw-medium text-dark">Dr. Patel</p>
+                                                <p class="mb-1 text-wrap">
+                                                    completed a <span class="fw-medium text-dark">follow-up</span> report for patient <span class="fw-medium text-dark">Emily</span>.
+                                                </p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fs-12"><i class="ti ti-clock me-1"></i>8 min ago</span>
+                                                    <div class="notification-action d-flex align-items-center float-end gap-2">
+                                                        <a href="javascript:void(0);" class="notification-read rounded-circle bg-danger" data-bs-toggle="tooltip" title="" data-bs-original-title="Make as Read" aria-label="Make as Read"></a>
+                                                        <button class="btn rounded-circle p-0" data-dismissible="#notification-2">
+                                                            <i class="ti ti-x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Item-->
+                                    <div class="dropdown-item notification-item py-3 text-wrap border-bottom" id="notification-3">
+                                        <div class="d-flex">
+                                            <div class="me-2 position-relative flex-shrink-0">
+                                                <img src="assets/img/doctors/doctor-02.jpg" class="avatar-md rounded-circle" alt="">
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0 fw-medium text-dark">Emily</p>
+                                                <p class="mb-1 text-wrap">
+                                                    booked an appointment with <span class="fw-medium text-dark">Dr. Patel</span> for <span class="fw-medium text-dark">April 15</span>
+                                                </p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fs-12"><i class="ti ti-clock me-1"></i>15 min ago</span>
+                                                    <div class="notification-action d-flex align-items-center float-end gap-2">
+                                                        <a href="javascript:void(0);" class="notification-read rounded-circle bg-danger" data-bs-toggle="tooltip" title="" data-bs-original-title="Make as Read" aria-label="Make as Read"></a>
+                                                        <button class="btn rounded-circle p-0" data-dismissible="#notification-3">
+                                                            <i class="ti ti-x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Item-->
+                                    <div class="dropdown-item notification-item py-3 text-wrap" id="notification-4">
+                                        <div class="d-flex">
+                                            <div class="me-2 position-relative flex-shrink-0">
+                                                <img src="assets/img/doctors/doctor-07.jpg" class="avatar-md rounded-circle" alt="">
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0 fw-medium text-dark">Amelia</p>
+                                                <p class="mb-1 text-wrap">
+                                                    completed the <span class="fw-medium text-dark">pre-visit</span> health questionnaire.
+                                                </p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fs-12"><i class="ti ti-clock me-1"></i>20 min ago</span>
+                                                    <div class="notification-action d-flex align-items-center float-end gap-2">
+                                                        <a href="javascript:void(0);" class="notification-read rounded-circle bg-danger" data-bs-toggle="tooltip" title="" data-bs-original-title="Make as Read" aria-label="Make as Read"></a>
+                                                        <button class="btn rounded-circle p-0" data-dismissible="#notification-4">
+                                                            <i class="ti ti-x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- View All-->
+                                <div class="p-2 rounded-bottom border-top text-center">
+                                    <a href="notifications.html" class="text-center text-decoration-underline fs-14 mb-0">
+                                        @Localizer.GetString("view_all")
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Dropdown -->
+                    <div class="dropdown profile-dropdown d-flex align-items-center justify-content-center">
+                        <a href="javascript:void(0);" class="topbar-link dropdown-toggle drop-arrow-none position-relative" data-bs-toggle="dropdown" data-bs-offset="0,22" aria-haspopup="false" aria-expanded="false">
+                            <img src="assets/img/users/user-01.jpg" width="32" class="rounded-circle d-flex" alt="user-image">
+                            <span class="online text-success"><i class="ti ti-circle-filled d-flex bg-white rounded-circle border border-1 border-white"></i></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-md p-2">
+
+                            <div class="d-flex align-items-center bg-light rounded-3 p-2 mb-2">
+                                <img src="assets/img/users/user-01.jpg" class="rounded-circle" width="42" height="42" alt="">
+                                <div class="ms-2">
+                                    <p class="fw-medium text-dark mb-0">Super Admin</p>
+                                    <span class="d-block fs-13">@Localizer.GetString("administrator")</span>
+                                </div>
+                            </div>
+
+                            <!-- Item-->
+                            <a href="profile-settings.html" class="dropdown-item">
+                                <i class="ti ti-user-circle me-1 align-middle"></i>
+                                <span class="align-middle">@Localizer.GetString("profile")</span>
+                            </a>
+
+                            <!-- Item-->
+                            <a href="account-settings.html" class="dropdown-item">
+                                <i class="ti ti-settings me-1 align-middle"></i>
+                                <span class="align-middle">@Localizer.GetString("system_setting")</span>
+                            </a>
+
+                            <!-- item -->
+                            <div class="form-check form-switch form-check-reverse d-flex align-items-center justify-content-between dropdown-item mb-0">
+                                <label class="form-check-label" for="notify"><i class="ti ti-bell me-1"></i>Notifications</label>
+                                <input class="form-check-input me-0" type="checkbox" role="switch" id="notify">
+                            </div>
+
+                            <!-- Item-->
+                            <!-- <a href="transactions.html" class="dropdown-item">
+                                <i class="ti ti-transition-right me-1 align-middle"></i>
+                                <span class="align-middle">Transactions</span>
+                            </a> -->
+                            <!-- Item-->
+                            <div class="pt-2 mt-2 border-top">
+                                <a href="login.html" class="dropdown-item text-danger">
+                                    <i class="ti ti-logout me-1 fs-17 align-middle"></i>
+                                    <span class="align-middle">@Localizer.GetString("logout")</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </header>
+        <!-- Topbar End -->
+        <!-----Change Session------->
+        <div class="modal fade" id="session-year">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h6 class="modal-title">@Localizer.GetString("current_session")</h6>
+                        <button type="button" class="btn-close p-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="" class="form-label">@Localizer.GetString("session")</label>
+                            <select name="ddlSessionYear" id="ddlSessionYear" class="form-select mb-3">
+                                <option value="">2020 - 2021</option>
+                                <option value="">2021 - 2022</option>
+                                <option value="">2022 - 2023</option>
+                                <option value="">2023 - 2024</option>
+                                <option value="" selected>2024 - 2025</option>
+                                <option value="">2025 - 2026</option>
+                            </select>
+
+                            <button class="btn btn-primary w-100" id="btnSaveSession">@Localizer.GetString("save")</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidenav Menu Start -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <a href="/" class="logo logo-normal">
+                    <img src="~/assets/img/logo.svg" alt="Logo">
+                </a>
+                <button class="sidenav-toggle-btn btn border-0 p-0 active" id="toggle_btn"> 
+                    <i class="ti ti-arrow-left text-body"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-inner" data-simplebar>
+                <div id="sidebar-menu" class="sidebar-menu">
+                    @{
+                        // Fetches all active UI elements and groups them by ParentID to form a dynamic 2-level nested tree matrix.
+                        var allMenus = MenuService.GetAllMenus().Where(m => m.IsActive).OrderBy(m => m.DisplayOrder).ToList();
+                        var rootMenus = allMenus.Where(m => m.ParentID == null).ToList();
+                    }
+                    <ul>
+                        <li class="menu-title"><span>@Localizer.GetString("main_menu")</span></li>
+                        @foreach (var menu in rootMenus)
+                        {
+                            var children = allMenus.Where(m => m.ParentID == menu.MenuID).ToList();
+                            if (children.Any())
+                            {
+                                <li class="submenu">
+                                    <a href="javascript:void(0);">
+                                        <i class="@(menu.MenuIcon ?? "ti ti-box")"></i><span>@menu.MenuName</span>
+                                        <span class="menu-arrow"></span>
+                                    </a>
+                                    <ul>
+                                        @foreach (var child in children)
+                                        {
+                                            <li><a href="@child.MenuURL">@child.MenuName</a></li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a href="@menu.MenuURL">
+                                        <i class="@(menu.MenuIcon ?? "ti ti-box")"></i> <span>@menu.MenuName</span>
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                        <li class="menu-title"><span>@Localizer.GetString("settings")</span></li>
+                        <li>
+                            <ul>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);">
+                                        <i class="ti ti-device-desktop-cog"></i><span>@Localizer.GetString("system_setting")</span>
+                                        <span class="menu-arrow"></span>
+                                    </a>
+                                    <ul>
+
+                                        <li class="submenu submenu-two">
+                                            <a href="javascript:void(0);">@Localizer.GetString("general_setting") <span
+                                                    class="menu-arrow inside-submenu"></span>
+                                            </a>
+                                            <ul class="">
+                                                <li><a href="/Settings/Companies">Company Master</a></li>
+                                                <li><a href="/Settings/Logo">Logo</a></li>
+                                                <li><a href="/Settings/LoginPageBG">Login Page Background</a></li>
+                                                <li><a href="/Settings/StudentGuardian">Student/Guardian Panel</a></li>
+                                                <li><a href="/Settings/IDAutoGen">ID Auto Generation</a></li>
+                                                <li><a href="/Settings/AttendanceType">Attendance Type</a></li>
+                                                <li><a href="/Settings/Maintenance">Maintenance</a></li>
+                                                <li><a href="/Settings/Miscellaneous">Miscellaneous</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="/Permission/Index">@Localizer.GetString("permission_master")</a></li>
+                                        <li><a href="/Role/Index">@Localizer.GetString("roles_permissions")</a></li>
+                                        <li><a href="/User/Index">@Localizer.GetString("users")</a></li>
+                                        <li><a href="/Sessions/Index">@Localizer.GetString("session_setting")</a></li>
+                                        <li><a href="/MasterMenu/Index">@Localizer.GetString("sidebar_menu")</a></li>
+                                        <li><a href="/Settings/Notifications">@Localizer.GetString("notification_setting")</a></li>
+                                        <li><a href="/Currencies/Index">@Localizer.GetString("currencies")</a></li>
+                                        <li><a href="/Language">@Localizer.GetString("languages")</a></li>
+                                        <li><a href="/Settings/EmailSettings">@Localizer.GetString("email_setting")</a></li>
+                                        <li><a href="/Settings/SmsSettings">@Localizer.GetString("sms_setting")</a></li>
+                                        <li><a href="/Settings/PaymentMethods">@Localizer.GetString("payment_methods")</a></li>
+                                        <li><a href="/Settings/PrintHeaderFooter">@Localizer.GetString("print_headerfooter")</a></li>
+                                        <li><a href="/Settings/BackupHistory">@Localizer.GetString("backup_history")</a></li>
+                                        
+                                        <li><a href="/Settings/SystemFields">System Fields</a></li>
+                                        <li><a href="/Settings/CustomFields">Custom Fields</a></li>
+                                        <li><a href="/Settings/StudentProfile">Student Profile</a></li>
+                                        <li><a href="/Settings/Modules">Modules</a></li>
+                                        <li><a href="/Settings/Captcha">Captcha Setting</a></li>
+                                        <li><a href="/Settings/FileType">File Type</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Sidenav Menu End -->
+
+        <div class="page-wrapper">
+            <div class="content pb-0">
+                @RenderBody()
+            </div>
+        </div>
+
+    </div>
+    <!-- End Wrapper -->
+
+
+    <!-- jQuery -->
+    <script src="~/assets/js/jquery-3.7.1.min.js"></script>
+
+    <!-- Bootstrap Core JS -->
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Simplebar JS -->
+    <script src="~/assets/plugins/simplebar/simplebar.min.js"></script>
+
+    <!-- Dropzone File Js -->
+    <script src="~/assets/plugins/dropzone/dropzone-min.js"></script>
+
+    <!-- File Upload Demo js -->
+    <script src="~/assets/js/form-fileupload.js"></script>
+
+    <!-- Editor JS -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+   
+
+    <!-- Main JS -->
+
+    <script src="~/assets/js/script.js"></script>
+
+    <!-- Daterangepikcer JS -->
+    <script src="~/assets/js/moment.min.js"></script>
+    <script src="~/assets/plugins/choices.js/public/assets/scripts/choices.min.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        ClassicEditor.create(document.querySelector("#editor")).catch((error) => {
+            console.error(error);
+        });
+
+        ClassicEditor.create(document.querySelector("#editor2")).catch((error) => {
+            console.error(error);
+        });
+
+        ClassicEditor.create(document.querySelector("#editor3")).catch((error) => {
+            console.error(error);
+        });
+
+        ClassicEditor.create(document.querySelector("#editor4")).catch((error) => {
+            console.error(error);
+        });
+
+        $('#mySelect').select2({
+            placeholder: "Select",
+            allowClear: true
+        });
+        $('#mySelect2').select2({
+            placeholder: "Select",
+            allowClear: true
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+
+</html>

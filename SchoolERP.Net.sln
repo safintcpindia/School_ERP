@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34825.169
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchoolERP.Net", "SchoolERP.Net.csproj", "{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1E9346C7-BAE0-479D-A801-C8DA3165CE05}
+	EndGlobalSection
+EndGlobal

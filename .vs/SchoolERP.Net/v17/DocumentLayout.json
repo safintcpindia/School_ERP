@@ -11,12 +11,12 @@
       "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\permission\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|d:\\school erp new\\13-04-2026\\schoolerp.net (1)\\views\\settings\\companies.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\settings\\companies.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|d:\\school erp new\\13-04-2026\\schoolerp.net (1)\\wwwroot\\assets\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:wwwroot\\assets\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|d:\\school erp new\\13-04-2026\\schoolerp.net (1)\\views\\settings\\companies.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\settings\\companies.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|d:\\school erp new\\13-04-2026\\schoolerp.net (1)\\controllers\\api\\userapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -62,11 +62,12 @@
               "RelativeToolTip": "Views\\Permission\\Index.cshtml",
               "ViewState": "AQIAAGYAAAAAAAAAAAAAAHEAAAAUAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-15T08:21:46.439Z"
+              "WhenOpened": "2026-04-15T08:21:46.439Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Companies.cshtml",
               "DocumentMoniker": "D:\\School ERP New\\13-04-2026\\SchoolERP.Net (1)\\Views\\Settings\\Companies.cshtml",
               "RelativeDocumentMoniker": "Views\\Settings\\Companies.cshtml",
@@ -78,15 +79,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "style.css",
               "DocumentMoniker": "D:\\School ERP New\\13-04-2026\\SchoolERP.Net (1)\\wwwroot\\assets\\css\\style.css",
               "RelativeDocumentMoniker": "wwwroot\\assets\\css\\style.css",
               "ToolTip": "D:\\School ERP New\\13-04-2026\\SchoolERP.Net (1)\\wwwroot\\assets\\css\\style.css",
               "RelativeToolTip": "wwwroot\\assets\\css\\style.css",
-              "ViewState": "AQIAAN0sAAAAAAAAAAAwwOgsAAATAAAA",
+              "ViewState": "AQIAAOksAAAAAAAAAAAwwPgsAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-04-14T14:07:17.085Z"
+              "WhenOpened": "2026-04-14T14:07:17.085Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -122,7 +124,8 @@
               "RelativeToolTip": "Controllers\\Api\\UserApiController.cs",
               "ViewState": "AQIAAH4AAAAAAAAAAAASwIsAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T09:00:12.561Z"
+              "WhenOpened": "2026-04-14T09:00:12.561Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -132,7 +135,7 @@
               "RelativeDocumentMoniker": "Views\\User\\Index.cshtml",
               "ToolTip": "D:\\School ERP New\\13-04-2026\\SchoolERP.Net (1)\\Views\\User\\Index.cshtml",
               "RelativeToolTip": "Views\\User\\Index.cshtml",
-              "ViewState": "AQIAAJUBAAAAAAAAAAAAAJwBAABdAAAA",
+              "ViewState": "AQIAADECAAAAAAAAAIAwwDoCAABTAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-04-14T08:59:50.197Z",
               "EditorCaption": ""
@@ -147,7 +150,8 @@
               "RelativeToolTip": "Controllers\\UserController.cs",
               "ViewState": "AQIAAAgAAAAAAAAAAAAiwBsAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T08:59:36.73Z"
+              "WhenOpened": "2026-04-14T08:59:36.73Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",

@@ -363,3 +363,4 @@ D:\School ERP New\13-04-2026\SchoolERP.Net (1)\obj\Debug\net8.0\refint\SchoolERP
 D:\School ERP New\13-04-2026\SchoolERP.Net (1)\obj\Debug\net8.0\SchoolERP.Net.pdb
 D:\School ERP New\13-04-2026\SchoolERP.Net (1)\obj\Debug\net8.0\SchoolERP.Net.genruntimeconfig.cache
 D:\School ERP New\13-04-2026\SchoolERP.Net (1)\obj\Debug\net8.0\ref\SchoolERP.Net.dll
+D:\School ERP New\13-04-2026\SchoolERP.Net (1)\obj\Debug\net8.0\SchoolERP.Net.sourcelink.json

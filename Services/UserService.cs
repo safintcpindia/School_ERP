@@ -339,20 +339,24 @@ namespace SchoolERP.Net.Services
                 }
             }
 
+            // FILTERING: To satisfy the requirement "only those role and permissions",
+            // we filter the matrix to only include menus that have role access OR a user override.
+            // We also must include parent menus to keep the tree structure valid.
+
             var menusWithAccess = new HashSet<int>();
-            
             foreach (var item in mergedMatrix.Values)
             {
-                if (item.RoleAccess || item.HasAccess)
+                if (item.RoleAccess || item.UserOverride.HasValue)
                 {
                     menusWithAccess.Add(item.MenuID);
                 }
             }
 
+            // Recursively add parent IDs to ensure the tree-view doesn't have "orphan" child nodes
             var menuParents = mergedMatrix.Values
                 .Where(m => m.ParentID.HasValue)
                 .GroupBy(m => m.MenuID)
-                .ToDictionary(g => g.Key, g => g.First().ParentID.Value);
+                .ToDictionary(g => g.Key, g => g.First().ParentID!.Value);
 
             bool addedNew;
             do

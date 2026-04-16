@@ -111,6 +111,20 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
+        /// Soft deletes a user.
+        /// </summary>
+        [HttpPost("delete/{id}")]
+        public IActionResult DeleteUser(int id)
+        {
+            int actingUser = 1;
+            var response = _userService.DeleteUser(id, actingUser);
+            if (response.Result > 0)
+                return Ok(ApiResponse<bool>.SuccessResponse(true, response.Message));
+            
+            return BadRequest(ApiResponse<bool>.ErrorResponse(response.Message));
+        }
+
+        /// <summary>
         /// Purges security lockouts generated from repeated failing password attempts.
         /// </summary>
         [HttpPost("unlock/{id}")]

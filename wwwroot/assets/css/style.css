@@ -11510,24 +11510,23 @@ label.form-label {
 input.form-check-input{
     border-color:#33333360;font-size:16px;
 }
-.shadow-tbl {
+.shadow-tbl, .shadow-tbl-outer {
     box-shadow: 0 1px 4px 0px rgba(130,143,163,0.15);
 }
 .shadow-tbl .card-body{
     padding:2px !important;
 }
 button.btn-out-close {
-    background-color: #fbfbfb;
-    color: #000;
-    border: 0;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    position: absolute;
-    right: -15px;
-    top: -15px;
-    opacity: 1;
-    box-shadow: 0 3px 5px 3px grey;
+    background-color: red;
+    color: #fff;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius:5px;
+    border:0;
+}
+.choices__list--dropdown .choices__item--selectable, 
+.choices__list[aria-expanded] .choices__item--selectable {
+    padding-right: 0;
 }
 
 

@@ -811,6 +811,22 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/user/delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
     "Method": "GetRoles",
     "RelativePath": "api/user/roles-dropdown",
     "HttpMethod": "GET",

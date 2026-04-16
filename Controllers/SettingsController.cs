@@ -402,5 +402,15 @@ namespace SchoolERP.Net.Controllers
             var response = await _userClient.ToggleStatusAsync(userId, isActive);
             return Json(new { success = response.Success, message = response.Message });
         }
+
+        /// <summary>
+        /// Deletes a user.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var response = await _userClient.DeleteUserAsync(id);
+            return Json(new { success = response.Success, message = response.Message });
+        }
     }
 }

@@ -8,30 +8,36 @@
     Layout = "_Layout";
 }
 
-<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
     <div>
-        <h4 class="fw-bold mb-0">Notification Settings</h4>
+        <h6 class="fw-bold mb-0">Notification Settings</h6>
     </div>
+    <button class="btn btn-info shadow-sm" disabled>
+        <i class="ti ti-edit me-2"></i>Edit
+    </button>
 </div>
 
 <div class="row">
     <div class="col-xl-12">
-        <div class="card">
+        <div class="card shadow-tbl">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table mb-0">
                         <thead>
                             <tr>
+                                <th style="width: 50px;">Select</th>
                                 <th>Event</th>
                                 <th>Destination</th>
                                 <th>Recipient</th>
                                 <th>Template ID</th>
-                                <th>Sample Message</th>
-                                <th>Action</th>
+                                <th>Sample Message</th>                                
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                <td class="ps-4 text-center">
+                                    <input type="radio" name="selectedMenu" class="form-check-input" value="">
+                                </td>
                                 <td>Student Admission</td>
                                 <td>
                                     <div class="form-check mb-2">
@@ -59,18 +65,12 @@
                                         Dear {{student_name}} your admission is confirmed in Class: {{class}} Section: {{section}} for Session: {{current_session_name}}. For more details contact System Admin.
                                     </div>
                                 </td>
-                                <td class="text-end">
-                                    <div class="dropdown dropstart d-inline-block">
-                                        <a class="drop-arrow-none" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="ti ti-dots-vertical fs-18 text-muted"></i>
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-right">
-                                            <li><a class="dropdown-item" href="#">Edit</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
+                                
                             </tr>
                             <tr>
+                                <td class="ps-4 text-center">
+                                    <input type="radio" name="selectedMenu" class="form-check-input" value="">
+                                </td>
                                 <td>Fee Payment</td>
                                 <td>
                                     <div class="form-check mb-2">
@@ -98,7 +98,7 @@
                                         Dear {{student_name}}, your fee payment of {{amount}} has been received. Receipt No: {{receipt_no}}. Thank you.
                                     </div>
                                 </td>
-                                <td class="text-end">
+                               @*  <td class="text-center">
                                     <div class="dropdown dropstart d-inline-block">
                                         <a class="drop-arrow-none" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="ti ti-dots-vertical fs-18 text-muted"></i>
@@ -107,7 +107,7 @@
                                             <li><a class="dropdown-item" href="#">Edit</a></li>
                                         </ul>
                                     </div>
-                                </td>
+                                </td> *@
                             </tr>
                         </tbody>
                     </table>

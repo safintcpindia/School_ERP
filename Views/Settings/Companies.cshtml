@@ -119,7 +119,15 @@
         background-color: rgba(var(--bs-primary-rgb), 0.1);
         color: var(--bs-primary);
     }
-</style>
+
+    .item-row.level-1{
+        padding:15px;
+    }
+    .item-row.level-1 td{
+        background-color:#f0f0f0;
+    }
+    
+    </style>
 
 
 <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
@@ -171,19 +179,19 @@
                                         @if (item.HasChildren)
                                         {
                                             <div class="tree-toggle" onclick="toggleHierarchy(@item.CompanyId, event)">
-                                                <i class="fas fa-chevron-down"></i>
+                                                <i class="ti ti-minus"></i>
                                             </div>
                                         }
                                         else if (item.Level > 0)
                                         {
-                                            <div style="width: 36px;"></div>
+                                            <div style="width: 30px;"></div>
                                         }
                                         
-                                        <div class="avatar-sm bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px;">
+                                        @* <div class="avatar-sm bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px;">
                                             <i class="ti ti-building fs-5"></i>
-                                        </div>
+                                        </div> *@
                                         <div>
-                                            <span class="fw-bold text-dark d-block">@item.SchoolName</span>
+                                            <span class="text-dark d-block">@item.SchoolName</span>
                                             <small class="text-muted">ID: @item.CompanyId</small>
                                         </div>
                                     </div>

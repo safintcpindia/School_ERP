@@ -15,5 +15,6 @@ namespace SchoolERP.Net.Services.Clients
         Task<ApiResponse<bool>> SaveUserAsync(UserUpsertRequest request);
         Task<ApiResponse<bool>> ToggleStatusAsync(int userId, bool isActive);
         Task<ApiResponse<bool>> UnlockUserAsync(int id);
+        Task<ApiResponse<bool>> DeleteUserAsync(int id);
     }
 }

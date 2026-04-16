@@ -10,9 +10,9 @@
     ViewData["Title"] = "Currency Management";
 }
 
-<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
     <div>
-        <h4 class="fw-bold mb-0">Currency Management</h4>
+        <h6 class="fw-bold mb-0">Currency Management</h6>
     </div>
     <div class="d-flex flex-wrap align-items-center gap-2">
         <button class="btn btn-primary shadow-sm" id="btnAddCurrency" onclick="openAddModal()">
@@ -29,20 +29,20 @@
 
 <div class="row">
     <div class="col-xl-12">
-        <div class="card border-0 shadow-sm">
+        <div class="card shadow-tbl">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover align-items-center mb-0" id="currenciesTable">
+                    <table class="table" id="currenciesTable">
                         <thead>
-                            <tr class="bg-light">
+                            <tr>
                                 <th class="ps-4" style="width: 50px;">Select</th>
                                 <th>Title</th>
                                 <th>Code</th>
                                 <th>Symbol</th>
-                                <th class="text-end">Conv. Rate</th>
-                                <th class="text-center">Base</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Created On</th>
+                                <th>Conv. Rate</th>
+                                <th>Base</th>
+                                <th>Status</th>
+                                <th>Created On</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,15 +57,15 @@
                                     </td>
                                     <td>@c.CurrencyCode</td>
                                     <td><span class="badge bg-info text-white">@c.CurrencySymbol</span></td>
-                                    <td class="text-end">@c.CurrencyConvRate.ToString("N4")</td>
-                                    <td class="text-center">
+                                    <td>@c.CurrencyConvRate.ToString("N4")</td>
+                                    <td>
                                         @if (c.CurrencyBase)
                                         {
                                             <span class="badge bg-primary">Base</span>
                                         }
                                     </td>
-                                    <td class="text-center">
-                                        <div class="form-check form-switch d-flex justify-content-center" onclick="event.stopPropagation()">
+                                    <td>
+                                        <div class="form-check form-switch ms-1" onclick="event.stopPropagation()">
                                             <input class="form-check-input currency-status-switch" type="checkbox" @(c.IsActive ? "checked" : "") onchange="toggleStatus(@c.CurrencyId, this.checked)">
                                         </div>
                                     </td>
@@ -84,14 +84,14 @@
 <div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header border-bottom bg-light d-flex align-items-center">
+            <div class="modal-header d-flex align-items-center">
                 <h5 class="modal-title fw-bold mb-0" id="modalTitle">Add Currency</h5>
                 <div class="ms-auto d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    @* <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button> *@
                     <button type="button" class="btn btn-sm btn-primary shadow-sm" id="btnSave" onclick="saveItem()">
                         <i class="fas fa-save me-1"></i>Save Currency
                     </button>
-                    <button type="button" class="btn-close ms-2" data-bs-dismiss="modal"></button>
+                    <button class="btn btn-danger" data-bs-dismiss="modal"><i class="ti ti-x me-1"></i> Close</button>
                 </div>
             </div>
             <div class="modal-body p-4">
@@ -120,7 +120,7 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="chkCurrencyBase">
                                 <label class="form-check-label fw-bold" for="chkCurrencyBase">Base Currency</label>

@@ -54,5 +54,10 @@ namespace SchoolERP.Net.Services.Clients
         {
             return await PostAsync<bool>($"api/user/unlock/{id}", null);
         }
+
+        public async Task<ApiResponse<bool>> DeleteUserAsync(int id)
+        {
+            return await PostAsync<bool>($"api/user/delete/{id}", null);
+        }
     }
 }

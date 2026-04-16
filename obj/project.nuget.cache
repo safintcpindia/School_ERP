@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KmoLanXV0h8=",
+  "dgSpecHash": "4vS1LjFyvyg=",
   "success": true,
-  "projectFilePath": "D:\\School ERP New\\13-04-2026\\SchoolERP.Net (1)\\SchoolERP.Net.csproj",
+  "projectFilePath": "C:\\Users\\svmim\\Downloads\\schoolerp_16-04-2026\\SchoolERP.Net.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\svmim\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.8\\microsoft.aspnetcore.authentication.jwtbearer.8.0.8.nupkg.sha512",
     "C:\\Users\\svmim\\.nuget\\packages\\microsoft.bcl.cryptography\\8.0.0\\microsoft.bcl.cryptography.8.0.0.nupkg.sha512",

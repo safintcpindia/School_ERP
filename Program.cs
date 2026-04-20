@@ -1,6 +1,9 @@
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using SchoolERP.Net.Filters;
 using SchoolERP.Net.Data;
 using SchoolERP.Net.Utilities;
 using SchoolERP.Net.Services;
@@ -9,7 +12,11 @@ using SchoolERP.Net.Services.Clients;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<MenuPermissionAuthorizationFilter>();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.AddService<MenuPermissionAuthorizationFilter>();
+});
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
 
@@ -22,6 +29,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IUserMenuPermissionService, UserMenuPermissionService>();
 builder.Services.AddScoped<IOrganisationService, OrganisationService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<ISessionService, SessionService>();
@@ -30,6 +38,7 @@ builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddScoped<IEmailConfigService, EmailConfigService>();
 builder.Services.AddScoped<ISmsConfigService, SmsConfigService>();
 builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+builder.Services.AddScoped<SchoolERP.Net.Helpers.PermissionHelper>();
 
 
 // Configure API Clients
@@ -140,6 +149,24 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
+
+    // Allow JWT auth for normal MVC page loads by reading token from cookie.
+    // (Your login page stores the JWT client-side.)
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (string.IsNullOrEmpty(context.Token))
+            {
+                var cookieToken = context.Request.Cookies["token"];
+                if (!string.IsNullOrEmpty(cookieToken))
+                {
+                    context.Token = cookieToken;
+                }
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 var app = builder.Build();
@@ -159,6 +186,20 @@ app.UseMiddleware<LocalizationMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path;
+    var isApiRoute = path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase);
+    var isAnonymousApiRoute = path.StartsWithSegments("/api/auth/login", StringComparison.OrdinalIgnoreCase);
+
+    if (isApiRoute && !isAnonymousApiRoute && context.User?.Identity?.IsAuthenticated != true)
+    {
+        await context.ChallengeAsync(JwtBearerDefaults.AuthenticationScheme);
+        return;
+    }
+
+    await next();
+});
 
 app.MapControllerRoute(
     name: "default",

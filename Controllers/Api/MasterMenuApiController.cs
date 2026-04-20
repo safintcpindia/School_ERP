@@ -1,14 +1,17 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
 using SchoolERP.Net.Models.Common;
 using SchoolERP.Net.Services;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace SchoolERP.Net.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     /// <summary>
     /// Serves as the UI framework routing generator.
     /// Provides raw datasets to construct the frontend application's navigation sidebar.
@@ -55,10 +58,11 @@ namespace SchoolERP.Net.Controllers.Api
                 return BadRequest(ApiResponse<bool>.ErrorResponse("Menu validation block failed", errors));
             }
 
-            // Defaults simulating contextual auth pipeline parsing
-            int userId = 1; // TODO: Get from JWT
-            int mainAccountId = 1;
-            int sessionId = 1;
+            int userId = GetCurrentUserId();
+            if (userId <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+            int mainAccountId = GetClaimInt("MainAccountId", userId);
+            int sessionId = GetClaimInt("SessionId", 0);
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
             var (result, message) = _menuService.UpsertMenu(request, userId, mainAccountId, sessionId, ipAddress);
@@ -75,9 +79,11 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("toggle-status")]
         public IActionResult ToggleStatus([FromQuery] int menuId, [FromQuery] bool isActive)
         {
-            int userId = 1; // TODO: Get from JWT
-            int mainAccountId = 1;
-            int sessionId = 1;
+            int userId = GetCurrentUserId();
+            if (userId <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+            int mainAccountId = GetClaimInt("MainAccountId", userId);
+            int sessionId = GetClaimInt("SessionId", 0);
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
             var (result, message) = _menuService.ToggleMenuStatus(menuId, isActive, userId, mainAccountId, sessionId, ipAddress);
@@ -86,6 +92,17 @@ namespace SchoolERP.Net.Controllers.Api
                 return Ok(ApiResponse<bool>.SuccessResponse(true, message));
 
             return BadRequest(ApiResponse<bool>.ErrorResponse(message));
+        }
+
+        private int GetCurrentUserId()
+        {
+            return GetClaimInt(ClaimTypes.NameIdentifier, GetClaimInt("UserId", 0));
+        }
+
+        private int GetClaimInt(string claimType, int fallback = 0)
+        {
+            var claim = User.FindFirst(claimType);
+            return (claim != null && int.TryParse(claim.Value, out int value)) ? value : fallback;
         }
     }
 }

@@ -1,13 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
 using SchoolERP.Net.Models.Common;
 using SchoolERP.Net.Services;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace SchoolERP.Net.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     /// <summary>
     /// Exposes core dictionary mappings for generic system types (e.g. Employee vs Student).
     /// </summary>
@@ -49,8 +52,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("save")]
         public IActionResult Save([FromBody] MstUserTypeUpsertRequest request)
         {
-            // In a real app, we'd get the current user ID from the JWT token
-            int currentUserId = 1; 
+            int currentUserId = GetCurrentUserId();
+            if (currentUserId <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
 
             var result = _userMgmtService.UpsertUserType(request, currentUserId, ipAddress);
@@ -66,7 +70,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("toggle-status")]
         public IActionResult ToggleStatus([FromQuery] int typeId, [FromQuery] bool isActive)
         {
-            int currentUserId = 1;
+            int currentUserId = GetCurrentUserId();
+            if (currentUserId <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
 
             var result = _userMgmtService.ToggleUserTypeStatus(typeId, isActive, currentUserId, ipAddress);
@@ -74,6 +80,12 @@ namespace SchoolERP.Net.Controllers.Api
                 return Ok(ApiResponse<bool>.SuccessResponse(true, result.message));
 
             return BadRequest(ApiResponse<bool>.ErrorResponse(result.message));
+        }
+
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+            return (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId)) ? userId : 0;
         }
     }
 }

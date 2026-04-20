@@ -8727,10 +8727,11 @@ Author: Dreams Technologies
 Author URL: https://themeforest.net/user/dreamstechnologies
 */
 
-.nav-tabs>li>a,
-.nav-pills>li>a {
+.nav-tabs > li > a,
+.nav-pills > li > a {
     font-weight: 500;
     color: var(--gray-600);
+    background-color: var(--primary-transparent);
 }
 
 .bg-nav-pills {
@@ -11492,14 +11493,27 @@ Version: 1.0.0
 Author: Dreams Technologies
 Author URL: https://themeforest.net/user/dreamstechnologies
 */
+.filter-body .select2-container .select2-selection--single .select2-selection__clear{
+    display:none;
+}
+.form-control.is-invalid, 
+.was-validated .form-control:invalid{
+    background-image:none;
+}
 
-input::placeholder{
-    color:#00000080 !important;
+input::placeholder {
+    color: #00000080 !important;
 }
 input.form-control,
 select.form-select,
 textarea.form-control {
     border: 1px solid #33333340;
+}
+.select2-container .select2-selection--single {
+    border: 1px solid #33333340 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__clear{
+    display:none;
 }
 
 label.form-label {

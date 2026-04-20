@@ -34,6 +34,7 @@ namespace SchoolERP.Net.Services
                     ParentMenuName = dr["ParentMenuName"]?.ToString(),
                     DisplayOrder = (int)dr["DisplayOrder"],
                     MenuIcon = dr["MenuIcon"]?.ToString(),
+                    MenuKey = dr["MenuKey"]?.ToString(),
                     IsActive = (bool)dr["IsActive"],
                     CreatedBy = (int)dr["CreatedBy"],
                     CreatedOn = (DateTime)dr["CreatedOn"],
@@ -62,6 +63,7 @@ namespace SchoolERP.Net.Services
                 ParentID = dr["ParentID"] != DBNull.Value ? (int)dr["ParentID"] : null,
                 DisplayOrder = (int)dr["DisplayOrder"],
                 MenuIcon = dr["MenuIcon"]?.ToString(),
+                MenuKey = dr["MenuKey"]?.ToString(),
                 IsActive = (bool)dr["IsActive"]
             };
         }
@@ -77,14 +79,14 @@ namespace SchoolERP.Net.Services
                 new SqlParameter("@MenuID", request.MenuID),
                 new SqlParameter("@MenuName", request.MenuName),
                 new SqlParameter("@DisplayLabel", (object?)request.DisplayLabel ?? DBNull.Value),
+                new SqlParameter("@MenuKey", (object?)request.MenuKey ?? DBNull.Value),
                 new SqlParameter("@MenuURL", request.MenuURL),
                 new SqlParameter("@ParentID", (object?)request.ParentID ?? DBNull.Value),
                 new SqlParameter("@DisplayOrder", request.DisplayOrder),
                 new SqlParameter("@MenuIcon", (object?)request.MenuIcon ?? DBNull.Value),
                 new SqlParameter("@IsActive", request.IsActive),
                 new SqlParameter("@UserID", userId),
-                new SqlParameter("@MainAccountID", mainAccountId),
-                new SqlParameter("@SessionID", sessionId),
+                
                 new SqlParameter("@IPAddress", ipAddress)
             };
 

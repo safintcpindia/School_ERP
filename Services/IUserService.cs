@@ -53,5 +53,8 @@ namespace SchoolERP.Net.Services
 
         /// <summary>Unlocks a locked user account.</summary>
         void UnlockUser(int userId, int doneBy);
+
+        /// <summary>Checks if a username is structurally unique among active users.</summary>
+        bool IsUsernameUnique(string username, int userId);
     }
 }

@@ -38,6 +38,7 @@ namespace SchoolERP.Net.Services
                     CommandType = CommandType.StoredProcedure
                 };
                 cmd.Parameters.AddWithValue("@Username", username);
+                cmd.Parameters.AddWithValue("@PasswordPlain", password);
                 
                 await conn.OpenAsync();
 
@@ -54,27 +55,8 @@ namespace SchoolERP.Net.Services
                 if (result == 0)
                     return (0, message, null);
 
-                // Get stored hash/salt
-                string storedHash = reader["PasswordHash"]?.ToString() ?? "";
-                string storedSalt = reader["PasswordSalt"]?.ToString() ?? "";
-                bool isLocked = Convert.ToBoolean(reader["IsLocked"]);
-                bool isActive = Convert.ToBoolean(reader["IsActive"]);
-
-                // Step 1: Active Directory state checks
-                if (isLocked)
-                    return (0, "Account is locked due to failing login thresholds", null);
-                if (!isActive)
-                    return (0, "Account is physically deactivated from portal access", null);
-
-                // Step 2: Verify cryptographic hashes natively in .NET (not SQL)
-                // This detaches DB engine processing from brute-force math loads.
-                if (!SecurityHelper.VerifyPassword(password, storedHash, storedSalt))
-                {
-                    // Optionally call a "sp_Users_RecordFailedAttempt" here
-                    return (0, "Invalid password", null);
-                }
-
-                // Verification successful, move to next result for session data
+                // Password verification is performed inside the stored procedure.
+                // If result is success, move to next result for session data
                 if (!await reader.NextResultAsync() || !await reader.ReadAsync())
                     return (0, "Error fetching user details", null);
 
@@ -89,12 +71,17 @@ namespace SchoolERP.Net.Services
                     DashboardID   = reader["DashboardID"] != DBNull.Value ? Convert.ToInt32(reader["DashboardID"]) : null
                 };
 
+                var userTypeName = GetOptionalString(reader, "UserTypeName")
+                                   ?? GetOptionalString(reader, "TypeName")
+                                   ?? string.Empty;
+
                 user.Token = _jwtHelper.GenerateToken(
                     user.Username,
                     user.DefaultRoleName,
                     user.UserID,
                     user.UserTypeID,
-                    user.DefaultRoleID);
+                    user.DefaultRoleID,
+                    userTypeName);
 
                 return (1, "Login successful", user);
             }
@@ -102,6 +89,18 @@ namespace SchoolERP.Net.Services
             {
                 return (-1, $"Database error: {ex.Message}", null);
             }
+        }
+
+        private static string? GetOptionalString(IDataRecord record, string columnName)
+        {
+            for (int i = 0; i < record.FieldCount; i++)
+            {
+                if (string.Equals(record.GetName(i), columnName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return record.IsDBNull(i) ? null : record.GetValue(i)?.ToString();
+                }
+            }
+            return null;
         }
     }
 }

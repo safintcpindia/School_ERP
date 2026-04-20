@@ -1,8 +1,10 @@
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using SchoolERP.Net.Models.Common;
 
 namespace SchoolERP.Net.Services.Clients
@@ -16,10 +18,12 @@ namespace SchoolERP.Net.Services.Clients
     {
         protected readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         protected BaseApiClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _httpContextAccessor = new HttpContextAccessor();
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -30,7 +34,9 @@ namespace SchoolERP.Net.Services.Clients
         {
             try
             {
-                var response = await _httpClient.GetAsync(url);
+                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                AttachBearerToken(request);
+                var response = await _httpClient.SendAsync(request);
                 return await HandleResponse<T>(response);
             }
             catch (Exception ex)
@@ -43,7 +49,12 @@ namespace SchoolERP.Net.Services.Clients
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(url, data);
+                using var request = new HttpRequestMessage(HttpMethod.Post, url)
+                {
+                    Content = JsonContent.Create(data)
+                };
+                AttachBearerToken(request);
+                var response = await _httpClient.SendAsync(request);
                 return await HandleResponse<T>(response);
             }
             catch (Exception ex)
@@ -56,7 +67,12 @@ namespace SchoolERP.Net.Services.Clients
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync(url, data);
+                using var request = new HttpRequestMessage(HttpMethod.Put, url)
+                {
+                    Content = JsonContent.Create(data)
+                };
+                AttachBearerToken(request);
+                var response = await _httpClient.SendAsync(request);
                 return await HandleResponse<T>(response);
             }
             catch (Exception ex)
@@ -69,13 +85,22 @@ namespace SchoolERP.Net.Services.Clients
         {
             try
             {
-                var response = await _httpClient.DeleteAsync(url);
+                using var request = new HttpRequestMessage(HttpMethod.Delete, url);
+                AttachBearerToken(request);
+                var response = await _httpClient.SendAsync(request);
                 return await HandleResponse<T>(response);
             }
             catch (Exception ex)
             {
                 return ApiResponse<T>.ErrorResponse($"Network Error: {ex.Message}");
             }
+        }
+
+        private void AttachBearerToken(HttpRequestMessage request)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request?.Cookies["token"];
+            if (string.IsNullOrWhiteSpace(token)) return;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
         /// <summary>

@@ -46,6 +46,10 @@
         .auth-bg .login-backgrounds .authentication-card .authen-overlay-item {
             padding: 40px;
         }
+
+        #btnTogglePassword {
+            cursor: pointer;
+        }
     </style>
 
 </head>
@@ -85,7 +89,7 @@
                                 <form id="loginForm" action="index.html" class="d-flex justify-content-center align-items-center">
                                     <div class="d-flex flex-column justify-content-lg-center p-4 p-lg-0 pb-0 flex-fill">
                                         <div class=" mx-auto mb-4 text-center">
-                                            <img src="assets/img/logo.svg" width="200" class="img-fluid" alt="Logo">
+                                            <img src="~/assets/img/logo.svg" width="200" class="img-fluid" alt="Logo">
                                         </div>
                                         <div class="card border-0 p-lg-3 shadow-md rounded-3 m-0">
                                             <div class="card-body">
@@ -93,6 +97,7 @@
                                                     <h5 class="mb-1 fs-20 fw-bold">Sign In</h5>
                                                     <p class="mb-0">Please enter below details to access the dashboard</p>
                                                 </div>
+                                                <div id="loginErrorBox" class="alert alert-danger py-2 px-3 small d-none" role="alert"></div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Username</label>
                                                     <div class="position-relative">
@@ -121,9 +126,9 @@
                                                                 <i class="ti ti-lock text-dark fs-14"></i>
                                                             </span>
                                                             <input type="password" id="txtPassword" class="pass-input form-control ps-0 border-0" placeholder="****************">
-                                                            <span class="input-group-text bg-white border-0">
-                                                                <i class="ti toggle-password ti-eye-off text-dark fs-14"></i>
-                                                            </span>
+                                                            <button type="button" class="input-group-text bg-white border-0" id="btnTogglePassword" aria-label="Show or hide password">
+                                                                <i class="ti ti-eye-off text-dark fs-14"></i>
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -173,9 +178,42 @@
 
     <!-- App Logic -->
     <script>
+        function setLoginError(message) {
+            const box = document.getElementById('loginErrorBox');
+            if (!box) return;
+            box.textContent = message || 'Login failed. Please try again.';
+            box.classList.remove('d-none');
+        }
+
+        function clearLoginError() {
+            const box = document.getElementById('loginErrorBox');
+            if (!box) return;
+            box.textContent = '';
+            box.classList.add('d-none');
+        }
+
+        const btnTogglePwd = document.getElementById('btnTogglePassword');
+        if (btnTogglePwd) {
+            btnTogglePwd.addEventListener('click', function () {
+                const pwd = document.getElementById('txtPassword');
+                const icon = this.querySelector('i');
+                if (!pwd || !icon) return;
+                if (pwd.type === 'password') {
+                    pwd.type = 'text';
+                    icon.classList.remove('ti-eye-off');
+                    icon.classList.add('ti-eye');
+                } else {
+                    pwd.type = 'password';
+                    icon.classList.remove('ti-eye');
+                    icon.classList.add('ti-eye-off');
+                }
+            });
+        }
+
         $(document).ready(function () {
             $('#loginForm').on('submit', function (e) {
                 e.preventDefault();
+                clearLoginError();
                 
                 const loginData = {
                     username: $('#txtUsername').val(),
@@ -191,17 +229,30 @@
                     success: function (response) {
                         // Persists the JWT and standard profile tuple inside the browser's persistent cache.
                         // Essential for constructing HTTP Bearer headers on subsequent internal calls.
-                        localStorage.setItem('token', response.token);
-                        localStorage.setItem('user', JSON.stringify(response));
+                        console.log(response);
+                        const token = response?.data?.token;
+                        if (token) {
+                            localStorage.setItem('token', token);
+                            // Make JWT available to server-rendered MVC pages (sidebar) via cookie.
+                            document.cookie = `token=${token}; path=/; SameSite=Lax`;
+                        }
+                        localStorage.setItem('user', JSON.stringify(response?.data ?? response));
                         
                         // Redirect to dashboard
                         window.location.href = '/Dashboard/Index';
                     },
                     error: function (xhr) {
-                        alert('Login failed: ' + xhr.responseText);
+                        const message =
+                            xhr?.responseJSON?.message ||
+                            xhr?.responseJSON?.Message ||
+                            xhr?.responseText ||
+                            'Login failed. Please check username and password.';
+                        setLoginError(message);
                     }
                 });
             });
+
+            $('#txtUsername, #txtPassword').on('input', clearLoginError);
         });
     </script>
 </body>

@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
+using SchoolERP.Net.Services;
 using SchoolERP.Net.Services.Clients;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SchoolERP.Net.Controllers
 {
@@ -12,16 +13,15 @@ namespace SchoolERP.Net.Controllers
     public class CurrenciesController : Controller
     {
         private readonly ICurrencyClientService _currencyClient;
+        private readonly IUserMenuPermissionService _menuPerm;
+        private const string MenuPath = "/Currencies";
 
-        public CurrenciesController(ICurrencyClientService currencyClient)
+        public CurrenciesController(ICurrencyClientService currencyClient, IUserMenuPermissionService menuPerm)
         {
             _currencyClient = currencyClient;
+            _menuPerm = menuPerm;
         }
 
-        /// <summary>
-        /// Instantiates the root view listing all known currencies.
-        /// Extracts records synchronously for the HTML page rendering map.
-        /// </summary>
         public async Task<IActionResult> Index()
         {
             var response = await _currencyClient.GetAllAsync();
@@ -32,43 +32,46 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// Reads a distinct currency configuration by key, enabling the frontend partials to reflect settings.
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetCurrency(int id)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to edit currencies." });
+
             var response = await _currencyClient.GetByIDAsync(id);
             if (!response.Success) return Json(new { success = false, message = response.Message });
             return Json(new { success = true, data = response.Data });
         }
 
-        /// <summary>
-        /// Intercepts and formats form submissions targeting currency generation/updating.
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] MstCurrencyUpsertRequest request)
         {
+            var isCreate = request.CurrencyId <= 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Json(new { success = false, message = "You do not have permission to add currencies." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to edit currencies." });
+
             var response = await _currencyClient.UpsertAsync(request);
             return Json(new { success = response.Success, message = response.Message });
         }
 
-        /// <summary>
-        /// Changes whether a financial unit is active in UI selection modules.
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to change currency status." });
+
             var response = await _currencyClient.ToggleStatusAsync(id, isActive);
             return Json(new { success = response.Success, message = response.Message });
         }
 
-        /// <summary>
-        /// Drops a currency from the schema physically or logically depending on service constraints.
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Json(new { success = false, message = "You do not have permission to delete currencies." });
+
             var response = await _currencyClient.DeleteAsync(id);
             return Json(new { success = response.Success, message = response.Message });
         }

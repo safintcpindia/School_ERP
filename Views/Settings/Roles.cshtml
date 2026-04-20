@@ -5,8 +5,23 @@
     ======================================================================
 *@
 @model SchoolERP.Net.Models.RolesPageViewModel
+@using System.Security.Claims
+@using System.Text.Json
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @{
     Layout = "_Layout";
+    int currentUserId = 0;
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
+    }
+    if (currentUserId > 0)
+        PermHelper.LoadPermissions(currentUserId);
+    var canAdd = PermHelper.HasPermissionByUrl("/Settings", "Add");
+    var canEdit = PermHelper.HasPermissionByUrl("/Settings", "Edit");
+    var canView = PermHelper.HasPermissionByUrl("/Settings", "View");
 }
 <link rel="stylesheet" href="~/css/treeview.css" />
 
@@ -15,15 +30,12 @@
         <h4 class="fw-bold mb-0">Roles & Permissions</h4>
     </div>
     <div class="d-flex align-items-center flex-wrap gap-2">
-        <button class="btn btn-primary" onclick="openRoleModal(0, '', '')">
-            <i class="fas fa-plus me-1"></i>Add New Role
-        </button>
-        <button class="btn btn-success">
-            <i class="fas fa-key me-1"></i> Permissions
-        </button>
-        <button class="btn btn-info">
-            <i class="fas fa-edit me-1"></i> Edit
-        </button>
+        @if (canAdd)
+        {
+            <button type="button" class="btn btn-primary" onclick="openRoleModal(0, '', '')">
+                <i class="fas fa-plus me-1"></i>Add New Role
+            </button>
+        }
     </div>
 </div>
 
@@ -71,8 +83,14 @@
                                                 <i class="ti ti-dots-vertical fs-18 text-muted"></i>
                                             </a>
                                             <ul class="dropdown-menu dropdown-menu-right">
-                                                <li><a class="dropdown-item" href="#" onclick="managePermissions(@role.RoleID, '@role.RoleName')">Permissions</a></li>
-                                                <li><a class="dropdown-item" href="#" onclick="openRoleModal(@role.RoleID, '@role.RoleName', '@role.Description')">Edit</a></li>
+                                                @if (canView || canEdit)
+                                                {
+                                                    <li><a class="dropdown-item" href="#" onclick="managePermissions(@role.RoleID, '@role.RoleName')">Permissions</a></li>
+                                                }
+                                                @if (canEdit)
+                                                {
+                                                    <li><a class="dropdown-item" href="#" onclick="openRoleModal(@role.RoleID, '@role.RoleName', '@role.Description')">Edit</a></li>
+                                                }
                                             </ul>
                                         </div>
                                            @*  <button class="btn btn-link text-info px-2 mb-0" onclick="managePermissions(@role.RoleID, '@role.RoleName')">
@@ -101,15 +119,19 @@
                 <h5 class="modal-title fw-bold mb-0" id="roleModalTitle">Add New Role</h5>
                 <div class="ms-auto d-flex align-items-center gap-2">
                     <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-sm btn-primary px-3" onclick="saveRole()">Save Role</button>
+                    @if (canAdd || canEdit)
+                    {
+                        <button type="button" class="btn btn-sm btn-primary px-3" onclick="saveRole()">Save Role</button>
+                    }
                     <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             </div>
             <div class="modal-body">
+                <div id="roleModalNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
                 <input type="hidden" id="roleId" value="0" />
                 <div class="mb-3">
-                    <label class="form-label text-sm fw-bold">Role Name</label>
                     <input type="text" id="roleName" class="form-control" placeholder="Enter role name" />
+                    <div class="invalid-feedback" id="errRoleName"></div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label text-sm fw-bold">Description</label>
@@ -133,9 +155,12 @@
                 <span class="text-primary text-xs">Manage access for:</span>
                 <h6 class="mb-0" id="currentRoleName">Role Name</h6>
             </div>
-            <button class="btn btn-success btn-sm shadow-none" onclick="savePermissions()">
-                <i class="fas fa-save me-1"></i> Save Changes
-            </button>
+            @if (canEdit)
+            {
+                <button type="button" class="btn btn-success btn-sm shadow-none" onclick="savePermissions()">
+                    <i class="fas fa-save me-1"></i> Save Changes
+                </button>
+            }
         </div>
         <input type="hidden" id="currentRoleId" value="0" />
         <div id="permissionsLoading" class="text-center py-5 d-none">
@@ -162,10 +187,31 @@
 
 @section Scripts {
     <script>
+        const permCanAdd = @Html.Raw(JsonSerializer.Serialize(canAdd));
+        const permCanEdit = @Html.Raw(JsonSerializer.Serialize(canEdit));
+        const permCanView = @Html.Raw(JsonSerializer.Serialize(canView));
+        const IV = window.InlineFormValidation;
+        const roleFieldMap = { roleName: 'errRoleName' };
         const roleModal = new bootstrap.Modal(document.getElementById('roleModal'));
+
+        function clearRoleModalValidation() {
+            IV.clearMap(roleFieldMap);
+            IV.clearNotice('roleModalNotice');
+        }
+
+        IV.bindAutoClear(roleFieldMap);
         const permissionsOffcanvas = new bootstrap.Offcanvas(document.getElementById('permissionsOffcanvas'));
 
         function openRoleModal(id, name, desc) {
+            if (id === 0 && !permCanAdd) {
+                alert('You do not have permission to add roles.');
+                return;
+            }
+            if (id > 0 && !permCanEdit) {
+                alert('You do not have permission to edit roles.');
+                return;
+            }
+            clearRoleModalValidation();
             document.getElementById('roleId').value = id;
             document.getElementById('roleName').value = name;
             document.getElementById('roleDescription').value = desc;
@@ -174,16 +220,30 @@
         }
 
         async function saveRole() {
-            const data = {
-                RoleID: parseInt(document.getElementById('roleId').value),
-                RoleName: document.getElementById('roleName').value,
-                Description: document.getElementById('roleDescription').value
-            };
-
-            if (!data.RoleName) {
-                alert('Role Name is required');
+            const rid = parseInt(document.getElementById('roleId').value);
+            if (rid === 0 && !permCanAdd) {
+                alert('You do not have permission to add roles.');
                 return;
             }
+            if (rid > 0 && !permCanEdit) {
+                IV.setNotice('roleModalNotice', 'You do not have permission to edit roles.');
+                return;
+            }
+            clearRoleModalValidation();
+
+            const roleName = document.getElementById('roleName').value.trim();
+            const description = document.getElementById('roleDescription').value.trim();
+
+            if (!roleName) {
+                IV.setFieldError('roleName', 'errRoleName', 'Role name is required.');
+                return;
+            }
+
+            const data = {
+                RoleID: rid,
+                RoleName: roleName,
+                Description: description
+            };
 
             try {
                 const response = await fetch('/Settings/SaveRole', {
@@ -195,7 +255,7 @@
                 if (result.success) {
                     location.reload();
                 } else {
-                    alert(result.message);
+                    IV.setNotice('roleModalNotice', result.message || 'Save failed.');
                 }
             } catch (err) {
                 console.error(err);
@@ -204,6 +264,10 @@
         }
 
         async function managePermissions(roleId, roleName) {
+            if (!permCanView && !permCanEdit) {
+                alert('You do not have permission to view role permissions.');
+                return;
+            }
             document.getElementById('currentRoleId').value = roleId;
             document.getElementById('currentRoleName').innerText = roleName;
             document.getElementById('treeGridBody').innerHTML = '';
@@ -308,7 +372,7 @@
                     }
 
                     // MASTER CHECKBOX
-                    html += `<input type="checkbox" class="row-master-check me-2" onchange="onToggleRow(this, ${m.id})">`;
+                    html += `<input type="checkbox" class="row-master-check me-2" onchange="onToggleRow(this, ${m.id})"${permCanEdit ? '' : ' disabled'}>`;
 
                     html += toggleHtml;
 
@@ -321,7 +385,7 @@
                         if (hasPerm !== undefined) {
                             html += `<td class="matrix-col">
                                 <input type="checkbox" class="form-check-input perm-checkbox" 
-                                       data-menu="${m.id}" data-perm="${p.id}" ${hasPerm ? 'checked' : ''}>
+                                       data-menu="${m.id}" data-perm="${p.id}" ${hasPerm ? 'checked' : ''}${permCanEdit ? '' : ' disabled'}>
                              </td>`;
                         } else {
                             html += `<td class="matrix-col">-</td>`;
@@ -378,6 +442,10 @@
         }
 
         async function savePermissions() {
+            if (!permCanEdit) {
+                alert('You do not have permission to save role permissions.');
+                return;
+            }
             const roleId = parseInt(document.getElementById('currentRoleId').value);
             const selected = [];
             document.querySelectorAll('.perm-checkbox:checked').forEach(cb => {

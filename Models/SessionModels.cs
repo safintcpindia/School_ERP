@@ -34,4 +34,9 @@ namespace SchoolERP.Net.Models
     {
         public List<MstSessionViewModel> Sessions { get; set; } = new();
     }
+
+    public class SetCurrentSessionRequest
+    {
+        public int SessionId { get; set; }
+    }
 }

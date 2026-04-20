@@ -116,5 +116,9 @@ namespace SchoolERP.Net.Services
         /// <param name="ipAddress">The audit trace IP.</param>
         /// <returns>Execution status and database feedback message.</returns>
         (bool success, string message) SaveRolePermissions(MstRolePermissionSaveRequest request, int adminId, string ipAddress);
+        /// <summary>
+        /// Retrieves the aggregated list of explicit permissions granted to a user via roles or overrides.
+        /// </summary>
+        List<UserPermissionViewModel> GetUserPermissions(int userId);
     }
 }

@@ -7,9 +7,9 @@ using System.Security.Claims;
 
 namespace SchoolERP.Net.Controllers.Api
 {
-   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     /// <summary>
     /// Processes physical campuses, chains, or district descriptors binding the domain mapping.
     /// </summary>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
 using SchoolERP.Net.Services;
@@ -8,6 +9,7 @@ namespace SchoolERP.Net.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     /// <summary>
     /// This class handles HTTP routing and API requests for PaymentMethodApiController.
     /// </summary>

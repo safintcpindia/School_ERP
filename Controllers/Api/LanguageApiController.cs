@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
 using SchoolERP.Net.Models.Common;
@@ -9,6 +10,7 @@ namespace SchoolERP.Net.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     /// <summary>
     /// Feeds linguistic definitions mapped across global string dictionaries.
     /// </summary>

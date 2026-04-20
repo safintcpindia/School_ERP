@@ -5,25 +5,51 @@
     ======================================================================
 *@
 @model SchoolERP.Net.Models.MstCurrencyPageViewModel
+@using System.Security.Claims
+@using System.Text.Json
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Currency Management";
+    int currentUserId = 0;
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
+    }
+    if (currentUserId > 0)
+        PermHelper.LoadPermissions(currentUserId);
+    var canAdd = PermHelper.HasPermissionByUrl("/Currencies", "Add");
+    var canEdit = PermHelper.HasPermissionByUrl("/Currencies", "Edit");
+    var canDelete = PermHelper.HasPermissionByUrl("/Currencies", "Delete");
 }
+
+<div id="currencyPageNotice" class="alert alert-danger py-2 px-3 small d-none mb-2" role="alert"></div>
 
 <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
     <div>
         <h6 class="fw-bold mb-0">Currency Management</h6>
     </div>
-    <div class="d-flex flex-wrap align-items-center gap-2">
-        <button class="btn btn-primary shadow-sm" id="btnAddCurrency" onclick="openAddModal()">
-            <i class="fas fa-plus me-2"></i>Add
-        </button>
-        <button id="btnEdit" class="btn btn-success shadow-sm" disabled onclick="editSelected()">
-            <i class="fas fa-edit me-2"></i>Edit
-        </button>
-        <button id="btnDelete" class="btn btn-danger shadow-sm" disabled onclick="deleteSelected()">
-            <i class="fas fa-trash me-2"></i>Delete
-        </button>
+    <div class="d-flex flex-wrap align-items-center gap-1">
+        @if (canAdd)
+        {
+            <button class="btn btn-primary shadow-sm" id="btnAddCurrency" onclick="openAddModal()">
+                <i class="ti ti-plus me-1"></i>Add
+            </button>
+        }
+        @if (canEdit)
+        {
+            <button id="btnEdit" class="btn btn-info shadow-sm" disabled onclick="editSelected()">
+                <i class="ti ti-edit me-1"></i>Edit
+            </button>
+        }
+        @if (canDelete)
+        {
+            <button id="btnDelete" class="btn btn-danger shadow-sm" disabled onclick="deleteSelected()">
+                <i class="ti ti-trash me-1"></i>Delete
+            </button>
+        }
     </div>
 </div>
 
@@ -65,11 +91,18 @@
                                         }
                                     </td>
                                     <td>
-                                        <div class="form-check form-switch ms-1" onclick="event.stopPropagation()">
-                                            <input class="form-check-input currency-status-switch" type="checkbox" @(c.IsActive ? "checked" : "") onchange="toggleStatus(@c.CurrencyId, this.checked)">
-                                        </div>
+                                        @if (canEdit)
+                                        {
+                                            <div class="form-check form-switch ms-1" onclick="event.stopPropagation()">
+                                                <input class="form-check-input currency-status-switch" type="checkbox" @(c.IsActive ? "checked" : "") onchange="toggleStatus(@c.CurrencyId, this.checked)">
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge @(c.IsActive ? "bg-success" : "bg-secondary")">@(c.IsActive ? "Active" : "Inactive")</span>
+                                        }
                                     </td>
-                                    <td class="text-center"><span class="text-muted small">@c.CreatedOn.ToString("dd MMM yyyy")</span></td>
+                                    <td><span class="text-muted small">@c.CreatedOn.ToString("dd MMM yyyy")</span></td>
                                 </tr>
                             }
                         </tbody>
@@ -86,56 +119,61 @@
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header d-flex align-items-center">
                 <h5 class="modal-title fw-bold mb-0" id="modalTitle">Add Currency</h5>
-                <div class="ms-auto d-flex align-items-center gap-2">
+                <div class="ms-auto d-flex align-items-center gap-1">
                     @* <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button> *@
-                    <button type="button" class="btn btn-sm btn-primary shadow-sm" id="btnSave" onclick="saveItem()">
-                        <i class="fas fa-save me-1"></i>Save Currency
+                    <button type="button" class="btn btn-sm btn-success shadow-sm" id="btnSave" onclick="saveItem()">
+                        <i class="ti ti-cloud me-1"></i>Save Currency
                     </button>
                     <button class="btn btn-danger" data-bs-dismiss="modal"><i class="ti ti-x me-1"></i> Close</button>
                 </div>
             </div>
-            <div class="modal-body p-4">
+            <div class="modal-body p-3">
+                <div id="currencyModalNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
                 <form id="itemForm">
                     <input type="hidden" id="txtItemId" value="0">
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-semibold">Currency Title</label>
-                            <input type="text" class="form-control" id="txtCurrencyTitle" required placeholder="e.g. US Dollar">
+                            <input type="text" class="form-control" id="txtCurrencyTitle" placeholder="e.g. US Dollar" autocomplete="off">
+                            <div class="invalid-feedback" id="errTxtCurrencyTitle"></div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Currency Code</label>
-                            <input type="text" class="form-control" id="txtCurrencyCode" required placeholder="e.g. USD">
+                            <input type="text" class="form-control" id="txtCurrencyCode" placeholder="e.g. USD" autocomplete="off">
+                            <div class="invalid-feedback" id="errTxtCurrencyCode"></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Currency Symbol</label>
-                            <input type="text" class="form-control" id="txtCurrencySymbol" required placeholder="e.g. $">
+                            <input type="text" class="form-control" id="txtCurrencySymbol" placeholder="e.g. $" autocomplete="off">
+                            <div class="invalid-feedback" id="errTxtCurrencySymbol"></div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-semibold">Conversion Rate</label>
-                            <input type="number" step="0.0001" class="form-control" id="txtCurrencyConvRate" required placeholder="e.g. 1.0000">
+                            <input type="number" step="0.0001" class="form-control" id="txtCurrencyConvRate" placeholder="e.g. 1.0000">
+                            <div class="invalid-feedback" id="errTxtCurrencyConvRate"></div>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-5">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="chkCurrencyBase">
-                                <label class="form-check-label fw-bold" for="chkCurrencyBase">Base Currency</label>
+                                <label class="form-check-label" for="chkCurrencyBase">Base Currency</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="chkIsActive" checked>
-                                <label class="form-check-label fw-bold" for="chkIsActive">Active</label>
+                                <label class="form-check-label" for="chkIsActive">Active</label>
                             </div>
                         </div>
                     </div>
-                    <div class="form-text mt-2 text-info">
+                   @*  <div class="form-text mt-2 text-info">
                         <i class="fas fa-info-circle me-1"></i>Setting a currency as <strong>Base</strong> will unset existing base currency.
-                    </div>
+                    </div> *@
                 </form>
             </div>
 
@@ -145,19 +183,45 @@
 
 @section Scripts {
     <script>
+        const permCanAdd = @Html.Raw(JsonSerializer.Serialize(canAdd));
+        const permCanEdit = @Html.Raw(JsonSerializer.Serialize(canEdit));
+        const permCanDelete = @Html.Raw(JsonSerializer.Serialize(canDelete));
+        const IV = window.InlineFormValidation;
+        const currencyFieldMap = {
+            txtCurrencyTitle: 'errTxtCurrencyTitle',
+            txtCurrencyCode: 'errTxtCurrencyCode',
+            txtCurrencySymbol: 'errTxtCurrencySymbol',
+            txtCurrencyConvRate: 'errTxtCurrencyConvRate'
+        };
         const itemModal = new bootstrap.Modal(document.getElementById('itemModal'));
         let selectedCurrencyId = 0;
 
+        function clearCurrencyModalValidation() {
+            IV.clearMap(currencyFieldMap);
+            IV.clearNotice('currencyModalNotice');
+        }
+
+        IV.bindAutoClear(currencyFieldMap);
+
         function selectItem(id, row) {
+            IV.clearNotice('currencyPageNotice');
             selectedCurrencyId = id;
             document.querySelectorAll('.item-row').forEach(r => r.classList.remove('bg-light'));
             row.classList.add('bg-light');
             row.querySelector('input[type="radio"]').checked = true;
-            document.getElementById('btnEdit').disabled = false;
-            document.getElementById('btnDelete').disabled = false;
+            const btnEdit = document.getElementById('btnEdit');
+            const btnDelete = document.getElementById('btnDelete');
+            if (btnEdit && permCanEdit) btnEdit.disabled = false;
+            if (btnDelete && permCanDelete) btnDelete.disabled = false;
         }
 
         function openAddModal() {
+            if (!permCanAdd) {
+                IV.setNotice('currencyPageNotice', 'You do not have permission to add.');
+                return;
+            }
+            IV.clearNotice('currencyPageNotice');
+            clearCurrencyModalValidation();
             document.getElementById('modalTitle').textContent = 'Add Currency';
             document.getElementById('itemForm').reset();
             document.getElementById('txtItemId').value = "0";
@@ -167,7 +231,13 @@
         }
 
         async function editSelected() {
+            if (!permCanEdit) {
+                IV.setNotice('currencyPageNotice', 'You do not have permission to edit.');
+                return;
+            }
             if (selectedCurrencyId === 0) return;
+            IV.clearNotice('currencyPageNotice');
+            clearCurrencyModalValidation();
             try {
                 const resp = await fetch(`/Currencies/GetCurrency?id=${selectedCurrencyId}`);
                 const res = await resp.json();
@@ -182,46 +252,74 @@
                     document.getElementById('chkIsActive').checked = res.data.isActive;
                     itemModal.show();
                 } else {
-                    alert(res.message);
+                    IV.setNotice('currencyPageNotice', res.message || 'Could not load currency.');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error fetching currency details');
+                IV.setNotice('currencyPageNotice', 'Could not load currency details.');
             }
         }
 
         async function deleteSelected() {
+            if (!permCanDelete) {
+                IV.setNotice('currencyPageNotice', 'You do not have permission to delete.');
+                return;
+            }
             if (selectedCurrencyId === 0) return;
             if (!confirm('Are you sure you want to delete this currency? This action cannot be undone.')) return;
 
+            IV.clearNotice('currencyPageNotice');
             try {
                 const resp = await fetch(`/Currencies/Delete?id=${selectedCurrencyId}`, { method: 'POST' });
                 const res = await resp.json();
-                if (res.success) location.reload(); else alert(res.message);
+                if (res.success) location.reload();
+                else IV.setNotice('currencyPageNotice', res.message || 'Delete failed.');
             } catch (err) {
                 console.error(err);
-                alert('Error deleting currency');
+                IV.setNotice('currencyPageNotice', 'Could not delete currency.');
             }
         }
 
-        async function saveItem() {
+        function validateCurrencyForm() {
+            clearCurrencyModalValidation();
+            let ok = true;
             const title = document.getElementById('txtCurrencyTitle').value.trim();
             const code = document.getElementById('txtCurrencyCode').value.trim();
             const symbol = document.getElementById('txtCurrencySymbol').value.trim();
-            const rate = document.getElementById('txtCurrencyConvRate').value;
+            const rateRaw = document.getElementById('txtCurrencyConvRate').value;
+            if (!title) { IV.setFieldError('txtCurrencyTitle', 'errTxtCurrencyTitle', 'Title is required.'); ok = false; }
+            if (!code) { IV.setFieldError('txtCurrencyCode', 'errTxtCurrencyCode', 'Code is required.'); ok = false; }
+            if (!symbol) { IV.setFieldError('txtCurrencySymbol', 'errTxtCurrencySymbol', 'Symbol is required.'); ok = false; }
+            if (!rateRaw || Number.isNaN(parseFloat(rateRaw))) {
+                IV.setFieldError('txtCurrencyConvRate', 'errTxtCurrencyConvRate', 'Enter a valid conversion rate.');
+                ok = false;
+            }
+            return ok;
+        }
 
-            if (!title || !code || !symbol || !rate) {
-                alert('Please fill all required fields');
+        async function saveItem() {
+            const cid = parseInt(document.getElementById('txtItemId').value);
+            if (cid === 0 && !permCanAdd) {
+                IV.setNotice('currencyModalNotice', 'You do not have permission to add.');
                 return;
             }
+            if (cid > 0 && !permCanEdit) {
+                IV.setNotice('currencyModalNotice', 'You do not have permission to edit.');
+                return;
+            }
+            if (!validateCurrencyForm()) return;
 
-            // Binds MstCurrencyUpsertRequest properties to modal inputs maintaining numerical precision
+            const title = document.getElementById('txtCurrencyTitle').value.trim();
+            const code = document.getElementById('txtCurrencyCode').value.trim();
+            const symbol = document.getElementById('txtCurrencySymbol').value.trim();
+            const rate = parseFloat(document.getElementById('txtCurrencyConvRate').value);
+
             const data = {
                 currencyId: parseInt(document.getElementById('txtItemId').value),
                 currencyTitle: title,
                 currencyCode: code,
                 currencySymbol: symbol,
-                currencyConvRate: parseFloat(rate),
+                currencyConvRate: rate,
                 currencyBase: document.getElementById('chkCurrencyBase').checked,
                 isActive: document.getElementById('chkIsActive').checked
             };
@@ -233,26 +331,32 @@
                     body: JSON.stringify(data)
                 });
                 const res = await resp.json();
-                if (res.success) location.reload(); else alert(res.message);
+                if (res.success) location.reload();
+                else IV.setNotice('currencyModalNotice', res.message || 'Save failed.');
             } catch (err) {
                 console.error(err);
-                alert('Error saving currency');
+                IV.setNotice('currencyModalNotice', 'Could not save currency.');
             }
         }
 
         async function toggleStatus(id, isActive) {
+            if (!permCanEdit) {
+                IV.setNotice('currencyPageNotice', 'You do not have permission to change status.');
+                location.reload();
+                return;
+            }
+            IV.clearNotice('currencyPageNotice');
             try {
                 const resp = await fetch(`/Currencies/ToggleStatus?id=${id}&isActive=${isActive}`, { method: 'POST' });
                 const res = await resp.json();
                 if (res.success) {
-                    // Success
                 } else {
-                    alert(res.message);
+                    IV.setNotice('currencyPageNotice', res.message || 'Could not update status.');
                     location.reload();
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error toggling status');
+                IV.setNotice('currencyPageNotice', 'Could not update status.');
                 location.reload();
             }
         }

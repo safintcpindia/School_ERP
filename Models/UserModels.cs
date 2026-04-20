@@ -45,6 +45,7 @@ namespace SchoolERP.Net.Models
         public int? DashboardID { get; set; }
 
         public List<int> CompanyIDs { get; set; } = new();
+        public List<int> RoleIDs { get; set; } = new();
 
         // Role names from M:M mapping (concatenated)
         public string RoleNames { get; set; } = string.Empty;
@@ -210,6 +211,7 @@ namespace SchoolERP.Net.Models
         public List<UserViewModel> Users { get; set; } = new();
         public List<RoleViewModel> Roles { get; set; } = new();
         public List<MstUserTypeViewModel> UserTypes { get; set; } = new();
+        public List<MstCompanyViewModel> Companies { get; set; } = new();
     }
 
     /// <summary>

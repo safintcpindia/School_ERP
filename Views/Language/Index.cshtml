@@ -5,25 +5,51 @@
     ======================================================================
 *@
 @model SchoolERP.Net.Models.MstLanguagePageViewModel
+@using System.Security.Claims
+@using System.Text.Json
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Language Management";
+    int currentUserId = 0;
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
+    }
+    if (currentUserId > 0)
+        PermHelper.LoadPermissions(currentUserId);
+    var canAdd = PermHelper.HasPermissionByUrl("/Language", "Add");
+    var canEdit = PermHelper.HasPermissionByUrl("/Language", "Edit");
+    var canDelete = PermHelper.HasPermissionByUrl("/Language", "Delete");
 }
+
+<div id="languagePageNotice" class="alert alert-danger py-2 px-3 small d-none mb-2" role="alert"></div>
 
 <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
     <div>
         <h6 class="fw-bold mb-0">Language Management</h6>
     </div>
     <div class="d-flex flex-wrap align-items-center gap-2">
-        <button class="btn btn-primary shadow-sm" id="btnAddLanguage" onclick="openAddModal()">
-            <i class="fas fa-plus me-2"></i>Add
-        </button>
-        <button id="btnEdit" class="btn btn-success shadow-sm" disabled onclick="editSelected()">
-            <i class="fas fa-edit me-2"></i>Edit
-        </button>
-        <button id="btnDelete" class="btn btn-danger shadow-sm" disabled onclick="deleteSelected()">
-            <i class="fas fa-trash me-2"></i>Delete
-        </button>
+        @if (canAdd)
+        {
+            <button class="btn btn-primary shadow-sm" id="btnAddLanguage" onclick="openAddModal()">
+                <i class="fas fa-plus me-2"></i>Add
+            </button>
+        }
+        @if (canEdit)
+        {
+            <button id="btnEdit" class="btn btn-success shadow-sm" disabled onclick="editSelected()">
+                <i class="fas fa-edit me-2"></i>Edit
+            </button>
+        }
+        @if (canDelete)
+        {
+            <button id="btnDelete" class="btn btn-danger shadow-sm" disabled onclick="deleteSelected()">
+                <i class="fas fa-trash me-2"></i>Delete
+            </button>
+        }
     </div>
 </div>
 
@@ -74,9 +100,16 @@
                                         }
                                     </td>
                                     <td class="text-center">
-                                        <div class="form-check form-switch d-flex justify-content-center" onclick="event.stopPropagation()">
-                                            <input class="form-check-input language-status-switch" type="checkbox" @(l.IsActive ? "checked" : "") onchange="toggleStatus(@l.LanguageId, this.checked)">
-                                        </div>
+                                        @if (canEdit)
+                                        {
+                                            <div class="form-check form-switch d-flex justify-content-center" onclick="event.stopPropagation()">
+                                                <input class="form-check-input language-status-switch" type="checkbox" @(l.IsActive ? "checked" : "") onchange="toggleStatus(@l.LanguageId, this.checked)">
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge @(l.IsActive ? "bg-success" : "bg-secondary")">@(l.IsActive ? "Active" : "Inactive")</span>
+                                        }
                                     </td>
                                     <td class="text-center"><span class="text-muted small">@l.CreatedOn.ToString("dd MMM yyyy")</span></td>
                                 </tr>
@@ -104,22 +137,25 @@
                 </div>
             </div>
             <div class="modal-body p-4">
+                <div id="languageModalNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
                 <form id="itemForm">
                     <input type="hidden" id="txtItemId" value="0">
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-semibold">Language Title</label>
-                            <input type="text" class="form-control" id="txtLanguageTitle" required placeholder="e.g. English">
+                            <input type="text" class="form-control" id="txtLanguageTitle" placeholder="e.g. English" autocomplete="off">
+                            <div class="invalid-feedback" id="errTxtLanguageTitle"></div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Language Code</label>
-                            <input type="text" class="form-control" id="txtLanguageCode" required placeholder="e.g. en-US">
+                            <input type="text" class="form-control" id="txtLanguageCode" placeholder="e.g. en-US" autocomplete="off">
+                            <div class="invalid-feedback" id="errTxtLanguageCode"></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Language Icon</label>
-                            <input type="text" class="form-control" id="txtLanguageIcon" placeholder="e.g. 🇺🇸">
+                            <input type="text" class="form-control" id="txtLanguageIcon" placeholder="e.g. 🇺🇸" autocomplete="off">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -154,19 +190,43 @@
 
 @section Scripts {
     <script>
+        const permCanAdd = @Html.Raw(JsonSerializer.Serialize(canAdd));
+        const permCanEdit = @Html.Raw(JsonSerializer.Serialize(canEdit));
+        const permCanDelete = @Html.Raw(JsonSerializer.Serialize(canDelete));
+        const IV = window.InlineFormValidation;
+        const languageFieldMap = {
+            txtLanguageTitle: 'errTxtLanguageTitle',
+            txtLanguageCode: 'errTxtLanguageCode'
+        };
         const itemModal = new bootstrap.Modal(document.getElementById('itemModal'));
         let selectedLanguageId = 0;
 
+        function clearLanguageModalValidation() {
+            IV.clearMap(languageFieldMap);
+            IV.clearNotice('languageModalNotice');
+        }
+
+        IV.bindAutoClear(languageFieldMap);
+
         function selectItem(id, row) {
+            IV.clearNotice('languagePageNotice');
             selectedLanguageId = id;
             document.querySelectorAll('.item-row').forEach(r => r.classList.remove('bg-light'));
             row.classList.add('bg-light');
             row.querySelector('input[type="radio"]').checked = true;
-            document.getElementById('btnEdit').disabled = false;
-            document.getElementById('btnDelete').disabled = false;
+            const btnEdit = document.getElementById('btnEdit');
+            const btnDelete = document.getElementById('btnDelete');
+            if (btnEdit && permCanEdit) btnEdit.disabled = false;
+            if (btnDelete && permCanDelete) btnDelete.disabled = false;
         }
 
         function openAddModal() {
+            if (!permCanAdd) {
+                IV.setNotice('languagePageNotice', 'You do not have permission to add.');
+                return;
+            }
+            IV.clearNotice('languagePageNotice');
+            clearLanguageModalValidation();
             document.getElementById('modalTitle').textContent = 'Add Language';
             document.getElementById('itemForm').reset();
             document.getElementById('txtItemId').value = "0";
@@ -177,7 +237,13 @@
         }
 
         async function editSelected() {
+            if (!permCanEdit) {
+                IV.setNotice('languagePageNotice', 'You do not have permission to edit.');
+                return;
+            }
             if (selectedLanguageId === 0) return;
+            IV.clearNotice('languagePageNotice');
+            clearLanguageModalValidation();
             try {
                 const resp = await fetch(`/Language/GetLanguage?id=${selectedLanguageId}`);
                 const res = await resp.json();
@@ -192,38 +258,59 @@
                     document.getElementById('chkIsActive').checked = res.data.isActive;
                     itemModal.show();
                 } else {
-                    alert(res.message);
+                    IV.setNotice('languagePageNotice', res.message || 'Could not load language.');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error fetching language details');
+                IV.setNotice('languagePageNotice', 'Could not load language details.');
             }
         }
 
         async function deleteSelected() {
+            if (!permCanDelete) {
+                IV.setNotice('languagePageNotice', 'You do not have permission to delete.');
+                return;
+            }
             if (selectedLanguageId === 0) return;
             if (!confirm('Are you sure you want to delete this language? This action cannot be undone.')) return;
 
+            IV.clearNotice('languagePageNotice');
             try {
                 const resp = await fetch(`/Language/Delete?id=${selectedLanguageId}`, { method: 'POST' });
                 const res = await resp.json();
-                if (res.success) location.reload(); else alert(res.message);
+                if (res.success) location.reload();
+                else IV.setNotice('languagePageNotice', res.message || 'Delete failed.');
             } catch (err) {
                 console.error(err);
-                alert('Error deleting language');
+                IV.setNotice('languagePageNotice', 'Could not delete language.');
             }
         }
 
+        function validateLanguageForm() {
+            clearLanguageModalValidation();
+            let ok = true;
+            const title = document.getElementById('txtLanguageTitle').value.trim();
+            const code = document.getElementById('txtLanguageCode').value.trim();
+            if (!title) { IV.setFieldError('txtLanguageTitle', 'errTxtLanguageTitle', 'Title is required.'); ok = false; }
+            if (!code) { IV.setFieldError('txtLanguageCode', 'errTxtLanguageCode', 'Code is required.'); ok = false; }
+            return ok;
+        }
+
         async function saveItem() {
+            const lid = parseInt(document.getElementById('txtItemId').value);
+            if (lid === 0 && !permCanAdd) {
+                IV.setNotice('languageModalNotice', 'You do not have permission to add.');
+                return;
+            }
+            if (lid > 0 && !permCanEdit) {
+                IV.setNotice('languageModalNotice', 'You do not have permission to edit.');
+                return;
+            }
+            if (!validateLanguageForm()) return;
+
             const title = document.getElementById('txtLanguageTitle').value.trim();
             const code = document.getElementById('txtLanguageCode').value.trim();
 
-            if (!title || !code) {
-                alert('Please fill all required fields');
-                return;
-            }
-
-            // Maps UI inputs to MstLanguageUpsertRequest to persist localization dictionaries.
             const data = {
                 languageId: parseInt(document.getElementById('txtItemId').value),
                 languageTitle: title,
@@ -241,26 +328,32 @@
                     body: JSON.stringify(data)
                 });
                 const res = await resp.json();
-                if (res.success) location.reload(); else alert(res.message);
+                if (res.success) location.reload();
+                else IV.setNotice('languageModalNotice', res.message || 'Save failed.');
             } catch (err) {
                 console.error(err);
-                alert('Error saving language');
+                IV.setNotice('languageModalNotice', 'Could not save language.');
             }
         }
 
         async function toggleStatus(id, isActive) {
+            if (!permCanEdit) {
+                IV.setNotice('languagePageNotice', 'You do not have permission to change status.');
+                location.reload();
+                return;
+            }
+            IV.clearNotice('languagePageNotice');
             try {
                 const resp = await fetch(`/Language/ToggleStatus?id=${id}&isActive=${isActive}`, { method: 'POST' });
                 const res = await resp.json();
                 if (res.success) {
-                    // Success
                 } else {
-                    alert(res.message);
+                    IV.setNotice('languagePageNotice', res.message || 'Could not update status.');
                     location.reload();
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error toggling status');
+                IV.setNotice('languagePageNotice', 'Could not update status.');
                 location.reload();
             }
         }

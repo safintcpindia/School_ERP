@@ -5,25 +5,51 @@
     ======================================================================
 *@
 @model SchoolERP.Net.Models.MstSessionPageViewModel
+@using System.Security.Claims
+@using System.Text.Json
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Session Management";
+    int currentUserId = 0;
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
+    }
+    if (currentUserId > 0)
+        PermHelper.LoadPermissions(currentUserId);
+    var canAdd = PermHelper.HasPermissionByUrl("/Sessions", "Add");
+    var canEdit = PermHelper.HasPermissionByUrl("/Sessions", "Edit");
+    var canDelete = PermHelper.HasPermissionByUrl("/Sessions", "Delete");
 }
 
-<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+<div id="sessionPageNotice" class="alert alert-danger py-2 px-3 small d-none mb-2" role="alert"></div>
+
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-1 mb-2">
     <div>
         <h6 class="fw-bold mb-0">Session Management</h6>
     </div>
-    <div class="d-flex flex-wrap align-items-center gap-2">
-        <button class="btn btn-primary shadow-sm" id="btnAddSession" onclick="openAddModal()">
-            <i class="fas fa-plus me-2"></i>Add
-        </button>
-        <button id="btnEdit" class="btn btn-success shadow-sm" disabled onclick="editSelected()">
-            <i class="fas fa-edit me-2"></i>Edit
-        </button>
-        <button id="btnDelete" class="btn btn-danger shadow-sm" disabled onclick="deleteSelected()">
-            <i class="fas fa-trash me-2"></i>Delete
-        </button>
+    <div class="d-flex flex-wrap align-items-center gap-1">
+        @if (canAdd)
+        {
+            <button class="btn btn-primary" id="btnAddSession" onclick="openAddModal()">
+                <i class="ti ti-plus me-1"></i>Add
+            </button>
+        }
+        @if (canEdit)
+        {
+            <button id="btnEdit" class="btn btn-info" disabled onclick="editSelected()">
+                <i class="ti ti-edit me-1"></i>Edit
+            </button>
+        }
+        @if (canDelete)
+        {
+            <button id="btnDelete" class="btn btn-danger" disabled onclick="deleteSelected()">
+                <i class="ti ti-trash me-1"></i>Delete
+            </button>
+        }
     </div>
 </div>
 
@@ -44,7 +70,7 @@
                         <tbody>
                             @foreach (var s in Model.Sessions)
                             {
-                                <tr onclick="selectItem(@s.SessionId, this)" style="cursor: pointer;">
+                                <tr class="item-row" onclick="selectItem(@s.SessionId, this)" style="cursor: pointer;">
                                     <td class="ps-4 text-center">
                                         <input type="radio" name="selectedSession" class="form-check-input" value="@s.SessionId">
                                     </td>
@@ -52,9 +78,16 @@
                                         @s.SessionTitle
                                     </td>
                                     <td>
-                                        <div class="form-check form-switch" onclick="event.stopPropagation()">
-                                            <input class="form-check-input session-status-switch" type="checkbox" @(s.IsActive ? "checked" : "") onchange="toggleStatus(@s.SessionId, this.checked)">
-                                        </div>
+                                        @if (canEdit)
+                                        {
+                                            <div class="form-check form-switch" onclick="event.stopPropagation()">
+                                                <input class="form-check-input session-status-switch" type="checkbox" @(s.IsActive ? "checked" : "") onchange="toggleStatus(@s.SessionId, this.checked)">
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge @(s.IsActive ? "bg-success" : "bg-secondary")">@(s.IsActive ? "Active" : "Inactive")</span>
+                                        }
                                     </td>
                                     <td>@s.CreatedOn.ToString("dd MMM yyyy")</td>
                                 </tr>
@@ -71,27 +104,27 @@
 <div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header border-bottom bg-light d-flex align-items-center">
-                <h5 class="modal-title fw-bold mb-0" id="modalTitle">Add Session</h5>
-                <div class="ms-auto d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-sm btn-primary shadow-sm" id="btnSave" onclick="saveItem()">
-                        <i class="fas fa-save me-1"></i>Save Session
+            <div class="modal-header p-3">
+                <h5 class="modal-title" id="modalTitle">Add Session</h5>
+                <div class="ms-auto d-flex align-items-center gap-1">                    
+                    <button type="button" class="btn btn-success" id="btnSave" onclick="saveItem()">
+                        <i class="ti ti-cloud me-1"></i>Save
                     </button>
-                    <button type="button" class="btn-close ms-2" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><i class="ti ti-x me-1"></i> Close</button>
                 </div>
             </div>
-            <div class="modal-body p-4">
+            <div class="modal-body p-3">
+                <div id="sessionModalNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
                 <form id="itemForm">
                     <input type="hidden" id="txtItemId" value="0">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Session Title</label>
-                        <input type="text" class="form-control" id="txtSessionTitle" required placeholder="e.g. 2024-25">
+                        <input type="text" class="form-control" id="txtSessionTitle" placeholder="e.g. 2024-25" autocomplete="off">
+                        <div class="invalid-feedback" id="errTxtSessionTitle"></div>
                     </div>
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="isActive" checked>
-                        <label class="form-check-label fw-bold" for="isActive">Active</label>
-                        <div class="form-text">Activating this will deactivate all other sessions.</div>
+                        <label class="form-check-label fw-bold" for="isActive">Active</label>                        
                     </div>
                 </form>
             </div>
@@ -102,19 +135,40 @@
 
 @section Scripts {
     <script>
+        const permCanAdd = @Html.Raw(JsonSerializer.Serialize(canAdd));
+        const permCanEdit = @Html.Raw(JsonSerializer.Serialize(canEdit));
+        const permCanDelete = @Html.Raw(JsonSerializer.Serialize(canDelete));
+        const IV = window.InlineFormValidation;
+        const sessionFieldMap = { txtSessionTitle: 'errTxtSessionTitle' };
         const itemModal = new bootstrap.Modal(document.getElementById('itemModal'));
         let selectedSessionId = 0;
 
+        function clearSessionModalValidation() {
+            IV.clearMap(sessionFieldMap);
+            IV.clearNotice('sessionModalNotice');
+        }
+
+        IV.bindAutoClear(sessionFieldMap);
+
         function selectItem(id, row) {
+            IV.clearNotice('sessionPageNotice');
             selectedSessionId = id;
             document.querySelectorAll('.item-row').forEach(r => r.classList.remove('bg-light'));
             row.classList.add('bg-light');
             row.querySelector('input[type="radio"]').checked = true;
-            document.getElementById('btnEdit').disabled = false;
-            document.getElementById('btnDelete').disabled = false;
+            const btnEdit = document.getElementById('btnEdit');
+            const btnDelete = document.getElementById('btnDelete');
+            if (btnEdit && permCanEdit) btnEdit.disabled = false;
+            if (btnDelete && permCanDelete) btnDelete.disabled = false;
         }
 
         function openAddModal() {
+            if (!permCanAdd) {
+                IV.setNotice('sessionPageNotice', 'You do not have permission to add.');
+                return;
+            }
+            IV.clearNotice('sessionPageNotice');
+            clearSessionModalValidation();
             document.getElementById('modalTitle').textContent = 'Add Session';
             document.getElementById('itemForm').reset();
             document.getElementById('txtItemId').value = "0";
@@ -123,7 +177,13 @@
         }
 
         async function editSelected() {
+            if (!permCanEdit) {
+                IV.setNotice('sessionPageNotice', 'You do not have permission to edit.');
+                return;
+            }
             if (selectedSessionId === 0) return;
+            IV.clearNotice('sessionPageNotice');
+            clearSessionModalValidation();
             try {
                 const resp = await fetch(`/Sessions/GetSession?id=${selectedSessionId}`);
                 const res = await resp.json();
@@ -134,36 +194,51 @@
                     document.getElementById('isActive').checked = res.data.isActive;
                     itemModal.show();
                 } else {
-                    alert(res.message);
+                    IV.setNotice('sessionPageNotice', res.message || 'Could not load session.');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error fetching session details');
+                IV.setNotice('sessionPageNotice', 'Could not load session details.');
             }
         }
 
         async function deleteSelected() {
+            if (!permCanDelete) {
+                IV.setNotice('sessionPageNotice', 'You do not have permission to delete.');
+                return;
+            }
             if (selectedSessionId === 0) return;
             if (!confirm('Are you sure you want to delete this session? This action cannot be undone.')) return;
 
+            IV.clearNotice('sessionPageNotice');
             try {
                 const resp = await fetch(`/Sessions/Delete?id=${selectedSessionId}`, { method: 'POST' });
                 const res = await resp.json();
-                if (res.success) location.reload(); else alert(res.message);
+                if (res.success) location.reload();
+                else IV.setNotice('sessionPageNotice', res.message || 'Delete failed.');
             } catch (err) {
                 console.error(err);
-                alert('Error deleting session');
+                IV.setNotice('sessionPageNotice', 'Could not delete session.');
             }
         }
 
         async function saveItem() {
+            const sid = parseInt(document.getElementById('txtItemId').value);
+            if (sid === 0 && !permCanAdd) {
+                IV.setNotice('sessionModalNotice', 'You do not have permission to add.');
+                return;
+            }
+            if (sid > 0 && !permCanEdit) {
+                IV.setNotice('sessionModalNotice', 'You do not have permission to edit.');
+                return;
+            }
+            clearSessionModalValidation();
             const title = document.getElementById('txtSessionTitle').value.trim();
             if (!title) {
-                alert('Please enter session title');
+                IV.setFieldError('txtSessionTitle', 'errTxtSessionTitle', 'Session title is required.');
                 return;
             }
 
-            // Constructs MstSessionUpsertRequest directly handling active states dynamically.
             const data = {
                 sessionId: parseInt(document.getElementById('txtItemId').value),
                 sessionTitle: title,
@@ -177,27 +252,33 @@
                     body: JSON.stringify(data)
                 });
                 const res = await resp.json();
-                if (res.success) location.reload(); else alert(res.message);
+                if (res.success) location.reload();
+                else IV.setNotice('sessionModalNotice', res.message || 'Save failed.');
             } catch (err) {
                 console.error(err);
-                alert('Error saving session');
+                IV.setNotice('sessionModalNotice', 'Could not save session.');
             }
         }
 
         async function toggleStatus(id, isActive) {
+            if (!permCanEdit) {
+                IV.setNotice('sessionPageNotice', 'You do not have permission to change status.');
+                location.reload();
+                return;
+            }
+            IV.clearNotice('sessionPageNotice');
             try {
                 const resp = await fetch(`/Sessions/ToggleStatus?id=${id}&isActive=${isActive}`, { method: 'POST' });
                 const res = await resp.json();
                 if (res.success) {
-                    // Since only one can be active, reload to update UI switches
                     if (isActive) location.reload();
                 } else {
-                    alert(res.message);
+                    IV.setNotice('sessionPageNotice', res.message || 'Could not update status.');
                     location.reload();
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error toggling status');
+                IV.setNotice('sessionPageNotice', 'Could not update status.');
                 location.reload();
             }
         }

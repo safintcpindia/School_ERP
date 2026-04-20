@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
+using SchoolERP.Net.Services;
 using SchoolERP.Net.Services.Clients;
 using System;
 using System.Collections.Generic;
@@ -13,17 +14,17 @@ namespace SchoolERP.Net.Controllers
     public class UserController : Controller
     {
         private readonly IUserClientService _userClient;
+        private readonly ICompanyClientService _companyClient;
+        private readonly IUserMenuPermissionService _menuPerm;
+        private const string MenuPath = "/User";
 
-        public UserController(IUserClientService userClient)
+        public UserController(IUserClientService userClient, ICompanyClientService companyClient, IUserMenuPermissionService menuPerm)
         {
             _userClient = userClient;
+            _companyClient = companyClient;
+            _menuPerm = menuPerm;
         }
 
-        /// <summary>
-        /// Renders the master User Management list interface.
-        /// Extracts both the list of registered users and the dropdown lookup sources (Roles, Types)
-        /// in a single page load to avoid secondary AJAX delays on the view.
-        /// </summary>
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "User Management";
@@ -31,28 +32,27 @@ namespace SchoolERP.Net.Controllers
             var usersResponse = await _userClient.GetAllUsersAsync();
             var rolesResponse = await _userClient.GetRolesDropdownAsync();
             var typesResponse = await _userClient.GetUserTypesDropdownAsync();
+            var companiesResponse = await _companyClient.GetAllAsync();
 
             var model = new UsersPageViewModel
             {
                 Users     = usersResponse.Success ? usersResponse.Data : new List<UserViewModel>(),
                 Roles     = rolesResponse.Success ? rolesResponse.Data : new List<RoleViewModel>(),
-                UserTypes = typesResponse.Success ? typesResponse.Data : new List<MstUserTypeViewModel>()
+                UserTypes = typesResponse.Success ? typesResponse.Data : new List<MstUserTypeViewModel>(),
+                Companies = companiesResponse.Success ? companiesResponse.Data : new List<MstCompanyViewModel>()
             };
 
             return View(model);
         }
 
-        /// <summary>
-        /// Fetches the details of a specific User ID, including their mapped multidimensional Role sets.
-        /// Used primarily to populate the User Upsert Modal on the frontend.
-        /// </summary>
-        /// <param name="userId">The targeted User Primary Key.</param>
         [HttpGet]
         public async Task<IActionResult> GetUser(int userId)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to edit users." });
+
             try
             {
-                // Fetch core user metadata mapping
                 var userResponse = await _userClient.GetUserByIdAsync(userId);
                 if (!userResponse.Success)
                     return Json(new { success = false, message = userResponse.Message });
@@ -93,17 +93,17 @@ namespace SchoolERP.Net.Controllers
             }
         }
 
-        /// <summary>
-        /// Validates and saves an Upsert (Insert/Update) User payload.
-        /// Performs minimal server-side validation checks before dispatching the payload to the API client.
-        /// </summary>
-        /// <param name="request">The mapping properties from the User Create/Edit modal.</param>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] UserUpsertRequest request)
         {
+            var isCreate = request.UserID <= 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Json(new { success = false, message = "You do not have permission to add users." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to edit users." });
+
             try
             {
-                // Sanity validation: Core identities cannot be blank
                 if (string.IsNullOrWhiteSpace(request.FullName))
                     return Json(new { success = false, message = "Full name is required" });
 
@@ -122,12 +122,12 @@ namespace SchoolERP.Net.Controllers
             }
         }
 
-        /// <summary>
-        /// System toggle for allowing or dismissing a user's right to login (Soft Delete / Disable).
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int userId, bool isActive)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to change user status." });
+
             try
             {
                 var response = await _userClient.ToggleStatusAsync(userId, isActive);
@@ -139,12 +139,12 @@ namespace SchoolERP.Net.Controllers
             }
         }
 
-        /// <summary>
-        /// Intervenes to remove the "Locked" block from an account that has exceeded invalid attempts.
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Unlock(int userId)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to unlock users." });
+
             try
             {
                 var response = await _userClient.UnlockUserAsync(userId);

@@ -1,13 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
 using SchoolERP.Net.Models.Common;
 using SchoolERP.Net.Services;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace SchoolERP.Net.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     /// <summary>
     /// Processes granular security matrices routing mapping arrays to access tiers.
     /// </summary>
@@ -47,7 +50,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("save")]
         public IActionResult Save([FromBody] MstRoleUpsertRequest request)
         {
-            int currentUserId = 1;
+            int currentUserId = GetCurrentUserId();
+            if (currentUserId <= 0)
+                return Unauthorized(ApiResponse<int>.ErrorResponse("User is not authenticated."));
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
             var result = _userMgmtService.UpsertRole(request, currentUserId, ipAddress);
             
@@ -63,7 +68,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("toggle-status")]
         public IActionResult ToggleStatus([FromQuery] int roleId, [FromQuery] bool isActive)
         {
-            int currentUserId = 1;
+            int currentUserId = GetCurrentUserId();
+            if (currentUserId <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
             var result = _userMgmtService.ToggleRoleStatus(roleId, isActive, currentUserId, ipAddress);
             
@@ -89,7 +96,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("save-permissions")]
         public IActionResult SavePermissions([FromBody] MstRolePermissionSaveRequest request)
         {
-            int currentUserId = 1;
+            int currentUserId = GetCurrentUserId();
+            if (currentUserId <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
             var result = _userMgmtService.SaveRolePermissions(request, currentUserId, ipAddress);
             
@@ -97,6 +106,12 @@ namespace SchoolERP.Net.Controllers.Api
                 return Ok(ApiResponse<bool>.SuccessResponse(true, result.message));
             
             return BadRequest(ApiResponse<bool>.ErrorResponse(result.message));
+        }
+
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+            return (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId)) ? userId : 0;
         }
     }
 }

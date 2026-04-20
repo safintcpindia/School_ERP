@@ -5,9 +5,22 @@
     ======================================================================
 *@
 @model Dictionary<string, string>
+@using System.Security.Claims
+@using System.Text.Json
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @{
     Layout = "_Layout";
     string selectedLanguage = ViewData["SelectedLanguage"]?.ToString() ?? "";
+    int currentUserId = 0;
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
+    }
+    if (currentUserId > 0)
+        PermHelper.LoadPermissions(currentUserId);
+    var canEdit = PermHelper.HasPermissionByUrl("/Settings", "Edit");
 }
 
 <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
@@ -53,10 +66,14 @@
                                             <input type="text" class="form-control translation-input" 
                                                    value="@kvp.Value" 
                                                    data-key="@kvp.Key"
-                                                   data-original="@kvp.Value">
-                                            <button class="btn btn-primary d-none save-btn" type="button">
-                                                <i class="ti ti-check"></i>
-                                            </button>
+                                                   data-original="@kvp.Value"
+                                                   @(canEdit ? "" : "readonly disabled")>
+                                            @if (canEdit)
+                                            {
+                                                <button class="btn btn-primary d-none save-btn" type="button">
+                                                    <i class="ti ti-check"></i>
+                                                </button>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
@@ -71,6 +88,7 @@
 
 @section Scripts {
     <script>
+        const permCanEdit = @Html.Raw(JsonSerializer.Serialize(canEdit));
         $(document).ready(function() {
             // Search functionality
             $('#translationSearch').on('keyup', function() {
@@ -82,6 +100,7 @@
 
             // Show save button when value changes
             $('.translation-input').on('input', function() {
+                if (!permCanEdit) return;
                 var btn = $(this).siblings('.save-btn');
                 if ($(this).val() !== $(this).data('original')) {
                     btn.removeClass('d-none');
@@ -92,6 +111,7 @@
 
             // Save functionality
             $('.save-btn').on('click', function() {
+                if (!permCanEdit) return;
                 var btn = $(this);
                 var input = btn.siblings('.translation-input');
                 var key = input.data('key');

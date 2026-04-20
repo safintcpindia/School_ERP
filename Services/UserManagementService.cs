@@ -328,12 +328,18 @@ namespace SchoolERP.Net.Services
             var dt = _sqlHelper.ExecuteQuery("sp_Roles_GetPermissionsMatrix", parameters);
             
             if (dt == null || dt.Rows.Count == 0) return list;
+            if (!HasMatrixColumns(dt))
+                return list;
+
+            string? menuIdColumn = FindColumnName(dt, "MENUID", "MenuID", "MenuId");
+            if (string.IsNullOrWhiteSpace(menuIdColumn))
+                throw new ArgumentException("Column 'MenuID' does not belong to table.");
 
             foreach (DataRow row in dt.Rows)
             {
                 list.Add(new RoleMenuPermissionViewModel
                 {
-                    MenuID = Convert.ToInt32(row["MENUID"]),
+                    MenuID = Convert.ToInt32(row[menuIdColumn]),
                     MenuName = row["MenuName"]?.ToString() ?? "",
                     ParentID = row["ParentID"] != DBNull.Value ? Convert.ToInt32(row["ParentID"]) : null,
                     PermissionID = Convert.ToInt32(row["PermissionID"]),
@@ -370,6 +376,44 @@ namespace SchoolERP.Net.Services
                 return (false, "No response from database");
             }
             catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public List<UserPermissionViewModel> GetUserPermissions(int userId)
+        {
+            var list = new List<UserPermissionViewModel>();
+            var dt = _sqlHelper.ExecuteQuery("sp_User_GetPermissions", new[] { new SqlParameter("@UserID", userId) });
+            if (dt == null || dt.Rows.Count == 0) return list;
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new UserPermissionViewModel
+                {
+                    MenuID = Convert.ToInt32(row["MenuID"]),
+                    PermissionName = row["PermissionName"]?.ToString() ?? "",
+                    MenuURL = row["MenuURL"]?.ToString() ?? "",
+                    MenuKey = row["MenuKey"]?.ToString() ?? ""
+                });
+            }
+            return list;
+        }
+
+        private static string? FindColumnName(DataTable table, params string[] expectedNames)
+        {
+            foreach (DataColumn col in table.Columns)
+            {
+                foreach (string expected in expectedNames)
+                {
+                    if (string.Equals(col.ColumnName, expected, StringComparison.OrdinalIgnoreCase))
+                        return col.ColumnName;
+                }
+            }
+            return null;
+        }
+
+        private static bool HasMatrixColumns(DataTable table)
+        {
+            return !string.IsNullOrWhiteSpace(FindColumnName(table, "MENUID", "MenuID", "MenuId"))
+                   && !string.IsNullOrWhiteSpace(FindColumnName(table, "PermissionID", "PERMISSIONID", "PermissionId"));
         }
     }
 }

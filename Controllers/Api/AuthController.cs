@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
 using SchoolERP.Net.Models.Common;
@@ -8,6 +9,7 @@ namespace SchoolERP.Net.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     /// <summary>
     /// Headless endpoints resolving JWT generation and active directory credential validations.
     /// </summary>
@@ -24,6 +26,7 @@ namespace SchoolERP.Net.Controllers.Api
         /// Validates encrypted passwords against the SQL symmetric keys mapping.
         /// Yields an active authorization token mechanism if successful.
         /// </summary>
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {

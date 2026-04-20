@@ -811,6 +811,27 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
+    "Method": "CheckUsername",
+    "RelativePath": "api/user/check-username",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "username",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.UserApiController",
     "Method": "DeleteUser",
     "RelativePath": "api/user/delete/{id}",
     "HttpMethod": "POST",

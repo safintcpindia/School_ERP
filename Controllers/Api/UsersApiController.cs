@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
 using SchoolERP.Net.Services;
+using System.Security.Claims;
 
 namespace SchoolERP.Net.Controllers.Api
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     /// <summary>
     /// Alternate simplified routing segment handling Create/Login constructs directly.
     /// Functions similarly to UserApiController but explicitly partitions auth.
@@ -23,14 +26,15 @@ namespace SchoolERP.Net.Controllers.Api
 
         /// <summary>
         /// Example of creating a user. 
-        /// Password will be hashed in the UserService before being sent to SQL.
+        /// Password hash/salt is generated in SQL stored procedure.
         /// Email/Phone/OTPSecret will be encrypted in the UserService.
         /// </summary>
         [HttpPost("create")]
         public IActionResult CreateUser([FromBody] UserUpsertRequest request)
         {
-            // In a real app, get current UserID from JWT
-            int currentUserId = 1; 
+            int currentUserId = GetCurrentUserId();
+            if (currentUserId <= 0)
+                return Unauthorized(new { Success = false, Message = "User is not authenticated." });
 
             var (result, message) = _userService.CreateUser(request, currentUserId);
             
@@ -42,9 +46,10 @@ namespace SchoolERP.Net.Controllers.Api
 
         /// <summary>
         /// Example of logging in.
-        /// Password verification happens in AuthService (.NET), not in SQL.
+        /// Password verification happens in SQL stored procedure.
         /// </summary>
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var (success, message, user) = await _authService.LoginAsync(request.Username, request.Password);
@@ -53,6 +58,12 @@ namespace SchoolERP.Net.Controllers.Api
                 return Ok(new { Success = true, Message = message, Data = user });
 
             return Unauthorized(new { Success = false, Message = message });
+        }
+
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+            return (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId)) ? userId : 0;
         }
     }
 }

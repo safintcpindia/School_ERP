@@ -1,14 +1,17 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
 using SchoolERP.Net.Models.Common;
 using SchoolERP.Net.Services;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SchoolERP.Net.Controllers.Api
 {
     [Route("api/user")]
     [ApiController]
+    [Authorize]
     /// <summary>
     /// Centralized integration API for CRUD operations against the tbl_mst_users dataset.
     /// Used by frontend Javascript bundles to avoid page reloads.
@@ -74,14 +77,30 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
+        /// Validates whether a requested username is structurally unique in the system.
+        /// </summary>
+        [HttpGet("check-username")]
+        public IActionResult CheckUsername([FromQuery] string username, [FromQuery] int userId = 0)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return BadRequest(ApiResponse<bool>.ErrorResponse("Username is required"));
+
+            bool isUnique = _userService.IsUsernameUnique(username, userId);
+            
+            // We return the boolean naturally.
+            return Ok(ApiResponse<bool>.SuccessResponse(isUnique, isUnique ? "Username is available" : "Username is already taken"));
+        }
+
+        /// <summary>
         /// Interprets a User create/edit modal submission from frontend API clients.
         /// Dispatches data to SQL Server encryption routines.
         /// </summary>
         [HttpPost("save")]
         public IActionResult Save([FromBody] UserUpsertRequest request)
         {
-            // TODO: Ensure JWT Claim stripping validates identity to prevent spoofing
-            int actingUser = 1; 
+            int actingUser = GetCurrentUserId();
+            if (actingUser <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
             (int result, string message) response;
 
             // Route dynamically based on Primary Key state
@@ -102,7 +121,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("toggle-status")]
         public IActionResult ToggleStatus([FromQuery] int userId, [FromQuery] bool isActive)
         {
-            int actingUser = 1;
+            int actingUser = GetCurrentUserId();
+            if (actingUser <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
             var response = _userService.ToggleUserStatus(userId, isActive, actingUser);
             if (response.Result > 0)
                 return Ok(ApiResponse<bool>.SuccessResponse(true, response.Message));
@@ -116,7 +137,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("delete/{id}")]
         public IActionResult DeleteUser(int id)
         {
-            int actingUser = 1;
+            int actingUser = GetCurrentUserId();
+            if (actingUser <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
             var response = _userService.DeleteUser(id, actingUser);
             if (response.Result > 0)
                 return Ok(ApiResponse<bool>.SuccessResponse(true, response.Message));
@@ -130,7 +153,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("unlock/{id}")]
         public IActionResult Unlock(int id)
         {
-            int actingUser = 1;
+            int actingUser = GetCurrentUserId();
+            if (actingUser <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
             _userService.UnlockUser(id, actingUser);
             return Ok(ApiResponse<bool>.SuccessResponse(true, "User account unlocked"));
         }
@@ -152,14 +177,21 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("save-wizard")]
         public IActionResult SaveWizard([FromBody] UserUpsertRequest request)
         {
-            // TODO: Get acting user from JWT
-            int actingUser = 1;
+            int actingUser = GetCurrentUserId();
+            if (actingUser <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
             var response = _userService.SaveUserWizard(request, actingUser);
 
             if (response.Result > 0)
                 return Ok(ApiResponse<bool>.SuccessResponse(true, response.Message));
             
             return BadRequest(ApiResponse<bool>.ErrorResponse(response.Message));
+        }
+
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+            return (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId)) ? userId : 0;
         }
     }
 }

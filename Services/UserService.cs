@@ -132,12 +132,8 @@ namespace SchoolERP.Net.Services
             // Flatten role arrays to comma-separated strings for 'fn_SplitString' SQL parsing
             string roleIDs = string.Join(",", request.RoleIDs);
 
-            // 1. Hash Password (Generates unique salt + compute)
-            var (hash, salt) = SecurityHelper.HashPassword(request.Password);
-
             // 2. Encrypt Sensitive Data using symmetric application keys
-            string encryptedEmail = _encryption.Encrypt(request.Email);
-            string encryptedPhone = _encryption.Encrypt(request.PhoneNo);
+           
             string encryptedOTPSecret = _encryption.Encrypt(request.OTPSecret);
 
             var parameters = new[]
@@ -145,10 +141,11 @@ namespace SchoolERP.Net.Services
                 new SqlParameter("@UserID",        0),
                 new SqlParameter("@FullName",      request.FullName),
                 new SqlParameter("@Username",      request.Username),
-                new SqlParameter("@Email",         (object?)NullIfEmpty(encryptedEmail)    ?? DBNull.Value),
-                new SqlParameter("@PasswordHash",  hash),
-                new SqlParameter("@PasswordSalt",  salt),
-                new SqlParameter("@PhoneNo",       (object?)NullIfEmpty(encryptedPhone)  ?? DBNull.Value),
+                new SqlParameter("@Email",         (object?)NullIfEmpty(request.Email)    ?? DBNull.Value),
+                // PasswordHash/PasswordSalt are generated inside SQL Server.
+                // We pass plaintext password for the stored procedure to hash+salt.
+                new SqlParameter("@PasswordPlain", (object?)NullIfEmpty(request.Password) ?? DBNull.Value),
+                new SqlParameter("@PhoneNo",       (object?)NullIfEmpty(request.PhoneNo)  ?? DBNull.Value),
                 new SqlParameter("@UserTypeID",    request.UserTypeID),
                 new SqlParameter("@DefaultRoleID", (object?)request.DefaultRoleID        ?? DBNull.Value),
                 new SqlParameter("@DashboardID",   (object?)request.DashboardID          ?? DBNull.Value),
@@ -187,17 +184,8 @@ namespace SchoolERP.Net.Services
             // Flatten role arrays
             string roleIDs = string.Join(",", request.RoleIDs);
 
-            // 1. Hash Password conditionally
-            string? hash = null;
-            string? salt = null;
-            if (!string.IsNullOrEmpty(request.Password))
-            {
-                (hash, salt) = SecurityHelper.HashPassword(request.Password);
-            }
-
             // 2. Encrypt Sensitive Data conditionally depending on presence of payload values
-            string? encryptedEmail = !string.IsNullOrEmpty(request.Email) ? _encryption.Encrypt(request.Email) : null;
-            string? encryptedPhone = !string.IsNullOrEmpty(request.PhoneNo) ? _encryption.Encrypt(request.PhoneNo) : null;
+           
             string? encryptedOTPSecret = !string.IsNullOrEmpty(request.OTPSecret) ? _encryption.Encrypt(request.OTPSecret) : null;
 
             var parameters = new[]
@@ -205,10 +193,11 @@ namespace SchoolERP.Net.Services
                 new SqlParameter("@UserID",        request.UserID),
                 new SqlParameter("@FullName",      request.FullName),
                 new SqlParameter("@Username",      request.Username),
-                new SqlParameter("@Email",         (object?)NullIfEmpty(encryptedEmail)    ?? DBNull.Value),
-                new SqlParameter("@PasswordHash",  (object?)hash                         ?? DBNull.Value),
-                new SqlParameter("@PasswordSalt",  (object?)salt                         ?? DBNull.Value),
-                new SqlParameter("@PhoneNo",       (object?)NullIfEmpty(encryptedPhone)  ?? DBNull.Value),
+                new SqlParameter("@Email",         (object?)NullIfEmpty(request.Email)    ?? DBNull.Value),
+                // Pass plaintext password only when user requests a change.
+                // SQL Server stored procedure will generate hash+salt if this is present.
+                new SqlParameter("@PasswordPlain", (object?)NullIfEmpty(request.Password) ?? DBNull.Value),
+                new SqlParameter("@PhoneNo",       (object?)NullIfEmpty(request.PhoneNo)  ?? DBNull.Value),
                 new SqlParameter("@UserTypeID",    request.UserTypeID),
                 new SqlParameter("@DefaultRoleID", (object?)request.DefaultRoleID        ?? DBNull.Value),
                 new SqlParameter("@DashboardID",   (object?)request.DashboardID          ?? DBNull.Value),
@@ -272,10 +261,14 @@ namespace SchoolERP.Net.Services
                 DataTable dt = _sqlHelper.ExecuteQuery("sp_Roles_GetPermissionsMatrix", parameters);
 
                 if (dt == null || dt.Rows.Count == 0) continue;
+                if (!HasMatrixColumns(dt)) continue;
+                string? menuIdColumn = FindColumnName(dt, "MENUID", "MenuID", "MenuId");
+                if (string.IsNullOrWhiteSpace(menuIdColumn))
+                    throw new ArgumentException("Column 'MenuID' does not belong to table.");
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    int menuId = Convert.ToInt32(dr["MENUID"]);
+                    int menuId = Convert.ToInt32(dr[menuIdColumn]);
                     int permId = Convert.ToInt32(dr["PermissionID"]);
                     string key = $"{menuId}:{permId}";
                     bool hasAccess = dr["HasAccess"] != DBNull.Value && Convert.ToBoolean(dr["HasAccess"]);
@@ -375,9 +368,10 @@ namespace SchoolERP.Net.Services
                 }
             } while (addedNew);
 
-            wizard.PermissionMatrix = mergedMatrix.Values
-                .Where(m => menusWithAccess.Contains(m.MenuID))
-                .ToList();
+            //wizard.PermissionMatrix = mergedMatrix.Values
+            //    .Where(m => menusWithAccess.Contains(m.MenuID))
+            //    .ToList();
+            wizard.PermissionMatrix = mergedMatrix.Values.ToList();
 
             return wizard;
         }
@@ -395,6 +389,8 @@ namespace SchoolERP.Net.Services
                     return (-1, "User Type is required.");
                 if (request.UserID == 0 && string.IsNullOrWhiteSpace(request.Password))
                     return (-1, "Password is required for new users.");
+                if (request.IsOTPEnabled && string.IsNullOrWhiteSpace(request.PhoneNo))
+                    return (-1, "Phone number is required when Login with OTP is enabled.");
 
                 // 1. Prepare Comma-separated strings
                 string roleIDsStr    = string.Join(",", request.RoleIDs);
@@ -405,11 +401,8 @@ namespace SchoolERP.Net.Services
                     .Select(o => $"{o.MenuID}:{o.PermissionID}:{(o.IsAllowed ? 1 : 0)}"));
 
                 // 2. Handle Password Hashing (only if provided)
-                string? hash = null, salt = null;
-                if (!string.IsNullOrEmpty(request.Password))
-                {
-                    (hash, salt) = SecurityHelper.HashPassword(request.Password);
-                }
+                // Password hashing/salting is generated inside SQL Server.
+                string? passwordPlain = string.IsNullOrEmpty(request.Password) ? null : request.Password;
 
                 // 3. Encrypt Sensitive Data (safe — EncryptionHelper returns input when empty)
                 string encryptedEmail  = _encryption.Encrypt(request.Email  ?? "");
@@ -422,10 +415,9 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@UserID",              request.UserID),
                     new SqlParameter("@FullName",            request.FullName),
                     new SqlParameter("@Username",            request.Username),
-                    new SqlParameter("@Email",               (object?)NullIfEmpty(encryptedEmail)       ?? DBNull.Value),
-                    new SqlParameter("@PasswordHash",        (object?)hash                             ?? DBNull.Value),
-                    new SqlParameter("@PasswordSalt",        (object?)salt                             ?? DBNull.Value),
-                    new SqlParameter("@PhoneNo",             (object?)NullIfEmpty(encryptedPhone)      ?? DBNull.Value),
+                    new SqlParameter("@Email",               (object?)NullIfEmpty(request.Email)       ?? DBNull.Value),
+                    new SqlParameter("@PasswordPlain",       (object?)passwordPlain                    ?? DBNull.Value),
+                    new SqlParameter("@PhoneNo",             (object?)NullIfEmpty(request.PhoneNo)      ?? DBNull.Value),
                     new SqlParameter("@UserTypeID",          request.UserTypeID),
                     new SqlParameter("@DefaultRoleID",       (object?)request.DefaultRoleID            ?? DBNull.Value),
                     new SqlParameter("@DashboardID",         (object?)request.DashboardID              ?? DBNull.Value),
@@ -521,6 +513,12 @@ namespace SchoolERP.Net.Services
                                     ? dr["DefaultRoleName"].ToString() ?? "" : "",
                 DashboardID     = dr["DashboardID"] != DBNull.Value ? Convert.ToInt32(dr["DashboardID"]) : null,
                 RoleNames       = dr.Table.Columns.Contains("RoleNames") ? dr["RoleNames"]?.ToString() ?? "" : "",
+                CompanyIDs      = dr.Table.Columns.Contains("CompanyIDs") && dr["CompanyIDs"] != DBNull.Value
+                                    ? dr["CompanyIDs"].ToString()!.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList() 
+                                    : new List<int>(),
+                RoleIDs         = dr.Table.Columns.Contains("RoleIDs") && dr["RoleIDs"] != DBNull.Value
+                                    ? dr["RoleIDs"].ToString()!.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList()
+                                    : new List<int>(),
                 BackDaysAllow   = dr["BackDaysAllow"] != DBNull.Value ? Convert.ToInt32(dr["BackDaysAllow"]) : 0,
                 IsOTPEnabled    = dr["IsOTPEnabled"] != DBNull.Value && (bool)dr["IsOTPEnabled"],
                 StartDate       = dr["StartDate"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(dr["StartDate"]) : null,
@@ -542,6 +540,40 @@ namespace SchoolERP.Net.Services
         private object? NullIfEmpty(string? value)
         {
             return string.IsNullOrEmpty(value) ? null : value;
+        }
+
+        public bool IsUsernameUnique(string username, int userId)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Username", username),
+                new SqlParameter("@UserID", userId)
+            };
+            DataTable dt = _sqlHelper.ExecuteQuery("sp_Users_CheckUsernameValid", parameters);
+            if (dt.Rows.Count > 0 && dt.Rows[0]["IsUnique"] != DBNull.Value)
+            {
+                return Convert.ToBoolean(dt.Rows[0]["IsUnique"]);
+            }
+            return false;
+        }
+
+        private static string? FindColumnName(DataTable table, params string[] expectedNames)
+        {
+            foreach (DataColumn col in table.Columns)
+            {
+                foreach (string expected in expectedNames)
+                {
+                    if (string.Equals(col.ColumnName, expected, StringComparison.OrdinalIgnoreCase))
+                        return col.ColumnName;
+                }
+            }
+            return null;
+        }
+
+        private static bool HasMatrixColumns(DataTable table)
+        {
+            return !string.IsNullOrWhiteSpace(FindColumnName(table, "MENUID", "MenuID", "MenuId"))
+                   && !string.IsNullOrWhiteSpace(FindColumnName(table, "PermissionID", "PERMISSIONID", "PermissionId"));
         }
     }
 }

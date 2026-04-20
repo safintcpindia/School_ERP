@@ -5,71 +5,105 @@
     ======================================================================
 *@
 @model SchoolERP.Net.Models.MstUserManagementPageViewModel
+@using System.Security.Claims
+@using System.Text.Json
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @{
     Layout = "_Layout";
     ViewData["Title"] = "User Type Management";
+    int currentUserId = 0;
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
+    }
+    if (currentUserId > 0)
+        PermHelper.LoadPermissions(currentUserId);
+    var canAdd = PermHelper.HasPermissionByUrl("/UserType", "Add");
+    var canEdit = PermHelper.HasPermissionByUrl("/UserType", "Edit");
 }
 
-<div class="container-fluid py-4">
-    <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
-        <div>
-            <h4 class="fw-bold mb-0">User Type Management</h4>
-        </div>
-        <div class="d-flex flex-wrap align-items-center gap-2">
-            <button class="btn btn-primary shadow-sm" id="btnAddUserType" onclick="openAddModal()">
-                <i class="fas fa-plus me-2"></i>Add User Type
-            </button>
-        </div>
+<div id="userTypePageNotice" class="alert alert-danger py-2 px-3 small d-none mb-2" role="alert"></div>
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+        <h6 class="fw-bold mb-0">User Type Management</h6>
     </div>
+    <div class="d-flex flex-wrap align-items-center gap-1">
+        @if (canAdd)
+        {
+            <button class="btn btn-primary shadow-sm" id="btnAddUserType" onclick="openAddModal()">
+                <i class="ti ti-plus me-2"></i>Add
+            </button>
+        }
+        @if (canEdit)
+        {
+            <button id="btnEditUserType" class="btn btn-info shadow-sm" disabled onclick="editSelectedUserType()">
+                <i class="ti ti-edit me-2"></i>Edit
+            </button>
+        }
+    </div>
+</div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden">
-                <div class="card-header bg-white py-3 border-bottom-0">
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                        <h5 class="mb-0 fw-bold text-dark">Master User Types</h5>
-                        <div class="position-relative">
-                            <i class="fas fa-search search-icon-input"></i>
-                            <input type="text" class="form-control form-control-sm ps-4" id="txtSearchInput" placeholder="Search types...">
-                        </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-2 shadow-tbl-outer">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div class="position-relative border d-flex align-items-center rounded-3 px-3">
+                        <i class="fas fa-search search-icon-input"></i>
+                        <input type="text" class="form-control border-0 ps-2" id="txtSearchInput"
+                               placeholder="Search User Types..." style="min-width: 220px;">
                     </div>
                 </div>
-                <div class="card-body px-0 pt-0 pb-2">
-                    <div class="table-responsive">
-                        <table class="table align-items-center mb-0" id="typesTable">
-                            <thead>
-                                <tr class="bg-light">
-                                    <th class="ps-4">Type Code</th>
-                                    <th>Display Name</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Created On</th>
-                                    <th class="text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var type in Model.UserTypes)
-                                {
-                                    <tr class="item-row">
-                                        <td class="ps-4">
-                                            <span class="badge bg-primary-soft text-primary fw-bold">@type.TypeCode</span>
-                                        </td>
-                                        <td><h6 class="mb-0 text-sm fw-bold">@type.TypeName</h6></td>
-                                        <td class="text-center">
-                                            <div class="form-check form-switch d-flex justify-content-center">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-tbl">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-items-center mb-0" id="typesTable">
+                        <thead>
+                            <tr class="bg-light">
+                                <th style="width: 50px;">Select</th>
+                                <th>Type Code</th>
+                                <th>Display Name</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Created On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var type in Model.UserTypes)
+                            {
+                                <tr class="item-row" onclick="selectItem(@type.UserTypeID, this)" style="cursor: pointer;">
+                                    <td class="ps-4 text-center">
+                                        <input type="radio" name="selectedUserType" class="form-check-input" value="@type.UserTypeID">
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary-soft text-primary fw-bold">@type.TypeCode</span>
+                                    </td>
+                                    <td><h6 class="mb-0 text-sm fw-bold">@type.TypeName</h6></td>
+                                    <td class="text-center" onclick="event.stopPropagation()">
+                                        @if (canEdit)
+                                        {
+                                            <div class="form-check form-switch d-flex justify-content-center mb-0">
                                                 <input class="form-check-input" type="checkbox" checked="@type.IsActive" onchange="toggleStatus(@type.UserTypeID, this.checked)">
                                             </div>
-                                        </td>
-                                        <td class="text-center"><span class="text-xs">@type.CreatedOn.ToString("dd MMM yyyy")</span></td>
-                                        <td class="text-center">
-                                            <button class="btn btn-sm btn-icon border-0 text-primary" onclick="openEditModal(@type.UserTypeID)">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge @(type.IsActive ? "bg-success" : "bg-secondary")">@(type.IsActive ? "Active" : "Inactive")</span>
+                                        }
+                                    </td>
+                                    <td class="text-center"><span class="text-xs">@type.CreatedOn.ToString("dd MMM yyyy")</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -80,24 +114,30 @@
 <div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header border-bottom bg-light d-flex align-items-center">
+            <div class="modal-header d-flex align-items-center">
                 <h5 class="modal-title fw-bold mb-0" id="modalTitle">Add User Type</h5>
-                <div class="ms-auto d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btnCancel" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-sm btn-primary shadow-sm" id="btnSave" onclick="saveItem()">Save Changes</button>
-                    <button type="button" class="btn-close ms-2" data-bs-dismiss="modal"></button>
+                <div class="ms-auto d-flex align-items-center gap-1">
+                    <button type="button" class="btn btn-success" id="btnSave" onclick="saveItem()">
+                        <i class="ti ti-cloud me-1"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-danger ms-1" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ti ti-x me-1"></i> Close
+                    </button>
                 </div>
             </div>
             <div class="modal-body p-4">
+                <div id="userTypeModalNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
                 <form id="itemForm">
                     <input type="hidden" id="txtItemId" value="0">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Type Code (System Code)</label>
-                        <input type="text" class="form-control" id="txtTypeCode" required placeholder="e.g. TEACHER">
+                        <label class="form-label fw-semibold">Type Code (System Code) <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="txtTypeCode" placeholder="e.g. TEACHER" autocomplete="off">
+                        <div class="invalid-feedback" id="errTxtTypeCode"></div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Type Name (Display Name)</label>
-                        <input type="text" class="form-control" id="txtTypeName" required placeholder="e.g. Teacher">
+                        <label class="form-label fw-semibold">Type Name (Display Name) <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="txtTypeName" placeholder="e.g. Teacher" autocomplete="off">
+                        <div class="invalid-feedback" id="errTxtTypeName"></div>
                     </div>
                     <div class="form-check form-switch p-2 ps-5 bg-light rounded">
                         <input class="form-check-input" type="checkbox" id="isActive" checked>
@@ -112,9 +152,50 @@
 
 @section Scripts {
     <script>
+        const permCanAdd = @Html.Raw(JsonSerializer.Serialize(canAdd));
+        const permCanEdit = @Html.Raw(JsonSerializer.Serialize(canEdit));
+        const IV = window.InlineFormValidation;
+        const userTypeFieldMap = {
+            txtTypeCode: 'errTxtTypeCode',
+            txtTypeName: 'errTxtTypeName'
+        };
         const itemModal = new bootstrap.Modal(document.getElementById('itemModal'));
+        let selectedTypeId = 0;
+
+        function clearUserTypeModalValidation() {
+            IV.clearMap(userTypeFieldMap);
+            IV.clearNotice('userTypeModalNotice');
+        }
+
+        IV.bindAutoClear(userTypeFieldMap);
+
+        function selectItem(id, row) {
+            IV.clearNotice('userTypePageNotice');
+            selectedTypeId = id;
+            document.querySelectorAll('#typesTable tbody .item-row').forEach(r => r.classList.remove('bg-light'));
+            row.classList.add('bg-light');
+            const radio = row.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+            const btnEdit = document.getElementById('btnEditUserType');
+            if (btnEdit && permCanEdit) btnEdit.disabled = false;
+        }
+
+        function editSelectedUserType() {
+            if (!permCanEdit) {
+                IV.setNotice('userTypePageNotice', 'You do not have permission to edit.');
+                return;
+            }
+            if (selectedTypeId === 0) return;
+            openEditModal(selectedTypeId);
+        }
 
         function openAddModal() {
+            if (!permCanAdd) {
+                IV.setNotice('userTypePageNotice', 'You do not have permission to add.');
+                return;
+            }
+            IV.clearNotice('userTypePageNotice');
+            clearUserTypeModalValidation();
             document.getElementById('modalTitle').textContent = 'Add User Type';
             document.getElementById('itemForm').reset();
             document.getElementById('txtItemId').value = "0";
@@ -122,37 +203,112 @@
         }
 
         async function openEditModal(id) {
-            const resp = await fetch(`/UserType/GetUserType?typeId=${id}`);
-            const res = await resp.json();
-            if (res.success) {
-                document.getElementById('modalTitle').textContent = 'Edit User Type';
-                document.getElementById('txtItemId').value = res.userType.userTypeID;
-                document.getElementById('txtTypeCode').value = res.userType.typeCode;
-                document.getElementById('txtTypeName').value = res.userType.typeName;
-                document.getElementById('isActive').checked = res.userType.isActive;
-                itemModal.show();
+            if (!permCanEdit) {
+                IV.setNotice('userTypePageNotice', 'You do not have permission to edit.');
+                return;
+            }
+            IV.clearNotice('userTypePageNotice');
+            clearUserTypeModalValidation();
+            try {
+                const resp = await fetch(`/UserType/GetUserType?typeId=${id}`);
+                const res = await resp.json();
+                if (res.success) {
+                    document.getElementById('modalTitle').textContent = 'Edit User Type';
+                    document.getElementById('txtItemId').value = res.userType.userTypeID;
+                    document.getElementById('txtTypeCode').value = res.userType.typeCode;
+                    document.getElementById('txtTypeName').value = res.userType.typeName;
+                    document.getElementById('isActive').checked = res.userType.isActive;
+                    itemModal.show();
+                } else {
+                    IV.setNotice('userTypePageNotice', res.message || 'Could not load user type.');
+                }
+            } catch (e) {
+                console.error(e);
+                IV.setNotice('userTypePageNotice', 'Could not load user type.');
             }
         }
 
+        function validateUserTypeForm() {
+            clearUserTypeModalValidation();
+            let ok = true;
+            const code = document.getElementById('txtTypeCode').value.trim();
+            const name = document.getElementById('txtTypeName').value.trim();
+            if (!code) { IV.setFieldError('txtTypeCode', 'errTxtTypeCode', 'Type code is required.'); ok = false; }
+            if (!name) { IV.setFieldError('txtTypeName', 'errTxtTypeName', 'Type name is required.'); ok = false; }
+            return ok;
+        }
+
         async function saveItem() {
-            // Maps UI parameters to MstUserTypeUpsertRequest schema
+            const uid = parseInt(document.getElementById('txtItemId').value);
+            if (uid === 0 && !permCanAdd) {
+                IV.setNotice('userTypeModalNotice', 'You do not have permission to add.');
+                return;
+            }
+            if (uid > 0 && !permCanEdit) {
+                IV.setNotice('userTypeModalNotice', 'You do not have permission to edit.');
+                return;
+            }
+            if (!validateUserTypeForm()) return;
+
             const data = {
-                userTypeID: parseInt(document.getElementById('txtItemId').value),
+                userTypeID: uid,
                 typeCode: document.getElementById('txtTypeCode').value.trim(),
                 typeName: document.getElementById('txtTypeName').value.trim(),
                 isActive: document.getElementById('isActive').checked
             };
-            const resp = await fetch('/UserType/Save', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const res = await resp.json();
-            if (res.success) location.reload(); else alert(res.message);
+            const btn = document.getElementById('btnSave');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
+            try {
+                const resp = await fetch('/UserType/Save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const res = await resp.json();
+                if (res.success) location.reload();
+                else {
+                    IV.setNotice('userTypeModalNotice', res.message || 'Save failed.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="ti ti-cloud me-1"></i> Save';
+                }
+            } catch (e) {
+                console.error(e);
+                IV.setNotice('userTypeModalNotice', 'Could not save user type.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ti ti-cloud me-1"></i> Save';
+            }
         }
 
         async function toggleStatus(id, isActive) {
-            await fetch(`/UserType/ToggleStatus?typeId=${id}&isActive=${isActive}`, { method: 'POST' });
+            if (!permCanEdit) {
+                IV.setNotice('userTypePageNotice', 'You do not have permission to change status.');
+                location.reload();
+                return;
+            }
+            IV.clearNotice('userTypePageNotice');
+            try {
+                const resp = await fetch(`/UserType/ToggleStatus?typeId=${id}&isActive=${isActive}`, { method: 'POST' });
+                const res = await resp.json();
+                if (!res.success) {
+                    IV.setNotice('userTypePageNotice', res.message || 'Could not update status.');
+                    location.reload();
+                }
+            } catch (e) {
+                console.error(e);
+                IV.setNotice('userTypePageNotice', 'Could not update status.');
+                location.reload();
+            }
+        }
+
+        const txtSearchInput = document.getElementById('txtSearchInput');
+        if (txtSearchInput) {
+            txtSearchInput.addEventListener('input', function () {
+                const q = this.value.toLowerCase();
+                document.querySelectorAll('#typesTable tbody .item-row').forEach(row => {
+                    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+                });
+            });
         }
     </script>
 }

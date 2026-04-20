@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Models;
+using SchoolERP.Net.Services;
 using SchoolERP.Net.Services.Clients;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace SchoolERP.Net.Controllers
         private readonly ICompanyClientService _companyClient;
         private readonly ISessionClientService _sessionClient;
         private readonly ICurrencyClientService _currencyClient;
+        private readonly IUserMenuPermissionService _menuPerm;
+        private const string SettingsMenuPath = "/Settings";
 
         public SettingsController(
             ISettingsClientService settingsClient, 
@@ -31,7 +34,8 @@ namespace SchoolERP.Net.Controllers
             IPaymentMethodClientService paymentClient,
             ICompanyClientService companyClient,
             ISessionClientService sessionClient,
-            ICurrencyClientService currencyClient)
+            ICurrencyClientService currencyClient,
+            IUserMenuPermissionService menuPerm)
         {
             _settingsClient = settingsClient;
             _roleClient = roleClient;
@@ -42,6 +46,7 @@ namespace SchoolERP.Net.Controllers
             _companyClient = companyClient;
             _sessionClient = sessionClient;
             _currencyClient = currencyClient;
+            _menuPerm = menuPerm;
         }
 
         /// <summary>
@@ -87,6 +92,9 @@ namespace SchoolERP.Net.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPermissions(int roleId)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "View"))
+                return Json(new { success = false, message = "You do not have permission to view role permissions.", permissions = (object?)null });
+
             var response = await _roleClient.GetPermissionsAsync(roleId);
             return Json(new { success = response.Success, permissions = response.Data, message = response.Message });
         }
@@ -97,6 +105,12 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveRole([FromBody] RoleUpsertRequest request)
         {
+            var isCreate = request.RoleID <= 0;
+            if (isCreate && !_menuPerm.Has(User, SettingsMenuPath, "Add"))
+                return Json(new { success = false, message = "You do not have permission to add roles." });
+            if (!isCreate && !_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to edit roles." });
+
             // Transform the simplified incoming request into the strict Upsert pipeline request
             var serviceRequest = new MstRoleUpsertRequest
             {
@@ -116,6 +130,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveRolePermissions([FromBody] MstRolePermissionSaveRequest request)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to update role permissions." });
+
             var response = await _roleClient.SavePermissionsAsync(request);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -155,6 +172,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveEmailSettings([FromBody] MstEmailConfigUpsertRequest request)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to change email settings." });
+
             var response = await _emailClient.UpsertEmailConfigAsync(request);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -176,6 +196,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveSmsSettings([FromBody] MstSmsConfigUpsertRequest request)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to change SMS settings." });
+
             var response = await _smsClient.UpsertSmsConfigAsync(request);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -211,6 +234,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateTranslation([FromBody] TranslationUpdateModel model)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to update translations." });
+
             var response = await _settingsClient.UpdateTranslationAsync(model);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -242,6 +268,12 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> SavePaymentMethod([FromBody] MstPaymentMethodUpsertRequest request)
         {
+            var isCreate = request.PaymentId <= 0;
+            if (isCreate && !_menuPerm.Has(User, SettingsMenuPath, "Add"))
+                return Json(new { success = false, message = "You do not have permission to add payment methods." });
+            if (!isCreate && !_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to edit payment methods." });
+
             var response = await _paymentClient.UpsertPaymentMethodAsync(request);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -252,6 +284,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> DeletePaymentMethod(int id)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Delete"))
+                return Json(new { success = false, message = "You do not have permission to delete payment methods." });
+
             var response = await _paymentClient.DeletePaymentMethodAsync(id);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -262,6 +297,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> TogglePaymentStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to change payment method status." });
+
             var response = await _paymentClient.ToggleStatusAsync(id, isActive);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -336,6 +374,12 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveCompany([FromBody] MstCompanyUpsertRequest request)
         {
+            var isCreate = request.CompanyId <= 0;
+            if (isCreate && !_menuPerm.Has(User, SettingsMenuPath, "Add"))
+                return Json(new { success = false, message = "You do not have permission to add companies." });
+            if (!isCreate && !_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to edit companies." });
+
             var response = await _companyClient.UpsertAsync(request);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -343,6 +387,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteCompany(int id)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Delete"))
+                return Json(new { success = false, message = "You do not have permission to delete companies." });
+
             var response = await _companyClient.DeleteAsync(id);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -350,6 +397,9 @@ namespace SchoolERP.Net.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCompany(int id)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to edit companies.", data = (object?)null });
+
             var response = await _companyClient.GetByIDAsync(id);
             return Json(new { success = response.Success, data = response.Data, message = response.Message });
         }
@@ -357,6 +407,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleCompanyStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to change company status." });
+
             var response = await _companyClient.ToggleStatusAsync(id, isActive);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -389,6 +442,12 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveUser([FromBody] UserUpsertRequest request)
         {
+            var isCreate = request.UserID <= 0;
+            if (isCreate && !_menuPerm.Has(User, SettingsMenuPath, "Add"))
+                return Json(new { success = false, message = "You do not have permission to add users." });
+            if (!isCreate && !_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to edit users." });
+
             var response = await _userClient.SaveUserAsync(request);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -399,6 +458,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int userId, bool isActive)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to change user status." });
+
             var response = await _userClient.ToggleStatusAsync(userId, isActive);
             return Json(new { success = response.Success, message = response.Message });
         }
@@ -409,6 +471,9 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(int id)
         {
+            if (!_menuPerm.Has(User, SettingsMenuPath, "Delete"))
+                return Json(new { success = false, message = "You do not have permission to delete users." });
+
             var response = await _userClient.DeleteUserAsync(id);
             return Json(new { success = response.Success, message = response.Message });
         }

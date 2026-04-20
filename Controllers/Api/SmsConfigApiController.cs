@@ -9,7 +9,7 @@ namespace SchoolERP.Net.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     /// <summary>
     /// This class handles HTTP routing and API requests for SmsConfigApiController.
     /// </summary>

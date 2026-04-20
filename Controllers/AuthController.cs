@@ -64,9 +64,12 @@ namespace SchoolERP.Net.Controllers
         /// <returns>Redirect to Login action.</returns>
         public IActionResult Logout()
         {
-            // Typical implementation would call HttpContext.SignOutAsync() here 
-            // to strip the user's secure tokens and session memory.
-            return RedirectToAction("Login");
+            // Clear cookies used by this app.
+            Response.Cookies.Delete("token");
+            Response.Cookies.Delete("CurrentSessionId");
+
+            // Also clear client-side localStorage (token + cached user) via a tiny view.
+            return View();
         }
     }
 }

@@ -102,6 +102,14 @@
         font-size: 0.72rem;
         color: #6c757d;
     }
+
+    th.matrix-col.w-s-nowrap {
+        white-space: nowrap;
+    }
+
+    .w-s-nowrap input. Form-check-input {
+        margin-top: 1px !important;
+    }
 </style>
 
 
@@ -264,13 +272,7 @@
 
                     <!-- ── RIGHT: Permissions Panel ── -->
                     <div class="perm-panel">
-                        <div class="perm-toolbar bg-white border-0 mb-0">
-                            @* <span class="text-hint"><i class="fas fa-info-circle me-1"></i>Toggle entire modules using the folder icons</span> *@
-                            @* <div class="d-flex gap-1">
-                                <button class="btn btn-sm btn-outline-primary" id="btnCheckAll" onclick="toggleAllChecks(true)">Check All</button>
-                                <button class="btn btn-sm btn-outline-secondary" id="btnUncheckAll" onclick="toggleAllChecks(false)">Uncheck All</button>
-                            </div> *@
-                        </div>
+                       
 
                         <div class="perm-tree-scroll p-3">
                             <div class="tree-grid-container">
@@ -588,7 +590,7 @@
             uniquePerms.forEach(p => {
                 headerRow.innerHTML += `<th class="matrix-col w-s-nowrap">
                     <input type="checkbox"
-                           class="form-check-input me-1 column-master-check"
+                           class="form-check-input mt-0 me-0 column-master-check"
                            data-perm="${p.id}"
                            onchange="togglePermissionColumn(this)"
                            ${permCanEdit ? '' : 'disabled'}>
@@ -614,7 +616,7 @@
 
                     let toggleHtml = isParent
                         ? `<span class="tree-toggle" onclick="toggleNode(${m.id}, event)"><i class="fas fa-plus"></i></span>`
-                        : `<span style="width:20px;display:inline-block;"></span>`;
+                        : `<span style="width:0;display:inline-block;"></span>`;
 
                     html += `<td class="tree-cell">`;
                     for (let i = 0; i < depth; i++) {

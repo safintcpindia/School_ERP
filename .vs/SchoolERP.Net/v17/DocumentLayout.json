@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 20-4-2026\\views\\usertype\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\usertype\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 20-4-2026\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 20-4-2026\\views\\mastermenu\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\mastermenu\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 20-4-2026\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 20-4-2026\\views\\usertype\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\usertype\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 20-4-2026\\views\\permission\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -27,19 +35,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\Views\\MasterMenu\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\MasterMenu\\Index.cshtml",
+              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\Views\\MasterMenu\\Index.cshtml",
+              "RelativeToolTip": "Views\\MasterMenu\\Index.cshtml",
+              "ViewState": "AQIAAIUAAAAAAAAAAAAjwJIAAAA9AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-21T04:54:00.961Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AQIAAGoBAAAAAAAAAAAswHoBAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-21T04:52:02.671Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
               "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAEAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-04-21T04:13:07.896Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\Views\\UserType\\Index.cshtml",
               "RelativeDocumentMoniker": "Views\\UserType\\Index.cshtml",
@@ -52,7 +86,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\Views\\Permission\\Index.cshtml",
               "RelativeDocumentMoniker": "Views\\Permission\\Index.cshtml",
@@ -60,8 +94,7 @@
               "RelativeToolTip": "Views\\Permission\\Index.cshtml",
               "ViewState": "AQIAADMAAAAAAAAAAAAAACgAAAAGAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-21T04:08:37.094Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-21T04:08:37.094Z"
             }
           ]
         }

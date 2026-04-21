@@ -38,6 +38,7 @@
     </div>
 
     <div class="d-flex flex-wrap align-items-center gap-1">
+      
         @if (canAdd)
         {
             <button class="btn btn-primary shadow-sm" id="btnAddPermission" onclick="openAddModal()">
@@ -114,7 +115,7 @@
                                             <input type="radio" name="selectedPermission" class="form-check-input" value="@p.PermissionID">
                                         </td>
                                         <td>
-                                            <span class="badge bg-info-soft text-info fw-bold">@p.PermissionName</span>
+                                            @p.PermissionName
                                         </td>
                                         <td>@p.DisplayLabel</td>
                                         <td onclick="event.stopPropagation()">
@@ -345,5 +346,13 @@
                 location.reload();
             }
         }
+
+        document.getElementById('txtSearchInput')?.addEventListener('input', function () {
+            const q = this.value.toLowerCase().trim();
+            document.querySelectorAll('#permissionsTable tbody .item-row').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(q) ? '' : 'none';
+            });
+        });
     </script>
 }

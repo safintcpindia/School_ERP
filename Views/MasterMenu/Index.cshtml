@@ -42,7 +42,7 @@
             @if (canEdit)
             {
                 <button id="btnEdit" class="btn btn-info shadow-sm" disabled onclick="editSelected()">
-                    <i class="ti ti-edit me-2"></i>Edit
+                    <i class="ti ti-pencil me-2"></i>Edit
                 </button>
             }
             @if (canDelete)
@@ -69,7 +69,7 @@
                                     <th>URL / Route</th>
                                     <th>Parent</th>
                                     <th>Order</th>
-                                    <th class="text-center">Status</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -110,7 +110,7 @@
                                         <td class="">
                                             @if (canEdit)
                                             {
-                                                <div class="form-check form-switch d-flex justify-content-center mb-0" onclick="event.stopPropagation()">
+                                                <div class="form-check form-switch mb-0" onclick="event.stopPropagation()">
                                                     <input class="form-check-input" type="checkbox" role="switch"
                                                            checked="@menu.IsActive"
                                                            onchange="toggleStatus(@menu.MenuID, this.checked)"

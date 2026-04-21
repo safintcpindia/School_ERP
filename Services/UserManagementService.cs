@@ -364,7 +364,7 @@ namespace SchoolERP.Net.Services
                 {
                     new SqlParameter("@RoleID", request.RoleID),
                     new SqlParameter("@MenuPermissionPairs", pairs),
-                    new SqlParameter("@AdminID", adminId),
+                    new SqlParameter("@UserId", adminId),
                     new SqlParameter("@IPAddress", ipAddress)
                 };
                 var dt = _sqlHelper.ExecuteQuery("sp_Roles_SavePermissions", parameters);

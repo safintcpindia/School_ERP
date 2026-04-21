@@ -629,7 +629,7 @@
 
                     html += `<input type="checkbox" class="row-master-check me-2" onchange="onToggleRow(this, ${m.id})"${permCanEdit ? '' : ' disabled'}>`;
                     html += toggleHtml;
-                    html += `<i class="fas ${isParent ? 'fa-folder folder' : 'fa-file-alt file'} tree-icon"></i>`;
+                    html += `<i class="fas ${isParent ? 'fa-folder-open folder' : 'fa-file file'} tree-icon"></i>`;
                     html += `<span class="tree-label">${m.name}</span></td>`;
 
                     uniquePerms.forEach(p => {

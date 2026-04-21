@@ -429,32 +429,45 @@
                         <li><a href="#">About us</a></li>
                     </ul>-->
                     <ul>
-                        <li class="menu-title"><span>@Localizer.GetString("main_menu")</span></li>                        
+                        <!-- <li class="menu-title"><span>@Localizer.GetString("main_menu")</span></li>   -->                     
                         @foreach (var menu in rootMenus)
                         {
                             var children = allMenus.Where(m => m.ParentID == menu.MenuID).ToList();
                             if (children.Any())
                             {
-                                <li class="submenu">
-                                    <a href="javascript:void(0);">
-                                        <i class="@(menu.MenuIcon ?? "ti ti-box")"></i><span> @menu.MenuName</span>
-                                        <span class="menu-arrow"></span>
-                                    </a>
+
+                                <li>
                                     <ul>
-                                        @foreach (var child in children)
-                                        {
-                                            <li><a href="@child.MenuURL">
-                                                @child.MenuName</a></li>
-                                        }
+                                        <li class="submenu">
+                                            <a href="javascript:void(0);">
+                                                <i class="@(menu.MenuIcon ?? "ti ti-box")"></i><span> @menu.MenuName</span>
+                                                <span class="menu-arrow"></span>
+                                            </a>
+                                            <ul>
+
+                                                @foreach (var child in children)
+
+                                                {
+                                                    <li>
+                                                        <a href="@child.MenuURL">
+
+                                                            @child.MenuName
+                                                        </a>
+                                                    </li>
+
+                                                }
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </li>
+
                             }
                             else
                             {
                                 <li class="submenu">
                                     <a href="@menu.MenuURL">
                                         <i class="@(menu.MenuIcon ?? "ti ti-box")"></i> <span>
-                                            @Localizer.GetString(menu.MenuKey)
+                                            @menu.MenuName
                                             </span>
                                     </a>
                                 </li>

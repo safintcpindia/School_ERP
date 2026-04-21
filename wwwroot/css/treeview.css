@@ -122,13 +122,15 @@
     flex-shrink: 0;
 }
 
-.tree-icon.folder {
-    color: #ffc107; /* Warning yellow for folders */
-}
+    .tree-icon.folder {
+        -color: #6c757d; /* Warning yellow for folders */
+        color: #2E37A4;
+    }
 
-.tree-icon.file {
-    color: #6c757d; /* Muted gray for files */
-}
+    .tree-icon.file {
+        -color: #6c757d; /* Muted gray for files */
+        color: #2F80ED;
+    }
 
 /* Checkbox */
 .perm-check-input {

@@ -113,9 +113,9 @@
                 <div class="d-flex align-items-center justify-content-between border-bottom filter-header">
                     <h6 class="mb-0 fw-bold">Select Criteria</h6>
                     <div class="d-flex align-items-center justify-content-end">
-                        // <button type="button" class="btn btn-light btn-md me-2 fw-medium" id="btnResetFilters">Reset</button>
-                        // <a href="javascript:void(0);" class="btn btn-secondary btn-md me-2 fw-medium" id="close-filter">Close</a>
-                        <button type="button" class="btn btn-primary btn-md fw-medium" id="btnApplyFilters">Filter</button>
+                        <!--<button type="button" class="btn btn-light btn-md me-2 fw-medium" id="btnResetFilters">Reset</button>
+                        <a href="javascript:void(0);" class="btn btn-secondary btn-md me-2 fw-medium" id="close-filter">Close</a>-->
+                        <button type="button" class="btn text-primary fs-6 fw-medium" id="btnApplyFilters">Filter</button>
                     </div>
                 </div>
                 <form action="#">
@@ -492,7 +492,7 @@
                             Next <i class="ti ti-arrow-narrow-right ms-1"></i>
                         </button>
                         <button type="button" class="btn btn-sm btn-success shadow-sm d-none" id="btnWizardFinish" onclick="finishWizard()">
-                            <i class="ti ti-cloud me-1"></i> Save User
+                            <i class="ti ti-cloud me-1"></i> Save
                         </button>
                         <button type="button" class="btn btn-sm btn-light d-none" id="btnWizardPrev" onclick="moveWizard(-1)">
                             <i class="ti ti-arrow-narrow-left me-1"></i> Back
@@ -1431,11 +1431,11 @@
                     if (isParent) {
                         html += `<span class="tree-toggle" onclick="toggleTreeNode(${m.id}, event)"><i class="fas fa-plus"></i></span>`;
                     } else {
-                        html += `<span style="width:20px;display:inline-block;"></span>`;
+                        html += `<span style="width:0px;display:inline-block;"></span>`;
                     }
 
                     // Icon + Label
-                    html += `<i class="fas ${isParent ? 'fa-folder folder' : 'fa-file-alt file'} tree-icon"></i>`;
+                    html += `<i class="fas ${isParent ? 'fa-folder-open folder' : 'fa-file file'} tree-icon"></i>`;
                     html += `<span class="tree-label">${m.name}</span></td>`;
 
                     // Permission columns
@@ -1855,6 +1855,8 @@
             const endDate = document.getElementById('txtEndDate').value;
             const startTimeRaw = document.getElementById('txtStartTime').value.trim();
             const endTimeRaw = document.getElementById('txtEndTime').value.trim();
+            let startParsed = null;
+            let endParsed = null;
             const startSel = {
                 h: document.getElementById('ddlStartHour')?.value || '',
                 m: document.getElementById('ddlStartMinute')?.value || '',
@@ -1903,15 +1905,16 @@
             if (startDate && endDate) {
                 const sd = new Date(startDate);
                 const ed = new Date(endDate);
-                if (!(ed > sd)) {
-                    setFieldError('txtEndDate', 'End date must be greater than start date.');
+                if (!(ed >= sd)) {
+                    setFieldError('txtEndDate', 'End date must be greater than or equal to start date.');
                     ok = false;
                 }
             }
 
             if (startTimeRaw) {
-                const parsed = parse12HourToTimeSpan(startTimeRaw);
-                if (!parsed || parsed.ok === false) {
+                startParsed = parse12HourToTimeSpan(startTimeRaw);
+
+                if (!startParsed || startParsed.ok === false) {
                     setFieldError('txtStartTime', 'Please select a valid time.');
                     markTimeSelectInvalid('Start');
                     ok = false;
@@ -1923,8 +1926,9 @@
                 ok = false;
             }
             if (endTimeRaw) {
-                const parsed = parse12HourToTimeSpan(endTimeRaw);
-                if (!parsed || parsed.ok === false) {
+                endParsed = parse12HourToTimeSpan(endTimeRaw);
+
+                if (!endParsed || endParsed.ok === false) {
                     setFieldError('txtEndTime', 'Please select a valid time.');
                     markTimeSelectInvalid('End');
                     ok = false;
@@ -1934,6 +1938,18 @@
                 setFieldError('txtEndTime', 'Please select Hour, Minute and AM/PM.');
                 markTimeSelectInvalid('End');
                 ok = false;
+            }
+
+            if (startParsed && startParsed.ok && endParsed && endParsed.ok) {
+
+                const start = new Date(`1970-01-01T${startParsed.value}`);
+                const end = new Date(`1970-01-01T${endParsed.value}`);
+
+                if (end <= start) {
+                    setFieldError('txtEndTime', 'End time must be greater than start time.');
+                    markTimeSelectInvalid('End');
+                    ok = false;
+                }
             }
 
             return ok;

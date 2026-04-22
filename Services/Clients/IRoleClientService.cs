@@ -13,5 +13,6 @@ namespace SchoolERP.Net.Services.Clients
         Task<ApiResponse<bool>> ToggleStatusAsync(int roleId, bool isActive);
         Task<ApiResponse<List<RoleMenuPermissionViewModel>>> GetPermissionsAsync(int roleId);
         Task<ApiResponse<bool>> SavePermissionsAsync(MstRolePermissionSaveRequest request);
+        Task<ApiResponse<bool>> DeleteRoleAsync(int roleId);
     }
 }

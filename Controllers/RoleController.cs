@@ -90,5 +90,15 @@ namespace SchoolERP.Net.Controllers
             var response = await _roleClient.SavePermissionsAsync(request);
             return Json(new { success = response.Success, message = response.Message });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int roleId)
+        {
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Json(new { success = false, message = "You do not have permission to delete roles." });
+
+            var response = await _roleClient.DeleteRoleAsync(roleId);
+            return Json(new { success = response.Success, message = response.Message });
+        }
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "4KX/zEJaLiUIKJul0ATgvm8AiIu4XnaKTNJrzJB9XJSiSqIWCfmoYdkJePw38LKsCWi4PK47koV1+EcvjOadkg==",
+  "dgSpecHash": "4q6Bw6j5ZkTm9a0xHASQzPiKbf0QsrQP2VCAGgkz418iq/dFCO0J/x4cNeONiMAnSgd/9wH3luaR7F5MI4ynKw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\DELL\\Downloads\\SchoolERP 20-4-2026\\SchoolERP.Net.csproj",
+  "projectFilePath": "D:\\School\\School ERP 22-4-2026\\SchoolERP.Net.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\DELL\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.8\\microsoft.aspnetcore.authentication.jwtbearer.8.0.8.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\microsoft.bcl.cryptography\\8.0.0\\microsoft.bcl.cryptography.8.0.0.nupkg.sha512",

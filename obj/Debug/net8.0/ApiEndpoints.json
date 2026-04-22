@@ -557,6 +557,22 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.RoleApiController",
+    "Method": "Delete",
+    "RelativePath": "api/RoleApi/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoleApiController",
     "Method": "GetPermissions",
     "RelativePath": "api/RoleApi/{id}/permissions",
     "HttpMethod": "GET",

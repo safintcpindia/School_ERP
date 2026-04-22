@@ -104,68 +104,7 @@
         <h6 class="fw-bold mb-0">User Management</h6>
     </div>
     <div class="d-flex flex-wrap align-items-center gap-1">
-        <div class="dropdown">
-            <a href="#" id="btnFilterToggle" class="btn btn-white border rounded btn-md text-dark fs-14 align-items-center d-flex fw-normal"
-               data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                <i class="ti ti-filter text-gray-5 me-1"></i>Filters
-            </a>
-            <div class="dropdown-menu dropdown-lg dropdown-menu-end filter-dropdown p-0 shadow-tbl" id="filter-dropdown" style="">
-                <div class="d-flex align-items-center justify-content-between border-bottom filter-header">
-                    <h6 class="mb-0 fw-bold">Select Criteria</h6>
-                    <div class="d-flex align-items-center justify-content-end">
-                        <!--<button type="button" class="btn btn-light btn-md me-2 fw-medium" id="btnResetFilters">Reset</button>
-                        <a href="javascript:void(0);" class="btn btn-secondary btn-md me-2 fw-medium" id="close-filter">Close</a>-->
-                        <button type="button" class="btn text-primary fs-6 fw-medium" id="btnApplyFilters">Filter</button>
-                    </div>
-                </div>
-                <form action="#">
-                    <div class="filter-body pb-0">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label mb-1">User Type</label>
-                                <select class="form-select form-control select2" id="ddlFilterUserType" data-placeholder="Select user type">
-                                    <option value="all">All</option>
-                                    @foreach (var ut in Model.UserTypes)
-                                    {
-                                        <option value="@ut.UserTypeID">@ut.TypeName</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label mb-1">Company</label>
-                                <select class="form-select form-control select2" id="ddlFilterCompany" data-placeholder="Select company">
-                                    <option value="all">All</option>
-                                    @foreach (var c in Model.Companies ?? new List<MstCompanyViewModel>())
-                                    {
-                                        <option value="@c.CompanyId">@c.SchoolName</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label mb-1">Role</label>
-                                <select class="form-select form-control select2" id="ddlFilterRole" data-placeholder="Select role">
-                                    <option value="all">All</option>
-                                    @foreach (var role in Model.Roles)
-                                    {
-                                        <option value="@role.RoleID">@role.RoleName</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label mb-1">Status</label>
-                                <select class="form-select form-control select2" id="ddlFilterStatus" data-placeholder="Select status">
-                                    <option value="all">All</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="locked">Locked</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-        </div>
+       
         @if(PermHelper.HasPermissionByUrl("/User", "Add")) {
             <button class="btn btn-primary" id="btnAddUser" onclick="openAddModal()">
                 <i class="ti ti-plus me-1"></i>Add
@@ -269,8 +208,81 @@
                         <input type="text" class="form-control border-0 ps-2" id="txtSearchInput"
                                placeholder="Search users..." style="min-width: 220px;">
                     </div>
+
+                    <div class="dropdown">
+                        <a href="#" id="btnFilterToggle" class="btn btn-white border rounded btn-md text-dark fs-14 align-items-center d-flex fw-normal"
+                           data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                            <i class="ti ti-filter text-gray-5 me-1"></i>Filters
+                        </a>
+                        <div class="dropdown-menu dropdown-lg dropdown-menu-end filter-dropdown p-0 shadow-tbl" id="filter-dropdown" style="">
+                            <div class="d-flex align-items-center justify-content-between border-bottom filter-header">
+                                <h6 class="mb-0 fw-bold">Select Criteria</h6>
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <!--<button type="button" class="btn btn-light btn-md me-2 fw-medium" id="btnResetFilters">Reset</button>
+                                    <a href="javascript:void(0);" class="btn btn-secondary btn-md me-2 fw-medium" id="close-filter">Close</a>-->
+                                    <button type="button" class="btn text-primary fs-6 fw-medium" id="btnApplyFilters">Filter</button>
+                                </div>
+                            </div>
+                            <form action="#">
+                                <div class="filter-body pb-0">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label mb-1">User Type</label>
+                                            <select class="form-select form-control select2" id="ddlFilterUserType" data-placeholder="Select user type">
+                                                <option value="all">All</option>
+                                                @foreach (var ut in Model.UserTypes)
+                                                {
+                                                    <option value="@ut.UserTypeID">@ut.TypeName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label mb-1">Company</label>
+                                            <select class="form-select form-control select2" id="ddlFilterCompany" data-placeholder="Select company">
+                                                <option value="all">All</option>
+                                                @foreach (var c in Model.Companies ?? new List<MstCompanyViewModel>())
+                                                {
+                                                    <option value="@c.CompanyId">@c.SchoolName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label mb-1">Role</label>
+                                            <select class="form-select form-control select2" id="ddlFilterRole" data-placeholder="Select role">
+                                                <option value="all">All</option>
+                                                @foreach (var role in Model.Roles)
+                                                {
+                                                    <option value="@role.RoleID">@role.RoleName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label mb-1">Status</label>
+                                            <select class="form-select form-control select2" id="ddlFilterStatus" data-placeholder="Select status">
+                                                <option value="all">All</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                                <option value="locked">Locked</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
                     
                 </div>
+            </div>
+        </div>
+    <div class="col-xl-12 mb-2" id="activeFilterBadges" style="display: none;">
+        <div class="card shadow-tbl border-0 py-2 mb-2">
+            <div class="card-body p-2 d-flex flex-wrap gap-2 align-items-center">
+                <span class="text-muted small fw-bold ms-2 me-2"><i class="ti ti-filter-check me-1"></i>Active Filters:</span>
+                <div id="badgeContainer" class="d-flex flex-wrap gap-2"></div>
+                <button class="btn btn-sm btn-link text-danger p-0 ms-auto me-2 fw-bold text-decoration-none" id="btnResetAllFilters" onclick="resetAllFilters()">
+                    <i class="ti ti-trash me-1"></i>Clear All
+                </button>
             </div>
         </div>
     </div>
@@ -468,17 +480,17 @@
                         User Wizard
                     </h5>
                     <div class="wizard-steps-indicator d-flex align-items-center mt-3 gap-4">
-                        <div class="wizard-step active" data-step="1">
+                        <div class="wizard-step active" data-step="1" onclick="goToWizardStep(1)" style="cursor: pointer;">
                             <span class="step-num">1</span>
                             <span class="step-label d-none d-sm-inline">Identity</span>
                         </div>
                         <div class="wizard-step-line"></div>
-                        <div class="wizard-step" data-step="2">
+                        <div class="wizard-step" data-step="2" onclick="goToWizardStep(2)" style="cursor: pointer;">
                             <span class="step-num">2</span>
                             <span class="step-label d-none d-sm-inline">Companies</span>
                         </div>
                         <div class="wizard-step-line"></div>
-                        <div class="wizard-step" data-step="3">
+                        <div class="wizard-step" data-step="3" onclick="goToWizardStep(3)" style="cursor: pointer;">
                             <span class="step-num">3</span>
                             <span class="step-label d-none d-sm-inline">Permissions</span>
                         </div>
@@ -521,7 +533,7 @@
                                         <div class="invalid-feedback" id="errTxtUsername"></div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4" id="passwordGroup">
                                     <label class="form-label" id="passwordLabel">Password <span class="text-danger">*</span></label>
                                     <div class="mb-3 position-relative">
                                         @* <span class="input-group-text bg-light"><i class="fas fa-lock text-muted"></i></span> *@
@@ -533,7 +545,7 @@
                                     </div>
                                     <small class="text-muted d-none" id="passwordNote">Leave blank to keep existing.</small>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4" id="confirmPasswordGroup">
                                     <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
                                     <div class="mb-3 position-relative">
                                         @* <span class="input-group-text bg-light"><i class="fas fa-lock text-muted"></i></span> *@
@@ -1090,9 +1102,9 @@
 
                 const matchSearch = !search || rowText.includes(search);
                 const matchStatus = status === 'all' || rowStatus === status;
-            const matchUserType = userType === 'all' || !userType || rowUserType === userType;
-            const matchCompany = company === 'all' || !company || rowCompanies.includes(company);
-            const matchRole = role === 'all' || !role || rowRoles.includes(role);
+                const matchUserType = userType === 'all' || !userType || rowUserType === userType;
+                const matchCompany = company === 'all' || !company || rowCompanies.includes(company);
+                const matchRole = role === 'all' || !role || rowRoles.includes(role);
 
                 if (matchSearch && matchStatus && matchUserType && matchCompany && matchRole) {
                     row.style.display = '';
@@ -1116,9 +1128,93 @@
                 noResults.remove();
             }
 
-            // Disable bulk buttons if active user is hidden? 
-            // Actually usually reset selection is better.
+            renderFilterBadges();
             resetSelection();
+        }
+
+        function renderFilterBadges() {
+            const container = document.getElementById('badgeContainer');
+            const mainContainer = document.getElementById('activeFilterBadges');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const filters = [
+                { id: 'txtSearchInput', label: 'Search', type: 'text' },
+                { id: 'ddlFilterUserType', label: 'User Type', type: 'select' },
+                { id: 'ddlFilterCompany', label: 'Company', type: 'select' },
+                { id: 'ddlFilterRole', label: 'Role', type: 'select' },
+                { id: 'ddlFilterStatus', label: 'Status', type: 'select' }
+            ];
+
+            let activeCount = 0;
+
+            filters.forEach(f => {
+                const el = document.getElementById(f.id);
+                if (!el) return;
+
+                let value = el.value;
+                let text = '';
+
+                if (f.type === 'text') {
+                    if (value.trim()) {
+                        text = value;
+                        activeCount++;
+                    }
+                } else if (f.type === 'select') {
+                    if (value && value !== 'all') {
+                        const selectedOption = el.options[el.selectedIndex];
+                        text = selectedOption ? selectedOption.text : value;
+                        activeCount++;
+                    }
+                }
+
+                if (text) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge bg-primary-subtle text-primary border border-primary-subtle d-flex align-items-center gap-1 fw-medium px-2 py-1';
+                    badge.innerHTML = `${f.label}: ${text} <i class="ti ti-x ms-1 cursor-pointer" onclick="removeFilter('${f.id}')" style="font-size: 10px;"></i>`;
+                    container.appendChild(badge);
+                }
+            });
+
+            if (activeCount > 0) {
+                mainContainer.style.display = 'block';
+            } else {
+                mainContainer.style.display = 'none';
+            }
+        }
+
+        function removeFilter(filterId) {
+            const el = document.getElementById(filterId);
+            if (!el) return;
+
+            if (el.tagName === 'INPUT') {
+                el.value = '';
+            } else {
+                el.value = 'all';
+            }
+
+            if (window.jQuery && jQuery(el).data('select2')) {
+                jQuery(el).trigger('change.select2');
+            } else {
+                el.dispatchEvent(new Event('change'));
+            }
+
+            applyFilters();
+        }
+
+        function resetAllFilters() {
+            const filters = ['txtSearchInput', 'ddlFilterUserType', 'ddlFilterCompany', 'ddlFilterRole', 'ddlFilterStatus'];
+            filters.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (el.tagName === 'INPUT') el.value = '';
+                else el.value = 'all';
+
+                if (window.jQuery && jQuery(el).data('select2')) {
+                    jQuery(el).trigger('change.select2');
+                }
+            });
+            applyFilters();
         }
 
         // ========================================
@@ -1161,24 +1257,31 @@
 
         async function moveWizard(delta) {
             const nextStep = currentStep + delta;
-            if (nextStep < 1 || nextStep > 3) return;
+            await goToWizardStep(nextStep);
+        }
 
-            // Simple validation for Step 1
-            if (delta > 0 && currentStep === 1) {
+        async function goToWizardStep(nextStep) {
+            if (nextStep < 1 || nextStep > 3 || nextStep === currentStep) return;
+
+            const userId = parseInt(document.getElementById('txtUserId').value) || 0;
+            const isEdit = userId > 0;
+
+            // 1. Validate if moving forward from Step 1
+            if (nextStep > currentStep && currentStep === 1) {
                 if (!validateStep1()) return;
 
-                // Validate Username Uniqueness
-                const userId = parseInt(document.getElementById('txtUserId').value) || 0;
                 const username = document.getElementById('txtUsername').value.trim();
                 
+                // Show loading on the indicator if possible, or just the button
                 const btnNext = document.getElementById('btnWizardNext');
+                const originalHtml = btnNext.innerHTML;
                 btnNext.disabled = true;
-                btnNext.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Checking...';
+                btnNext.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
                 const isUnique = await checkUsernameUnique(username, userId);
 
                 btnNext.disabled = false;
-                btnNext.innerHTML = 'Next <i class="ti ti-arrow-narrow-right ms-1"></i>';
+                btnNext.innerHTML = originalHtml;
 
                 if (!isUnique) {
                     setFieldError('txtUsername', 'Username is already taken.');
@@ -1186,32 +1289,47 @@
                 }
             }
 
+            // 2. Capture state if leaving Step 2
             if (currentStep === 2) {
                 wizardData.selectedCompanyIDs = Array.from(
                     document.querySelectorAll('.company-checkbox:checked')
                 ).map(cb => parseInt(cb.value));
             }
 
-            // Sync UI
+            // 3. Sync UI Indicators
             document.querySelector(`.wizard-pane[id="step${currentStep}"]`).classList.remove('active');
             document.querySelector(`.wizard-step[data-step="${currentStep}"]`).classList.remove('active');
-            if (delta > 0) document.querySelector(`.wizard-step[data-step="${currentStep}"]`).classList.add('completed');
+            
+            if (nextStep > currentStep) {
+                document.querySelector(`.wizard-step[data-step="${currentStep}"]`).classList.add('completed');
+            }
 
             currentStep = nextStep;
 
             document.querySelector(`.wizard-pane[id="step${currentStep}"]`).classList.add('active');
             document.querySelector(`.wizard-step[data-step="${currentStep}"]`).classList.add('active');
 
-            // Button visibility
+            // 4. Button visibility
             document.getElementById('btnWizardPrev').classList.toggle('d-none', currentStep === 1);
             document.getElementById('btnWizardNext').classList.toggle('d-none', currentStep === 3);
-            document.getElementById('btnWizardFinish').classList.toggle('d-none', currentStep !== 3);
+            
+            // SHOW SAVE BUTTON ALWAYS ON ALL STEPS IN EDIT MODE
+            const btnFinish = document.getElementById('btnWizardFinish');
+            if (isEdit) {
+                btnFinish.classList.remove('d-none');
+                btnFinish.innerHTML = '<i class="fas fa-check-circle me-1"></i> Update User';
+            } else {
+                btnFinish.classList.toggle('d-none', currentStep !== 3);
+                btnFinish.innerHTML = '<i class="fas fa-check-circle me-1"></i> Save User';
+            }
 
-            // Contextual loading for Step 2/3
-            if (delta > 0 && (currentStep === 2 || currentStep === 3)) {
+            // 5. Contextual loading for Step 2/3
+            // If we are moving to Step 2 or 3, we should ensure data is fresh
+            if (currentStep === 2 || currentStep === 3) {
                 refreshWizardSteps();
             }
         }
+
 
         async function fetchWizardData(userId = 0, previewRoleId = 0) {
             let roleIds = Array.from(document.querySelectorAll('.role-checkbox:checked')).map(cb => cb.value).join(',');
@@ -1240,6 +1358,28 @@
                 showToast('Failed to load access details.', false);
             }
         }
+
+            function getSelectedCompanyIDs_Edit() {
+                let companyIDs = [];
+
+                $('.company-checkbox:checked').each(function () {
+                    companyIDs.push($(this).val());
+                });
+
+                return companyIDs;
+            }
+            function getPermissionOverride_Edit() {
+                let permissions = [];
+
+                $('.perm-grid-checkbox:checked').each(function () {
+                    permissions.push({
+                        menuId: $(this).data('menu'),
+                        permissionId: $(this).data('perm')
+                    });
+                });
+
+                return permissions;
+            }
 
         function renderStep2() {
             const container = document.getElementById('companyAssignmentList');
@@ -1873,8 +2013,7 @@
             if (!userType) { setFieldError('ddlUserTypeID', 'User Type is required.'); ok = false; }
 
             const isNew = userId === 0;
-            const pwdRequired = isNew || password.length > 0 || confirmPassword.length > 0;
-            if (pwdRequired) {
+            if (isNew) {
                 if (!password) { setFieldError('txtPassword', 'Password is required.'); ok = false; }
                 if (!confirmPassword) { setFieldError('txtConfirmPassword', 'Confirm Password is required.'); ok = false; }
                 if (password && confirmPassword && password !== confirmPassword) {
@@ -1955,20 +2094,6 @@
             return ok;
         }
 
-        function goToWizardStep(step) {
-            if (step < 1 || step > 3) return;
-
-            document.querySelectorAll('.wizard-pane').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
-
-            currentStep = step;
-            document.getElementById(`step${step}`)?.classList.add('active');
-            document.querySelector(`.wizard-step[data-step="${step}"]`)?.classList.add('active');
-
-            document.getElementById('btnWizardPrev').classList.toggle('d-none', currentStep === 1);
-            document.getElementById('btnWizardNext').classList.toggle('d-none', currentStep === 3);
-            document.getElementById('btnWizardFinish').classList.toggle('d-none', currentStep !== 3);
-        }
 
         document.getElementById('txtPhoneNo')?.addEventListener('input', function (e) {
             const digitsOnly = normalizePhoneDigits(e.target.value).slice(0, 10);
@@ -1998,6 +2123,8 @@
             document.getElementById('txtBackDaysAllow').value = '0';
             document.getElementById('chkIsOTPEnabled').checked = false;
             resetSelection();
+            document.getElementById('passwordGroup').classList.remove('d-none');
+            document.getElementById('confirmPasswordGroup').classList.remove('d-none');
             resetWizardUI();
             updatePhoneNoIndicator();
             wizardData.selectedCompanyIDs = [];
@@ -2011,6 +2138,8 @@
             currentStep = 1;
             document.getElementById('userWizardForm').reset();
             document.getElementById('txtUserId').value = userId;
+            document.getElementById('passwordGroup').classList.add('d-none');
+            document.getElementById('confirmPasswordGroup').classList.add('d-none');
             resetWizardUI();
             wizardData.selectedCompanyIDs = [];
             try {
@@ -2049,6 +2178,11 @@
                     setTimeSelects('End', u.endTime || '');
                     document.getElementById('txtBackDaysAllow').value = u.backDaysAllow || 0;
                     document.getElementById('chkIsOTPEnabled').checked = u.isOTPEnabled || false;
+                        wizardData = {
+                            selectedCompanyIDs: response.companyIDs || [],
+                            permissionOverrides: response.permissionOverrides || []
+                        };
+                        console.log(result.data);
                     updatePhoneNoIndicator();
                 }
             } catch (err) { console.error(err); }
@@ -2057,6 +2191,9 @@
         }
 
         function resetWizardUI() {
+            const userId = parseInt(document.getElementById('txtUserId').value) || 0;
+            const isEdit = userId > 0;
+
             document.querySelectorAll('.wizard-pane').forEach(p => p.classList.remove('active'));
             document.getElementById('step1').classList.add('active');
             document.querySelectorAll('.wizard-step').forEach(s => {
@@ -2065,7 +2202,16 @@
             });
             document.getElementById('btnWizardPrev').classList.add('d-none');
             document.getElementById('btnWizardNext').classList.remove('d-none');
-            document.getElementById('btnWizardFinish').classList.add('d-none');
+            
+            const btnFinish = document.getElementById('btnWizardFinish');
+            if (isEdit) {
+                btnFinish.classList.remove('d-none');
+                btnFinish.innerHTML = '<i class="fas fa-check-circle me-1"></i> Update User';
+            } else {
+                btnFinish.classList.add('d-none');
+                btnFinish.innerHTML = '<i class="fas fa-check-circle me-1"></i> Save User';
+            }
+
             document.getElementById('companyAssignmentList').innerHTML = '<div class="text-center py-4"><span class="spinner-border spinner-border-sm"></span> Loading...</div>';
             document.getElementById('userTreeGridBody').innerHTML = '<tr><td colspan="10" class="text-center py-5 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Loading details...</td></tr>';
             if (typeof updateRoleCardsUI === 'function') updateRoleCardsUI();
@@ -2099,11 +2245,13 @@
             // Gather all data
             const request = {
                 userID: userId,
+                op: userId==0?"I":"U",
                 username: document.getElementById('txtUsername').value.trim(),
                 fullName: document.getElementById('txtFullName').value.trim(),
                 email: document.getElementById('txtEmail').value.trim(),
                 phoneNo: normalizePhoneDigits(document.getElementById('txtPhoneNo').value),
-                password: isNew ? password : (password ? password : null),
+                password: userId==0?password:"",
+                    //isNew ?password: (password? password: null)
                 userTypeID: parseInt(document.getElementById('ddlUserTypeID').value) || 0,
                 startDate: document.getElementById('txtStartDate').value || null,
                 endDate: document.getElementById('txtEndDate').value || null,
@@ -2113,8 +2261,9 @@
                 isOTPEnabled: document.getElementById('chkIsOTPEnabled').checked,
                 roleIDs: Array.from(document.querySelectorAll('.role-checkbox:checked')).map(cb => parseInt(cb.value)),
                 //companyIDs: Array.from(document.querySelectorAll('.company-checkbox:checked')).map(cb => parseInt(cb.value)),
-                companyIDs: wizardData.selectedCompanyIDs || [],
-                permissionOverrides: Array.from(document.querySelectorAll('.perm-grid-checkbox'))
+                companyIDs: userId==0?selectedCompanyIDs || []:getSelectedCompanyIDs_Edit(),
+                permissionOverrides: 
+                Array.from(document.querySelectorAll('.perm-grid-checkbox'))
                     .filter(pcb => {
                         const roleAccess = pcb.dataset.roleAccess === 'true';
                         return pcb.checked !== roleAccess;
@@ -2123,9 +2272,11 @@
                         menuID: parseInt(pcb.dataset.menu),
                         permissionID: parseInt(pcb.dataset.perm),
                         isAllowed: pcb.checked
-                    }))
+                    })) 
             };
 
+                console.log(request.permissionOverrides);
+               
             try {
                 const response = await fetch('/api/user/save-wizard', {
                     method: 'POST',
@@ -2133,6 +2284,8 @@
                     body: JSON.stringify(request)
                 });
                 const result = await response.json();
+                console.log("result");
+                console.log(result);
                 if (result.success) {
                     showToast(result.message || 'User saved successfully.', true);
                     userModal.hide();
@@ -2145,7 +2298,7 @@
                 showToast('Error saving user data. Please try again.', false);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Save User';
+                btn.innerHTML = userId > 0 ? '<i class="fas fa-check-circle me-1"></i> Update User' : '<i class="fas fa-check-circle me-1"></i> Save User';
             }
         }
 

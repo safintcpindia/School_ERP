@@ -108,6 +108,25 @@ namespace SchoolERP.Net.Controllers.Api
             return BadRequest(ApiResponse<bool>.ErrorResponse(result.message));
         }
 
+        /// <summary>
+        /// Deletes a role natively.
+        /// </summary>
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            int currentUserId = GetCurrentUserId();
+            if (currentUserId <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
+            var result = _userMgmtService.DeleteRole(id, currentUserId, ipAddress);
+            
+            if (result.success)
+                return Ok(ApiResponse<bool>.SuccessResponse(true, result.message));
+            
+            return BadRequest(ApiResponse<bool>.ErrorResponse(result.message));
+        }
+
         private int GetCurrentUserId()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");

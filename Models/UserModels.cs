@@ -23,6 +23,8 @@ namespace SchoolERP.Net.Models
         public int UserTypeID { get; set; }
         public int? DashboardID { get; set; }
         public string Token { get; set; } = string.Empty;
+        
+
     }
 
     /// <summary>
@@ -80,7 +82,7 @@ namespace SchoolERP.Net.Models
     public class UserUpsertRequest
     {
         public int UserID { get; set; }
-
+        public string op { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

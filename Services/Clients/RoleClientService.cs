@@ -44,5 +44,10 @@ namespace SchoolERP.Net.Services.Clients
         {
             return await PostAsync<bool>("api/RoleApi/save-permissions", request);
         }
+
+        public async Task<ApiResponse<bool>> DeleteRoleAsync(int roleId)
+        {
+            return await DeleteAsync<bool>($"api/RoleApi/{roleId}");
+        }
     }
 }

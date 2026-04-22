@@ -60,6 +60,39 @@ namespace SchoolERP.Net.Services
                 if (!await reader.NextResultAsync() || !await reader.ReadAsync())
                     return (0, "Error fetching user details", null);
 
+                TimeSpan startTime = TimeSpan.Zero;
+                TimeSpan endTime = TimeSpan.Zero;
+
+                if (reader["StartTime"] != DBNull.Value)
+                {
+                    startTime = TimeSpan.Parse(reader["StartTime"].ToString());
+                }
+                if (reader["EndTime"] != DBNull.Value)
+                {
+                    endTime = TimeSpan.Parse(reader["EndTime"].ToString());
+                }
+                TimeSpan currentTime = DateTime.Now.TimeOfDay;
+
+                bool isEligible;
+
+                if (startTime <= endTime)
+                {
+                    // Normal same-day range
+                    isEligible = currentTime >= startTime && currentTime <= endTime;
+                }
+                else
+                {
+                    // Overnight range (crosses midnight)
+                    isEligible = currentTime >= startTime || currentTime <= endTime;
+                }
+                if(startTime != TimeSpan.Zero && endTime != TimeSpan.Zero)
+                {
+                    if (isEligible == false)
+                        return (0, "Login is not allowed at this time.", null);
+                }
+
+                
+
                 var user = new UserSessionModel
                 {
                     UserID        = Convert.ToInt32(reader["UserID"]),
@@ -68,7 +101,9 @@ namespace SchoolERP.Net.Services
                     DefaultRoleID = reader["DefaultRoleID"] != DBNull.Value ? Convert.ToInt32(reader["DefaultRoleID"]) : 0,
                     DefaultRoleName = reader["DefaultRoleName"]?.ToString() ?? "",
                     UserTypeID    = reader["UserTypeID"] != DBNull.Value ? Convert.ToInt32(reader["UserTypeID"]) : 0,
-                    DashboardID   = reader["DashboardID"] != DBNull.Value ? Convert.ToInt32(reader["DashboardID"]) : null
+                    DashboardID   = reader["DashboardID"] != DBNull.Value ? Convert.ToInt32(reader["DashboardID"]) : null,
+                    
+
                 };
 
                 var userTypeName = GetOptionalString(reader, "UserTypeName")

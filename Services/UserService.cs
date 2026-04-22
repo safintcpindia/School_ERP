@@ -237,22 +237,22 @@ namespace SchoolERP.Net.Services
                 wizard.User = GetUserById(userId) ?? new UserViewModel();
                 wizard.User.CompanyIDs = GetUserCompanyIds(userId);
             }
+            else
+            {
+                wizard.User = new UserViewModel();
+            }
 
-            // 2. Get All Roles
+            // 2. Get All Roles & Companies
             wizard.AllRoles = GetRoles();
-
-            // 3. Get All Companies
             wizard.AllCompanies = _companyService.GetAllCompanies();
 
-            // 4. Build Permission Matrix by querying each selected role individually
-            //    and merging with OR logic so that any permission granted by ANY role is checked.
+            // 3. Build Permission Matrix by querying each selected role individually
             var parsedRoleIds = (roleIds ?? "")
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(r => int.TryParse(r.Trim(), out int id) ? id : 0)
                 .Where(id => id > 0)
                 .ToList();
 
-            // Dictionary keyed by "MenuID:PermissionID" to merge across roles
             var mergedMatrix = new Dictionary<string, UserPermissionMatrixViewModel>();
 
             foreach (int roleId in parsedRoleIds)
@@ -263,8 +263,7 @@ namespace SchoolERP.Net.Services
                 if (dt == null || dt.Rows.Count == 0) continue;
                 if (!HasMatrixColumns(dt)) continue;
                 string? menuIdColumn = FindColumnName(dt, "MENUID", "MenuID", "MenuId");
-                if (string.IsNullOrWhiteSpace(menuIdColumn))
-                    throw new ArgumentException("Column 'MenuID' does not belong to table.");
+                if (string.IsNullOrWhiteSpace(menuIdColumn)) continue;
 
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -275,7 +274,6 @@ namespace SchoolERP.Net.Services
 
                     if (mergedMatrix.TryGetValue(key, out var existing))
                     {
-                        // OR logic: if ANY role grants access, mark it as granted
                         if (hasAccess)
                         {
                             existing.RoleAccess = true;
@@ -300,7 +298,7 @@ namespace SchoolERP.Net.Services
                 }
             }
 
-            // If editing an existing user, also check for user-level overrides
+            // 4. If editing an existing user, also check for user-level overrides
             if (userId > 0)
             {
                 try
@@ -319,62 +317,40 @@ namespace SchoolERP.Net.Services
 
                         bool? userOverride = dr["UserOverride"] != DBNull.Value ? (bool?)dr["UserOverride"] : null;
 
-                        if (mergedMatrix.TryGetValue(key, out var existing) && userOverride.HasValue)
+                        if (mergedMatrix.TryGetValue(key, out var existing))
                         {
                             existing.UserOverride = userOverride;
-                            existing.HasAccess = userOverride.Value;
+                            // Priority: Override wins over role
+                            if (userOverride.HasValue)
+                            {
+                                existing.HasAccess = userOverride.Value;
+                            }
                         }
-                    }
-                }
-                catch
-                {
-                    // sp_Users_GetPermissionsMatrix may not exist; overrides are optional
-                }
-            }
-
-            // FILTERING: To satisfy the requirement "only those role and permissions",
-            // we filter the matrix to only include menus that have role access OR a user override.
-            // We also must include parent menus to keep the tree structure valid.
-
-            var menusWithAccess = new HashSet<int>();
-            foreach (var item in mergedMatrix.Values)
-            {
-                if (item.RoleAccess || item.UserOverride.HasValue)
-                {
-                    menusWithAccess.Add(item.MenuID);
-                }
-            }
-
-            // Recursively add parent IDs to ensure the tree-view doesn't have "orphan" child nodes
-            var menuParents = mergedMatrix.Values
-                .Where(m => m.ParentID.HasValue)
-                .GroupBy(m => m.MenuID)
-                .ToDictionary(g => g.Key, g => g.First().ParentID!.Value);
-
-            bool addedNew;
-            do
-            {
-                addedNew = false;
-                var currentList = menusWithAccess.ToList();
-                foreach (var mId in currentList)
-                {
-                    if (menuParents.TryGetValue(mId, out int parentId))
-                    {
-                        if (menusWithAccess.Add(parentId))
+                        else if (userOverride.HasValue)
                         {
-                            addedNew = true;
+                            // If user has an override for a menu/perm NOT in the roles, we still add it
+                            mergedMatrix[key] = new UserPermissionMatrixViewModel
+                            {
+                                MenuID         = menuId,
+                                MenuName       = dr["MenuName"]?.ToString() ?? "",
+                                ParentID       = dr["ParentID"] != DBNull.Value ? (int?)Convert.ToInt32(dr["ParentID"]) : null,
+                                PermissionID   = permId,
+                                PermissionName = dr["PermissionName"]?.ToString() ?? "",
+                                DisplayLabel   = dr["DisplayLabel"]?.ToString() ?? "",
+                                RoleAccess     = false,
+                                UserOverride   = userOverride,
+                                HasAccess      = userOverride.Value
+                            };
                         }
                     }
                 }
-            } while (addedNew);
+                catch { /* Optional SP failed */ }
+            }
 
-            //wizard.PermissionMatrix = mergedMatrix.Values
-            //    .Where(m => menusWithAccess.Contains(m.MenuID))
-            //    .ToList();
             wizard.PermissionMatrix = mergedMatrix.Values.ToList();
-
             return wizard;
         }
+
 
         public (int Result, string Message) SaveUserWizard(UserUpsertRequest request, int modifiedBy)
         {

@@ -1317,10 +1317,10 @@
             const btnFinish = document.getElementById('btnWizardFinish');
             if (isEdit) {
                 btnFinish.classList.remove('d-none');
-                btnFinish.innerHTML = '<i class="fas fa-check-circle me-1"></i> Update User';
+                btnFinish.innerHTML = '<i class="ti ti-cloud me-1"></i> Save';
             } else {
                 btnFinish.classList.toggle('d-none', currentStep !== 3);
-                btnFinish.innerHTML = '<i class="fas fa-check-circle me-1"></i> Save User';
+                btnFinish.innerHTML = '<i class="ti ti-cloud me-1"></i> Save';
             }
 
             // 5. Contextual loading for Step 2/3
@@ -2206,10 +2206,10 @@
             const btnFinish = document.getElementById('btnWizardFinish');
             if (isEdit) {
                 btnFinish.classList.remove('d-none');
-                btnFinish.innerHTML = '<i class="fas fa-check-circle me-1"></i> Update User';
+                btnFinish.innerHTML = '<i class="ti ti-cloud me-1"></i> Save';
             } else {
                 btnFinish.classList.add('d-none');
-                btnFinish.innerHTML = '<i class="fas fa-check-circle me-1"></i> Save User';
+                btnFinish.innerHTML = '<i class="ti ti-cloud me-1"></i> Save';
             }
 
             document.getElementById('companyAssignmentList').innerHTML = '<div class="text-center py-4"><span class="spinner-border spinner-border-sm"></span> Loading...</div>';
@@ -2298,7 +2298,7 @@
                 showToast('Error saving user data. Please try again.', false);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = userId > 0 ? '<i class="fas fa-check-circle me-1"></i> Update User' : '<i class="fas fa-check-circle me-1"></i> Save User';
+                btn.innerHTML = userId > 0 ? '<i class="ti ti-cloud me-1"></i> Save' : '<i class="ti ti-cloud me-1"></i> Save';
             }
         }
 

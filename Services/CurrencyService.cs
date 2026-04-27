@@ -8,7 +8,7 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// This class provides business logic and data access services for CurrencyService.
+    /// This service handles the actual work of managing currency information, like saving exchange rates and updating currency details in the database.
     /// </summary>
     public class CurrencyService : ICurrencyService
     {
@@ -19,6 +19,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a list of all available currencies from the database.
+        /// </summary>
         public List<MstCurrencyViewModel> GetAllCurrencies(bool includeDeleted = false)
         {
             var list = new List<MstCurrencyViewModel>();
@@ -32,6 +35,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a single currency using its unique ID.
+        /// </summary>
         public MstCurrencyViewModel? GetCurrencyByID(int currencyId)
         {
             var parameters = new[] { new SqlParameter("@CurrencyId", currencyId) };
@@ -41,7 +47,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Commits physical exchange identifiers or modifies rate factors via native SQL stored procedures.
+        /// Saves or updates currency information in the database, including its name, code, and exchange rate.
         /// </summary>
         public (bool success, string message) UpsertCurrency(MstCurrencyUpsertRequest request, int userId)
         {
@@ -64,6 +70,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a currency record from the database.
+        /// </summary>
         public (bool success, string message) DeleteCurrency(int currencyId, int userId)
         {
             try
@@ -79,6 +88,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a currency can currently be used in the system.
+        /// </summary>
         public (bool success, string message) ToggleCurrencyStatus(int currencyId, bool isActive, int userId)
         {
             try
@@ -95,6 +107,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about currencies into a format that the application can easily use.
+        /// </summary>
         private MstCurrencyViewModel MapRowToViewModel(DataRow row)
         {
             return new MstCurrencyViewModel

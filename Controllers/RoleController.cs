@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// Controller responsible for managing Application Roles, their statuses, and associated permission matrices.
-    /// It interfaces with the backend IRoleClientService via API calls.
+    /// This controller manages user roles (like 'Admin' or 'Staff') and controls what each role is allowed to see and do in the system.
     /// </summary>
     public class RoleController : Controller
     {
@@ -22,6 +21,9 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the main page with a list of all defined user roles.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
             var response = await _roleClient.GetAllRolesAsync();
@@ -32,6 +34,9 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Gets the details of a specific role so you can view or edit its basic information.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetRole(int roleId)
         {
@@ -45,6 +50,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, role = response.Data });
         }
 
+        /// <summary>
+        /// Saves a new role or updates an existing one with the name and details you provided.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] MstRoleUpsertRequest request)
         {
@@ -59,6 +67,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message, roleId = response.Data });
         }
 
+        /// <summary>
+        /// Turns a role on or off, making it available or unavailable for users.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int roleId, bool isActive)
         {
@@ -69,6 +80,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Gets the list of menu items and actions that a specific role is allowed to access.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetPermissions(int roleId)
         {
@@ -81,6 +95,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, data = response.Data ?? new System.Collections.Generic.List<RoleMenuPermissionViewModel>() });
         }
 
+        /// <summary>
+        /// Saves the chosen list of allowed actions for a role, defining what they can do in the application.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> SavePermissions([FromBody] MstRolePermissionSaveRequest request)
         {
@@ -91,6 +108,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Permanently removes a role from the system's records.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Delete(int roleId)
         {

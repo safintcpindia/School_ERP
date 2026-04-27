@@ -123,7 +123,7 @@
                 </div>
             </div>
             <div class="modal-body p-4">
-                <div id="paymentModalNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
+                @* Local alert div removed in favor of global toast system *@
                 <form id="itemForm">
                     <input type="hidden" id="txtItemId" value="0">
                     <div class="mb-3">
@@ -180,7 +180,7 @@
 
         function openAddModal() {
             if (!permCanAdd) {
-                alert('You do not have permission to add.');
+                showToast('You do not have permission to add.', 'warning');
                 return;
             }
             clearPaymentModalValidation();
@@ -193,7 +193,7 @@
 
         async function editSelected() {
             if (!permCanEdit) {
-                alert('You do not have permission to edit.');
+                showToast('You do not have permission to edit.', 'warning');
                 return;
             }
             if (selectedPaymentId === 0) return;
@@ -212,7 +212,7 @@
 
         async function deleteSelected() {
             if (!permCanDelete) {
-                alert('You do not have permission to delete.');
+                showToast('You do not have permission to delete.', 'warning');
                 return;
             }
             if (selectedPaymentId === 0) return;
@@ -220,7 +220,7 @@
 
             const resp = await fetch(`/Settings/DeletePaymentMethod?id=${selectedPaymentId}`, { method: 'POST' });
             const res = await resp.json();
-            if (res.success) location.reload(); else alert(res.message);
+            if (res.success) location.reload(); else showToast(res.message, 'error');
         }
 
         async function saveItem() {
@@ -264,7 +264,7 @@
 
         async function toggleStatus(id, isActive) {
             if (!permCanEdit) {
-                alert('You do not have permission to change status.');
+                showToast('You do not have permission to change status.', 'warning');
                 location.reload();
                 return;
             }

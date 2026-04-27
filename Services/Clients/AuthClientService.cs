@@ -6,7 +6,7 @@ using SchoolERP.Net.Models.Common;
 namespace SchoolERP.Net.Services.Clients
 {
     /// <summary>
-    /// This class provides business logic and data access services for AuthClientService.
+    /// This service handles the actual work of communicating with the security system to verify a user's login details and start their session.
     /// </summary>
     public class AuthClientService : BaseApiClient, IAuthClientService
     {
@@ -14,6 +14,9 @@ namespace SchoolERP.Net.Services.Clients
         {
         }
 
+        /// <summary>
+        /// Performs the login action by sending the user's credentials to the security server and retrieving their session information if successful.
+        /// </summary>
         public async Task<ApiResponse<UserSessionModel>> LoginAsync(LoginRequest request)
         {
             return await PostAsync<UserSessionModel>("api/auth/login", request);

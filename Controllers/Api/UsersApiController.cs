@@ -10,8 +10,7 @@ namespace SchoolERP.Net.Controllers.Api
     [Route("api/[controller]")]
     [Authorize]
     /// <summary>
-    /// Alternate simplified routing segment handling Create/Login constructs directly.
-    /// Functions similarly to UserApiController but explicitly partitions auth.
+    /// This controller provides the technical endpoints for user registration and login through the API.
     /// </summary>
     public class UsersApiController : ControllerBase
     {
@@ -25,9 +24,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Example of creating a user. 
-        /// Password hash/salt is generated in SQL stored procedure.
-        /// Email/Phone/OTPSecret will be encrypted in the UserService.
+        /// Creates a new user account in the system with the information you provided.
         /// </summary>
         [HttpPost("create")]
         public IActionResult CreateUser([FromBody] UserUpsertRequest request)
@@ -45,8 +42,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Example of logging in.
-        /// Password verification happens in SQL stored procedure.
+        /// Verifies a user's login details and provides access if they are correct.
         /// </summary>
         [HttpPost("login")]
         [AllowAnonymous]

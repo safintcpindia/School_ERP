@@ -144,7 +144,7 @@
 
     .item-row.level-0.bg-light td,
     .item-row.level-1.bg-light td {
-        background-color: #f0f0f0;
+            background-color: #e3e4ef70;
     }
     
     
@@ -177,13 +177,32 @@
     </div>
 </div>
 
+    
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card mb-2 shadow-tbl-outer">
+        <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">                   
+                    <div class="position-relative border d-flex align-items-center rounded-2 px-3 ">
+                        <i class="fas fa-search search-icon-input"></i>
+                        <input type="text" class="form-control border-0 ps-2" id="txtSearchInput"
+                               placeholder="Search company..." style="min-width: 220px;">
+                    </div>
+                </div>
+                </div>
+        </div>
+    </div>    
+</div>
+<div class="row">
+    <div class="col-xl-12">
     <div class="card shadow-tbl">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table" id="companyTable">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-4" style="width: 50px;">Select</th>
+                            <th style="width: 50px;">#</th>
                             <th>School Name</th>
                             <th>Code</th>
                             <th>Parent</th>
@@ -201,7 +220,7 @@
                                 data-parent="@(item.ParentCompanyId ?? 0)" 
                                 onclick="selectItem(@item.CompanyId, this)" 
                                 style="cursor: pointer;">
-                                <td class="ps-4 text-center">
+                                <td class="">
                                     <input type="radio" name="selectedCompany" class="form-check-input" value="@item.CompanyId">
                                 </td>
                                 <td class="school-name-cell">
@@ -264,7 +283,8 @@
             </div>
         </div>
     </div>
-
+    </div>
+</div>
 
 <!-- Add/Edit Modal -->
 <div class="modal fade" id="companyModal" tabindex="-1" aria-hidden="true">
@@ -282,7 +302,7 @@
                 </div>
             </div>
             <div class="modal-body p-4">
-                    <div id="companyModalNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
+                    @* Local alert div removed in favor of global toast system *@
                     <form id="companyForm">
                         <input type="hidden" id="txtCompanyId" value="0" />
                     
@@ -922,7 +942,7 @@
 
     function openModal() {
         if (!permCanAdd) {
-            alert('You do not have permission to add.');
+            showToast('You do not have permission to add.', 'warning');
             return;
         }
         clearCompanyModalValidation();
@@ -935,7 +955,7 @@
 
     async function editSelected() {
         if (!permCanEdit) {
-            alert('You do not have permission to edit.');
+            showToast('You do not have permission to edit.', 'warning');
             return;
         }
         if (selectedCompanyId === 0) return;
@@ -965,18 +985,18 @@
                 $('#modalTitle').text('Edit Company');
                 companyModal.show();
             } else {
-                alert(result.message || 'Error fetching company details');
+                showToast(result.message || 'Error fetching company details', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('An unexpected error occurred');
+            showToast('An unexpected error occurred', 'error');
         }
     }
 
     async function saveCompany() {
         const cid = parseInt($('#txtCompanyId').val());
         if (cid === 0 && !permCanAdd) {
-            alert('You do not have permission to add.');
+            showToast('You do not have permission to add.', 'warning');
             return;
         }
         if (cid > 0 && !permCanEdit) {
@@ -1048,13 +1068,13 @@
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('An unexpected error occurred');
+            showToast('An unexpected error occurred', 'error');
         }
     }
 
     async function deleteSelected() {
         if (!permCanDelete) {
-            alert('You do not have permission to delete.');
+            showToast('You do not have permission to delete.', 'warning');
             return;
         }
         if (selectedCompanyId === 0) return;
@@ -1063,16 +1083,16 @@
             const response = await fetch(`/Settings/DeleteCompany?id=${selectedCompanyId}`, { method: 'POST' });
             const result = await response.json();
             if (result.success) location.reload();
-            else alert(result.message || 'Error deleting company');
+            else showToast(result.message || 'Error deleting company', 'error');
         } catch (error) {
             console.error('Error:', error);
-            alert('An unexpected error occurred');
+            showToast('An unexpected error occurred', 'error');
         }
     }
 
     async function toggleStatus(id, isActive) {
         if (!permCanEdit) {
-            alert('You do not have permission to change status.');
+            showToast('You do not have permission to change status.', 'warning');
             location.reload();
             return;
         }
@@ -1080,15 +1100,27 @@
             const response = await fetch(`/Settings/ToggleCompanyStatus?id=${id}&isActive=${isActive}`, { method: 'POST' });
             const result = await response.json();
             if (!result.success) {
-                alert(result.message || 'Error updating status');
+                showToast(result.message || 'Error updating status', 'error');
                 location.reload();
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('An unexpected error occurred');
+            showToast('An unexpected error occurred', 'error');
             location.reload();
         }
     }
+
+
+     
+        document.getElementById('txtSearchInput').addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('#companyTable tbody .item-row').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+
 </script>
+
+
 }
 

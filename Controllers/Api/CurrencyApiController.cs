@@ -11,7 +11,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// Master data service linking financial denomination constants to billing mechanisms.
+    /// This controller provides the technical endpoints for managing currency settings through the API.
     /// </summary>
     public class CurrencyApiController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Reads all local transaction currencies structured logically for frontend.
+        /// Gets the full list of all available currencies from the system.
         /// </summary>
         [HttpGet("GetAll")]
         public IActionResult GetAll(bool includeDeleted = false)
@@ -33,7 +33,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Exposes base metadata for a singular exchange denomination configuration.
+        /// Gets the details of one specific currency using its unique ID number.
         /// </summary>
         [HttpGet("GetByID/{id}")]
         public IActionResult GetByID(int id)
@@ -44,7 +44,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Connects new structural monetary tokens mapping against locale setups.
+        /// Saves a new currency or updates an existing one with the details provided.
         /// </summary>
         [HttpPost("Upsert")]
         public IActionResult Upsert([FromBody] MstCurrencyUpsertRequest request)
@@ -56,7 +56,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Wipes mapping completely (potentially halting dependent ledger rows on Foreign Keys).
+        /// Permanently removes a currency's record from the system.
         /// </summary>
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
@@ -67,7 +67,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Suspends usage natively across global system contexts softly.
+        /// Turns a currency's active status on or off.
         /// </summary>
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)

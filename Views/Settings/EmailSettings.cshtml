@@ -43,7 +43,7 @@
                 <h6 class="card-title mb-0">SMTP Configuration</h6>
             </div>
             <div class="card-body">
-                <div id="emailNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
+                @* Local alert div removed in favor of global toast system *@
                 <form id="emailSettingsForm">
                     <input type="hidden" id="hdnEmailId" value="@(Model?.EmailId ?? 0)" />
                     
@@ -142,7 +142,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@* SweetAlert script removed in favor of global toast system *@
 
 @section Scripts {
 <script>
@@ -203,7 +203,7 @@
                 if (!password) { IV.setFieldError('txtSmtpPassword', 'errSmtpPassword', 'SMTP password is required.'); hasError = true; }
 
                 if (hasError) {
-                    IV.setNotice('emailNotice', 'Please correct the highlighted fields.');
+                    showToast('Please correct the highlighted fields.', 'warning');
                     return;
                 }
             }
@@ -230,26 +230,15 @@
                 data: JSON.stringify(request),
                 success: function (response) {
                     if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: response.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            location.reload();
-                        });
+                        showToast(response.message, 'success');
+                        setTimeout(() => location.reload(), 2000);
                     } else {
-                        IV.setNotice('emailNotice', response.message || 'Save failed.');
+                        showToast(response.message || 'Save failed.', 'error');
                     }
                 },
                 error: function (xhr, status, error) {
                     console.error("AJAX Error:", status, error, xhr.responseText);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'An unexpected error occurred. Check browser console for details.'
-                    });
+                    showToast('An unexpected error occurred. Check browser console for details.', 'error');
                 },
                 complete: function () {
                     btn.prop('disabled', false).html(originalHtml);

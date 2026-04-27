@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for AuthController.
+    /// This controller manages the door to the application, handling when users try to log in or log out.
     /// </summary>
+    [Microsoft.AspNetCore.Authorization.AllowAnonymous]
     public class AuthController : Controller
     {
         private readonly IAuthClientService _authClient;
@@ -18,10 +19,8 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Serves the initial Login page view.
-        /// Unauthenticated users are redirected here.
+        /// Shows the login screen where you enter your username and password.
         /// </summary>
-        /// <returns>The Login Razor View.</returns>
         public IActionResult Login()
         {
             // Simply return the default view without a model on first load.
@@ -29,11 +28,8 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Processes the submitted login credentials.
-        /// Communicates with AuthClientService for token generation or credential validation.
+        /// Takes the username and password you entered, checks if they are correct, and lets you into the system if they match.
         /// </summary>
-        /// <param name="request">The data payload containing Username and Password.</param>
-        /// <returns>Redirects to Dashboard if successful, else re-renders Login with error.</returns>
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)
         {
@@ -59,9 +55,8 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Purges the active user session and redirects back to the login perimeter.
+        /// Logs you out of the application and clears your session so you can safely leave the computer.
         /// </summary>
-        /// <returns>Redirect to Login action.</returns>
         public IActionResult Logout()
         {
             // Clear cookies used by this app.

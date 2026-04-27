@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for UserTypeController.
+    /// This controller manages the different categories of users in the system (like 'Employee', 'Teacher', or 'Student').
     /// </summary>
     public class UserTypeController : Controller
     {
@@ -21,6 +21,9 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the main list of all defined user categories.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
             var response = await _userTypeClient.GetAllAsync();
@@ -31,6 +34,9 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Gets the details of a specific user category so you can view or edit its name.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetUserType(int typeId)
         {
@@ -42,6 +48,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, userType = response.Data });
         }
 
+        /// <summary>
+        /// Saves a new user category or updates an existing one with the name you provided.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] MstUserTypeUpsertRequest request)
         {
@@ -55,6 +64,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Turns a user category on or off, determining if it can be assigned to users.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int typeId, bool isActive)
         {

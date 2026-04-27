@@ -30,9 +30,9 @@
     var canDelete = PermHelper.HasPermissionByUrl("/Permission", "Delete");
 }
 
-<div id="permPageNotice" class="alert alert-danger py-2 px-3 small d-none mb-2" role="alert"></div>
+@* Local alert div removed in favor of global toast system *@
 
-<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
     <div>
         <h6 class="fw-bold mb-0">Permission Management</h6>
     </div>
@@ -60,6 +60,21 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card mb-2 shadow-tbl-outer">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div class="position-relative border d-flex align-items-center rounded-2 px-3 ">
+                        <i class="fas fa-search search-icon-input"></i>
+                        <input type="text" class="form-control border-0 ps-2" id="txtSearchInput"
+                               placeholder="Search permission..." style="min-width: 220px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
    @*  <div class="row mb-4">
         <div class="col-12">
@@ -101,8 +116,8 @@
                             <thead>
                                 <tr>
                                     <th style="width: 50px;">Select</th>
-                                    <th>Permission Name (Action)</th>
-                                    <th>Display Label</th>
+                                    <th style="width:220px;">Permission Name (Action)</th>
+                                    <th style="width:220px;">Display Label</th>
                                     <th>Status</th>
                                     <th>Created On</th>
                                 </tr>
@@ -155,7 +170,7 @@
                 </div>
             </div>
             <div class="modal-body">
-                <div id="permModalNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
+                @* Local alert div removed in favor of global toast system *@
                 <form id="itemForm" class="row">
                     <input type="hidden" id="txtItemId" value="0">
                     <div class="col-md-12 mb-3">

@@ -31,7 +31,7 @@ namespace SchoolERP.Net.Filters
 
             var user = http.User;
             if (user.Identity?.IsAuthenticated != true)
-                return Task.CompletedTask;
+                return Task.CompletedTask; // Global policy will handle this, but keep as safety
 
             if (IsSuperAdmin(user))
                 return Task.CompletedTask;
@@ -76,9 +76,6 @@ namespace SchoolERP.Net.Filters
             if (p.StartsWith("/js", StringComparison.OrdinalIgnoreCase)) return true;
             if (p.StartsWith("/assets", StringComparison.OrdinalIgnoreCase)) return true;
             if (p.StartsWith("/favicon", StringComparison.OrdinalIgnoreCase)) return true;
-            if (string.Equals(p, "/", StringComparison.OrdinalIgnoreCase)) return true;
-            // Default landing page after login (optional: remove if Dashboard is permission-controlled in menu master)
-            if (p.StartsWith("/dashboard", StringComparison.OrdinalIgnoreCase)) return true;
 
             return false;
         }

@@ -99,6 +99,7 @@ namespace SchoolERP.Net.Models
     {
         public int MenuID { get; set; }
         public string MenuName { get; set; } = string.Empty;
+        public string MenuIcon { get; set; } = string.Empty;
         public int? ParentID { get; set; }
         public int PermissionID { get; set; }
         public string PermissionName { get; set; } = string.Empty;

@@ -11,7 +11,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// This class handles HTTP routing and API requests for EmailConfigApiController.
+    /// This controller provides the technical endpoints for configuring the email server settings through the API.
     /// </summary>
     public class EmailConfigApiController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Extracts the active SMTP credentials safely stripped for administrative review.
+        /// Gets the current email server settings (like the server address and port) from the system.
         /// </summary>
         [HttpGet("Get")]
         public IActionResult Get()
@@ -33,7 +33,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Commits new mail server parameters (host, port, ssl settings) and stores audit logs.
+        /// Saves or updates the email server settings with the information you provided.
         /// </summary>
         [HttpPost("Upsert")]
         public IActionResult Upsert([FromBody] MstEmailConfigUpsertRequest request)

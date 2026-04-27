@@ -12,7 +12,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// Feeds linguistic definitions mapped across global string dictionaries.
+    /// This controller provides the technical endpoints for managing languages through the API.
     /// </summary>
     public class LanguageApiController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Reads installed localization branches available to users.
+        /// Gets the full list of all languages supported by the system.
         /// </summary>
         [HttpGet("GetAll")]
         public IActionResult GetAll(bool includeDeleted = false)
@@ -34,7 +34,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Extrapolates detailed metadata for a single specific dialect block.
+        /// Gets the details of one specific language using its unique ID number.
         /// </summary>
         [HttpGet("GetByID/{id}")]
         public IActionResult GetByID(int id)
@@ -45,7 +45,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Implements a new localized language into translation dependencies.
+        /// Saves a new language or updates an existing one with the details provided.
         /// </summary>
         [HttpPost("Upsert")]
         public IActionResult Upsert([FromBody] MstLanguageUpsertRequest request)
@@ -58,7 +58,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Completely deletes localized pointers from dialect graphs natively.
+        /// Permanently removes a language record from the system.
         /// </summary>
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
@@ -70,7 +70,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Masks locale choices from end-users dynamically.
+        /// Turns a language's active status on or off.
         /// </summary>
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)

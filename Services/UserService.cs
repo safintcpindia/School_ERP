@@ -9,9 +9,7 @@ using SchoolERP.Net.Utilities;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// ADO.NET-based implementation of IUserService.
-    /// Uses stored procedures for all data access — TDD 12.7.
-    /// Password hashing: PBKDF2-SHA256 with per-user random salt.
+    /// This service handles the actual work of managing user accounts, such as saving profile information, assigning roles and companies, and managing account security in the database.
     /// </summary>
     public class UserService : IUserService
     {
@@ -26,9 +24,9 @@ namespace SchoolERP.Net.Services
             _companyService = companyService;
         }
 
-        // =========================================================
-        // GET ALL USERS
-        // =========================================================
+        /// <summary>
+        /// Retrieves a list of all users from the database, including their role and category information.
+        /// </summary>
         public List<UserViewModel> GetAllUsers()
         {
             var users = new List<UserViewModel>();
@@ -40,9 +38,9 @@ namespace SchoolERP.Net.Services
             return users;
         }
 
-        // =========================================================
-        // GET BY ID
-        // =========================================================
+        /// <summary>
+        /// Looks up the details of a specific user from the database.
+        /// </summary>
         public UserViewModel? GetUserById(int userId)
         {
             var parameters = new[] { new SqlParameter("@UserID", userId) };
@@ -52,9 +50,9 @@ namespace SchoolERP.Net.Services
             return MapRowToViewModel(dt.Rows[0]);
         }
 
-        // =========================================================
-        // GET ASSIGNED ROLE IDS (M:M)
-        // =========================================================
+        /// <summary>
+        /// Fetches the list of role IDs assigned to a specific user from the database.
+        /// </summary>
         public List<int> GetUserRoleIds(int userId)
         {
             var roleIds = new List<int>();
@@ -67,6 +65,9 @@ namespace SchoolERP.Net.Services
             return roleIds;
         }
 
+        /// <summary>
+        /// Fetches the list of company IDs a user is assigned to from the database.
+        /// </summary>
         public List<int> GetUserCompanyIds(int userId)
         {
             var companyIds = new List<int>();
@@ -79,9 +80,9 @@ namespace SchoolERP.Net.Services
             return companyIds;
         }
 
-        // =========================================================
-        // GET ROLES DROPDOWN
-        // =========================================================
+        /// <summary>
+        /// Retrieves all active roles from the database.
+        /// </summary>
         public List<RoleViewModel> GetRoles()
         {
             var roles = new List<RoleViewModel>();
@@ -99,9 +100,9 @@ namespace SchoolERP.Net.Services
             return roles;
         }
 
-        // =========================================================
-        // GET USER TYPES DROPDOWN
-        // =========================================================
+        /// <summary>
+        /// Retrieves all active user categories from the database.
+        /// </summary>
         public List<MstUserTypeViewModel> GetUserTypes()
         {
             var types = new List<MstUserTypeViewModel>();
@@ -120,12 +121,8 @@ namespace SchoolERP.Net.Services
             return types;
         }
 
-        // =========================================================
-        // CREATE USER 
-        // =========================================================
         /// <summary>
-        /// Orchestrates the insertion pipeline consisting of memory-based hashing (PBKDF2), 
-        /// structural data encryption (AES), and array compression (RoleIDs) before triggering ADO.NET.
+        /// Saves a new user's information to the database.
         /// </summary>
         public (int Result, string Message) CreateUser(UserUpsertRequest request, int createdBy)
         {
@@ -172,12 +169,8 @@ namespace SchoolERP.Net.Services
             return (-99, "Unknown error");
         }
 
-        // =========================================================
-        // UPDATE USER
-        // =========================================================
         /// <summary>
-        /// Updates profile attributes without overwriting unchanged passwords or keys.
-        /// Recomputes hashes only if requested natively.
+        /// Updates a user's information in the database.
         /// </summary>
         public (int Result, string Message) UpdateUser(UserUpsertRequest request, int modifiedBy)
         {
@@ -224,9 +217,9 @@ namespace SchoolERP.Net.Services
             return (-99, "Unknown error");
         }
 
-        // =========================================================
-        // WIZARD DATA & SAVE
-        // =========================================================
+        /// <summary>
+        /// Collects all necessary data (user details, roles, companies) from the database for the user setup wizard.
+        /// </summary>
         public UserWizardViewModel GetUserWizardData(int userId, string roleIds = "")
         {
             var wizard = new UserWizardViewModel();
@@ -262,7 +255,7 @@ namespace SchoolERP.Net.Services
 
                 if (dt == null || dt.Rows.Count == 0) continue;
                 if (!HasMatrixColumns(dt)) continue;
-                string? menuIdColumn = FindColumnName(dt, "MENUID", "MenuID", "MenuId");
+                string? menuIdColumn = FindColumnName(dt, "MENUID", "MenuID", "MenuId","MenuIcon");
                 if (string.IsNullOrWhiteSpace(menuIdColumn)) continue;
 
                 foreach (DataRow dr in dt.Rows)
@@ -286,6 +279,7 @@ namespace SchoolERP.Net.Services
                         {
                             MenuID         = menuId,
                             MenuName       = dr["MenuName"]?.ToString() ?? "",
+                            MenuIcon = dr["MenuIcon"]?.ToString() ?? "",
                             ParentID       = dr["ParentID"] != DBNull.Value ? (int?)Convert.ToInt32(dr["ParentID"]) : null,
                             PermissionID   = permId,
                             PermissionName = dr["PermissionName"]?.ToString() ?? "",
@@ -333,6 +327,7 @@ namespace SchoolERP.Net.Services
                             {
                                 MenuID         = menuId,
                                 MenuName       = dr["MenuName"]?.ToString() ?? "",
+                                MenuIcon    = dr["MenuIcon"]?.ToString() ?? "",
                                 ParentID       = dr["ParentID"] != DBNull.Value ? (int?)Convert.ToInt32(dr["ParentID"]) : null,
                                 PermissionID   = permId,
                                 PermissionName = dr["PermissionName"]?.ToString() ?? "",
@@ -352,6 +347,9 @@ namespace SchoolERP.Net.Services
         }
 
 
+        /// <summary>
+        /// Executes a database command to save all user details, role assignments, and company assignments at once.
+        /// </summary>
         public (int Result, string Message) SaveUserWizard(UserUpsertRequest request, int modifiedBy)
         {
             try
@@ -427,9 +425,9 @@ namespace SchoolERP.Net.Services
             }
         }
 
-        // =========================================================
-        // TOGGLE STATUS
-        // =========================================================
+        /// <summary>
+        /// Updates whether a user is currently allowed to log into the system.
+        /// </summary>
         public (int Result, string Message) ToggleUserStatus(int userId, bool isActive, int doneBy)
         {
             var parameters = new[]
@@ -445,6 +443,9 @@ namespace SchoolERP.Net.Services
             return (1, "Status updated successfully");
         }
 
+        /// <summary>
+        /// Marks a user as deleted in the database.
+        /// </summary>
         public (int Result, string Message) DeleteUser(int userId, int doneBy)
         {
             var parameters = new[]
@@ -460,9 +461,9 @@ namespace SchoolERP.Net.Services
             return (-99, "Unknown error");
         }
 
-        // =========================================================
-        // UNLOCK
-        // =========================================================
+        /// <summary>
+        /// Clears any login locks on a user's account in the database.
+        /// </summary>
         public void UnlockUser(int userId, int doneBy)
         {
             var parameters = new[]
@@ -473,6 +474,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper.ExecuteNonQuery("sp_Users_Unlock", parameters);
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about a user into a format the application can easily use.
+        /// </summary>
         private UserViewModel MapRowToViewModel(DataRow dr)
         {
             return new UserViewModel
@@ -518,12 +522,15 @@ namespace SchoolERP.Net.Services
             return string.IsNullOrEmpty(value) ? null : value;
         }
 
+        /// <summary>
+        /// Asks the database if a specific username is already taken by another user.
+        /// </summary>
         public bool IsUsernameUnique(string username, int userId)
         {
             var parameters = new[]
             {
                 new SqlParameter("@Username", username),
-                new SqlParameter("@UserID", userId)
+                new SqlParameter("@UserID", userId),
             };
             DataTable dt = _sqlHelper.ExecuteQuery("sp_Users_CheckUsernameValid", parameters);
             if (dt.Rows.Count > 0 && dt.Rows[0]["IsUnique"] != DBNull.Value)

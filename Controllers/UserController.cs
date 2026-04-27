@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for UserController.
+    /// This controller manages all user accounts in the school, allowing you to create staff, teacher, or student login accounts.
     /// </summary>
     public class UserController : Controller
     {
@@ -25,6 +25,9 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the main list of all users registered in the system.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "User Management";
@@ -45,6 +48,9 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Gets the details of a specific user, including their name, login info, and roles, for viewing or editing.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetUser(int userId)
         {
@@ -93,6 +99,9 @@ namespace SchoolERP.Net.Controllers
             }
         }
 
+        /// <summary>
+        /// Saves a new user account or updates an existing one with the information you provided.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] UserUpsertRequest request)
         {
@@ -122,6 +131,9 @@ namespace SchoolERP.Net.Controllers
             }
         }
 
+        /// <summary>
+        /// Turns a user account on or off, determining if they can log into the system.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int userId, bool isActive)
         {
@@ -139,6 +151,9 @@ namespace SchoolERP.Net.Controllers
             }
         }
 
+        /// <summary>
+        /// Unlocks a user account that might have been locked due to too many failed login attempts.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Unlock(int userId)
         {

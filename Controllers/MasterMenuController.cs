@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for MasterMenuController.
+    /// This controller manages the system's navigation menus, allowing you to organize the sidebar and set up menu items.
     /// </summary>
     public class MasterMenuController : Controller
     {
@@ -22,6 +22,9 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the setup page where you can see all available menus and their sub-menus.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
             var response = await _menuClient.GetAllMenusAsync();
@@ -35,6 +38,9 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Gets the details of a specific menu item so you can view its settings or edit them.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetMenu(int menuId)
         {
@@ -46,6 +52,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, menu = response.Data });
         }
 
+        /// <summary>
+        /// Saves a new menu item or updates an existing one based on the information you entered.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] MenuUpsertRequest request)
         {
@@ -65,6 +74,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Turns a menu item on or off, determining if it appears in the sidebar.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int menuId, bool isActive)
         {
@@ -72,6 +84,19 @@ namespace SchoolERP.Net.Controllers
                 return Json(new { success = false, message = "You do not have permission to change menu status." });
 
             var response = await _menuClient.ToggleStatusAsync(menuId, isActive);
+            return Json(new { success = response.Success, message = response.Message });
+        }
+
+        /// <summary>
+        /// Changes the order in which menu items appear in the sidebar.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrder([FromBody] List<MenuOrderRequest> orders)
+        {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Json(new { success = false, message = "You do not have permission to reorder menus." });
+
+            var response = await _menuClient.UpdateMenuOrderAsync(orders);
             return Json(new { success = response.Success, message = response.Message });
         }
     }

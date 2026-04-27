@@ -8,7 +8,7 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// This class provides business logic and data access services for LanguageService.
+    /// This service handles the actual work of managing language settings, such as saving new languages and updating their details in the database.
     /// </summary>
     public class LanguageService : ILanguageService
     {
@@ -19,6 +19,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a list of all languages from the database.
+        /// </summary>
         public List<MstLanguageViewModel> GetAllLanguages(bool includeDeleted = false)
         {
             var list = new List<MstLanguageViewModel>();
@@ -32,6 +35,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific language using its unique ID.
+        /// </summary>
         public MstLanguageViewModel? GetLanguageByID(int languageId)
         {
             var parameters = new[] { new SqlParameter("@LanguageId", languageId) };
@@ -41,7 +47,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Directly invokes 'sp_Languages_Upsert' to inject a new ISO locale definition and its RTL flags.
+        /// Saves or updates language information in the database, including the name, code, and whether it is a right-to-left language.
         /// </summary>
         public (bool success, string message) UpsertLanguage(MstLanguageUpsertRequest request, int userId)
         {
@@ -64,6 +70,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a language record from the database.
+        /// </summary>
         public (bool success, string message) DeleteLanguage(int languageId, int userId)
         {
             try
@@ -79,6 +88,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a language is currently enabled for use in the application.
+        /// </summary>
         public (bool success, string message) ToggleLanguageStatus(int languageId, bool isActive, int userId)
         {
             try
@@ -95,6 +107,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about languages into a format that the application can easily understand.
+        /// </summary>
         private MstLanguageViewModel MapRowToViewModel(DataRow row)
         {
             return new MstLanguageViewModel

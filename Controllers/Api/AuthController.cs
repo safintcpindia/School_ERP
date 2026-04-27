@@ -11,7 +11,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// Headless endpoints resolving JWT generation and active directory credential validations.
+    /// This controller provides the technical endpoints for verifying user credentials and creating secure access tokens.
     /// </summary>
     public class AuthController : ControllerBase
     {
@@ -23,8 +23,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Validates encrypted passwords against the SQL symmetric keys mapping.
-        /// Yields an active authorization token mechanism if successful.
+        /// Verifies the username and password against the database and provides a secure access token if they are correct.
         /// </summary>
         [AllowAnonymous]
         [HttpPost("login")]

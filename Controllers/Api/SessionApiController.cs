@@ -11,8 +11,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// Coordinates chronological bounding blocks (Academic Years, Quarters).
-    /// Used globally to filter datastreams contextually.
+    /// This controller provides the technical endpoints for managing academic sessions (school years) through the API.
     /// </summary>
     public class SessionApiController : ControllerBase
     {
@@ -24,7 +23,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Constructs a timeline of available master sessions.
+        /// Gets the full list of all academic sessions defined in the system.
         /// </summary>
         [HttpGet("GetAll")]
         public IActionResult GetAll(bool includeDeleted = false)
@@ -34,7 +33,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Reads specific date markers forming a singular tracked calendar state.
+        /// Gets the details of one specific academic session using its unique ID number.
         /// </summary>
         [HttpGet("GetByID/{id}")]
         public IActionResult GetByID(int id)
@@ -45,7 +44,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Declares and modifies rigid boundaries defining a new system session block.
+        /// Saves a new academic session or updates an existing one with the dates and name you provided.
         /// </summary>
         [HttpPost("Upsert")]
         public IActionResult Upsert([FromBody] MstSessionUpsertRequest request)
@@ -57,7 +56,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Structurally nulls an unused operating interval block.
+        /// Permanently removes an academic session from the system's records.
         /// </summary>
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
@@ -68,7 +67,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Visually deprioritizes historical terms from active menu selection streams.
+        /// Turns an academic session's active status on or off.
         /// </summary>
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)
@@ -76,6 +75,29 @@ namespace SchoolERP.Net.Controllers.Api
             int userId = GetCurrentUserId();
             var (success, message) = _sessionService.ToggleSessionStatus(id, isActive, userId);
             return Ok(new { success, message });
+        }
+
+        /// <summary>
+        /// Sets the chosen academic session as the currently 'active' one for the user in the database.
+        /// </summary>
+        [HttpPost("SetCurrent")]
+        public IActionResult SetCurrent([FromBody] SetCurrentSessionRequest request)
+        {
+            int userId = GetCurrentUserId();
+            var (success, message) = _sessionService.UpdateUserCurrentSession(userId, request.SessionId);
+            if (!success) return BadRequest(ApiResponse<dynamic>.ErrorResponse(message));
+            return Ok(ApiResponse<dynamic>.SuccessResponse(null, message));
+        }
+
+        /// <summary>
+        /// Gets the ID of the academic session that the user is currently working in.
+        /// </summary>
+        [HttpGet("GetUserCurrentSession")]
+        public IActionResult GetUserCurrentSession()
+        {
+            int userId = GetCurrentUserId();
+            var sessionId = _sessionService.GetUserCurrentSession(userId);
+            return Ok(ApiResponse<int?>.SuccessResponse(sessionId));
         }
 
         /// <summary>

@@ -3,58 +3,54 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// Service interface for User Management operations.
-    /// All data access uses ADO.NET stored procedures (no ORM).
-    /// Aligned with TDD 12.7 tbl_mst_users schema.
+    /// This interface defines the rules for managing user accounts, including their personal details, roles, and which companies they can access.
     /// </summary>
     public interface IUserService
     {
-        /// <summary>Gets all users with type/role info.</summary>
+        /// <summary>Gets a list of all users registered in the system.</summary>
         List<UserViewModel> GetAllUsers();
 
-        /// <summary>Gets a single user by UserID (includes role assignments).</summary>
+        /// <summary>Finds the details of a specific user using their unique ID.</summary>
         UserViewModel? GetUserById(int userId);
 
-        /// <summary>Gets the list of RoleIDs assigned to a user (M:M).</summary>
+        /// <summary>Gets a list of all roles assigned to a specific user.</summary>
         List<int> GetUserRoleIds(int userId);
 
-        /// <summary>Gets all active roles for dropdown.</summary>
+        /// <summary>Gets a list of all active roles available for assigning to users.</summary>
         List<RoleViewModel> GetRoles();
 
-        /// <summary>Gets all active user types for dropdown.</summary>
+        /// <summary>Gets a list of all active user categories (like 'Admin' or 'Staff').</summary>
         List<MstUserTypeViewModel> GetUserTypes();
 
-        /// <summary>Creates a new user with hashed password + role mappings.</summary>
+        /// <summary>Creates a new user account with their password and assigned roles.</summary>
         (int Result, string Message) CreateUser(UserUpsertRequest request, int createdBy);
 
-        /// <summary>Updates an existing user and re-assigns roles.</summary>
+        /// <summary>Updates an existing user's information and roles.</summary>
         (int Result, string Message) UpdateUser(UserUpsertRequest request, int modifiedBy);
 
-        /// <summary>Gets the list of CompanyIDs assigned to a user (M:M).</summary>
+        /// <summary>Gets a list of all school companies a specific user is allowed to access.</summary>
         List<int> GetUserCompanyIds(int userId);
 
         /// <summary>
-        /// Gets all data required to hydrate the 3-step User Wizard.
-        /// Includes user info, roles, companies, and combined permission matrix.
+        /// Gets all the information needed for the multi-step user setup form (wizard).
         /// </summary>
         UserWizardViewModel GetUserWizardData(int userId, string roleIds = "");
 
         /// <summary>
-        /// Saves all 3 steps of the user wizard in a single transactional operation.
-        /// Handles identity, company mappings, and permission overrides.
+        /// Saves all the information from the user setup form in one go.
         /// </summary>
         (int Result, string Message) SaveUserWizard(UserUpsertRequest request, int modifiedBy);
 
-        /// <summary>Toggles user active status (soft delete/restore).</summary>
+        /// <summary>Turns a user's account on or off.</summary>
         (int Result, string Message) ToggleUserStatus(int userId, bool isActive, int doneBy);
 
-        /// <summary>Soft deletes a user.</summary>
+        /// <summary>Removes a user from the system.</summary>
         (int Result, string Message) DeleteUser(int userId, int doneBy);
 
-        /// <summary>Unlocks a locked user account.</summary>
+        /// <summary>Unlocks a user's account if it was locked (e.g., after too many wrong password attempts).</summary>
         void UnlockUser(int userId, int doneBy);
 
-        /// <summary>Checks if a username is structurally unique among active users.</summary>
+        /// <summary>Checks if a username is already being used by someone else.</summary>
         bool IsUsernameUnique(string username, int userId);
     }
 }

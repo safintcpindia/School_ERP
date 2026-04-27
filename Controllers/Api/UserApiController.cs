@@ -13,8 +13,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// Centralized integration API for CRUD operations against the tbl_mst_users dataset.
-    /// Used by frontend Javascript bundles to avoid page reloads.
+    /// This controller provides the technical endpoints for managing user accounts (like staff and administrators) through the API.
     /// </summary>
     public class UserApiController : ControllerBase
     {
@@ -26,7 +25,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Renders the array of active administrators and staff for datatable hydration.
+        /// Gets the full list of all users registered in the system.
         /// </summary>
         [HttpGet]
         public IActionResult GetAllUsers()
@@ -36,7 +35,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Identifies an individual user object for profile edits.
+        /// Gets the details of one specific user using their unique ID number.
         /// </summary>
         [HttpGet("{id}")]
         public IActionResult GetUserById(int id)
@@ -47,7 +46,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Reads the specific role matrix array bound to the selected user's profile.
+        /// Gets the list of roles assigned to a specific user.
         /// </summary>
         [HttpGet("{id}/roles")]
         public IActionResult GetUserRoleIds(int id)
@@ -57,7 +56,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Lookup endpoints for constructing static HTML dropdown `<select>` modules dynamically.
+        /// Gets a list of all available roles to show in a selection dropdown.
         /// </summary>
         [HttpGet("roles-dropdown")]
         public IActionResult GetRoles()
@@ -67,7 +66,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Renders available role boundary types (Admin, Teacher, Staff).
+        /// Gets a list of all available user types (like Admin or Staff) to show in a selection dropdown.
         /// </summary>
         [HttpGet("types-dropdown")]
         public IActionResult GetUserTypes()
@@ -77,7 +76,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Validates whether a requested username is structurally unique in the system.
+        /// Checks if a username is already taken or if it is available to use.
         /// </summary>
         [HttpGet("check-username")]
         public IActionResult CheckUsername([FromQuery] string username, [FromQuery] int userId = 0)
@@ -92,8 +91,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Interprets a User create/edit modal submission from frontend API clients.
-        /// Dispatches data to SQL Server encryption routines.
+        /// Saves a new user or updates an existing one with the details you provided.
         /// </summary>
         [HttpPost("save")]
         public IActionResult Save([FromBody] UserUpsertRequest request)
@@ -116,7 +114,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Administratively blocks or permits logins.
+        /// Turns a user account on or off.
         /// </summary>
         [HttpPost("toggle-status")]
         public IActionResult ToggleStatus([FromQuery] int userId, [FromQuery] bool isActive)
@@ -132,7 +130,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Soft deletes a user.
+        /// Permanently removes a user account from the system.
         /// </summary>
         [HttpPost("delete/{id}")]
         public IActionResult DeleteUser(int id)
@@ -148,7 +146,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Purges security lockouts generated from repeated failing password attempts.
+        /// Unlocks a user account that was locked due to too many failed login attempts.
         /// </summary>
         [HttpPost("unlock/{id}")]
         public IActionResult Unlock(int id)
@@ -161,7 +159,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Fetches all data for the 3-step User Wizard (Identity, Companies, Permissions).
+        /// Gets all the information needed to show the step-by-step user creation assistant.
         /// </summary>
         [HttpGet("wizard-data")]
         public IActionResult GetWizardData([FromQuery] int userId = 0, [FromQuery] string roleIds = "")
@@ -171,8 +169,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Final 3-step wizard submission.
-        /// Performs transactional save of user, companies, and permission overrides.
+        /// Saves all the information collected during the step-by-step user creation process.
         /// </summary>
         [HttpPost("save-wizard")]
         public IActionResult SaveWizard([FromBody] UserUpsertRequest request)

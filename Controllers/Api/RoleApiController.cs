@@ -12,7 +12,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// Processes granular security matrices routing mapping arrays to access tiers.
+    /// This controller provides the technical endpoints for managing user roles and their permissions through the API.
     /// </summary>
     public class RoleApiController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Reads all global roles inside the current environment string.
+        /// Gets the full list of all defined user roles from the system.
         /// </summary>
         [HttpGet]
         public IActionResult GetAllRoles()
@@ -34,7 +34,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Connects logic targeting a singular role's property sets.
+        /// Gets the details of one specific role using its unique ID number.
         /// </summary>
         [HttpGet("{id}")]
         public IActionResult GetRoleById(int id)
@@ -45,7 +45,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Crafts or modifies role definitions structurally.
+        /// Saves a new user role or updates an existing one with the details you provided.
         /// </summary>
         [HttpPost("save")]
         public IActionResult Save([FromBody] MstRoleUpsertRequest request)
@@ -63,7 +63,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Drops a role mapping natively across attached profiles logically.
+        /// Turns a role's active status on or off.
         /// </summary>
         [HttpPost("toggle-status")]
         public IActionResult ToggleStatus([FromQuery] int roleId, [FromQuery] bool isActive)
@@ -81,7 +81,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Resolves the comprehensive hierarchical array (Menus and View/Edit checks) applied to this Role.
+        /// Gets the list of allowed actions (like viewing or editing specific menus) for a chosen role.
         /// </summary>
         [HttpGet("{id}/permissions")]
         public IActionResult GetPermissions(int id)
@@ -91,7 +91,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Purges and resyncs the active checklist items globally defining what a Role executes.
+        /// Saves the chosen list of allowed actions for a role.
         /// </summary>
         [HttpPost("save-permissions")]
         public IActionResult SavePermissions([FromBody] MstRolePermissionSaveRequest request)
@@ -109,7 +109,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Deletes a role natively.
+        /// Permanently removes a role from the system's records.
         /// </summary>
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)

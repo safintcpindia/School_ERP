@@ -8,7 +8,7 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// This class provides business logic and data access services for OrganisationService.
+    /// This service handles the actual work of managing organization information, such as saving campus addresses, contact details, and various system settings (like fine amounts or attendance rules) in the database.
     /// </summary>
     public class OrganisationService : IOrganisationService
     {
@@ -19,6 +19,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a list of all organizations from the database.
+        /// </summary>
         public List<OrganisationViewModel> GetAllOrganisations(bool includeDeleted = false)
         {
             var list = new List<OrganisationViewModel>();
@@ -32,6 +35,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific organization based on its unique ID.
+        /// </summary>
         public OrganisationViewModel? GetOrganisationByID(int organisationID)
         {
             var parameters = new[] { new SqlParameter("@OrganisationID", organisationID) };
@@ -41,8 +47,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Translates a massive campus payload into SQL parameters and executes 'sp_Organisations_Upsert'.
-        /// Expected to handle everything from financial year mapping constraints to SMS gateway endpoints.
+        /// Saves or updates organization details in the database. This includes a wide range of settings like financial years, contact info, and system behaviors (e.g., if fees can be paid by cheque).
         /// </summary>
         public (bool success, string message) UpsertOrganisation(OrganisationUpsertRequest request, int userId)
         {
@@ -117,6 +122,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes an organization's record from the database.
+        /// </summary>
         public (bool success, string message) DeleteOrganisation(int organisationID, int userId)
         {
             try
@@ -132,6 +140,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether an organization is currently active or inactive in the system.
+        /// </summary>
         public (bool success, string message) ToggleOrganisationStatus(int organisationID, bool isActive, int userId)
         {
             try
@@ -148,6 +159,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about organizations into a format that the application can easily use to show on the screen.
+        /// </summary>
         private OrganisationViewModel MapRowToViewModel(DataRow row)
         {
             return new OrganisationViewModel

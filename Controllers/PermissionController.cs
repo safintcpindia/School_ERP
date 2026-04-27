@@ -5,7 +5,7 @@ using SchoolERP.Net.Services;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for PermissionController.
+    /// This controller manages the different types of actions users are allowed to perform (like 'Add', 'Edit', or 'Delete') across the system.
     /// </summary>
     public class PermissionController : Controller
     {
@@ -19,6 +19,9 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the main page with a list of all defined permissions.
+        /// </summary>
         public IActionResult Index()
         {
             var model = new MstUserManagementPageViewModel
@@ -28,6 +31,9 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Gets the details of a specific permission type so you can view or edit it.
+        /// </summary>
         [HttpGet]
         public IActionResult GetPermission(int permissionId)
         {
@@ -39,6 +45,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, permission = permission });
         }
 
+        /// <summary>
+        /// Saves a new permission type or updates an existing one with the details you provided.
+        /// </summary>
         [HttpPost]
         public IActionResult Save([FromBody] MstPermissionUpsertRequest request)
         {
@@ -56,6 +65,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = result.success, message = result.message });
         }
 
+        /// <summary>
+        /// Turns a specific permission type on or off, determining if it can be assigned to roles.
+        /// </summary>
         [HttpPost]
         public IActionResult ToggleStatus(int permissionId, bool isActive)
         {
@@ -70,6 +82,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = result.success, message = result.message });
         }
 
+        /// <summary>
+        /// Permanently removes a permission type from the system's records.
+        /// </summary>
         [HttpPost]
         public IActionResult Delete(int permissionId)
         {

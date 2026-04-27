@@ -11,7 +11,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// This class handles HTTP routing and API requests for PaymentMethodApiController.
+    /// This controller provides the technical endpoints for managing payment methods (like cash, check, or online) through the API.
     /// </summary>
     public class PaymentMethodApiController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Gets all configured billing interfaces.
+        /// Gets the full list of all payment methods configured in the system.
         /// </summary>
         [HttpGet("GetAll")]
         public IActionResult GetAll(bool includeDeleted = false)
@@ -33,7 +33,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Queries a single transaction provider for gateway mutation.
+        /// Gets the details of one specific payment method using its unique ID number.
         /// </summary>
         [HttpGet("GetById/{id}")]
         public IActionResult GetById(int id)
@@ -44,7 +44,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Modifies or introduces a new bank/financial gateway option natively.
+        /// Saves a new payment method or updates an existing one with the details you provided.
         /// </summary>
         [HttpPost("Upsert")]
         public IActionResult Upsert([FromBody] MstPaymentMethodUpsertRequest request)
@@ -55,7 +55,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Logically drops a transaction gateway from active invoice selections.
+        /// Permanently removes a payment method from the system's records.
         /// </summary>
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
@@ -66,7 +66,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Quickly hides a payment gateway globally without stripping historical transaction data.
+        /// Turns a payment method on or off, determining if it can be used for new payments.
         /// </summary>
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)

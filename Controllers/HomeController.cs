@@ -5,8 +5,7 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Controllers;
 
 /// <summary>
-/// This class handles HTTP routing and API requests for HomeController.
-/// Acts as the default fallback route processor for public-facing or root interactions.
+/// This controller handles general pages like the home page, privacy policy, and error messages.
 /// </summary>
 public class HomeController : Controller
 {
@@ -18,7 +17,7 @@ public class HomeController : Controller
     }
 
     /// <summary>
-    /// Serves the main public-facing landing page of the application, if any.
+    /// Shows the main home page of the website.
     /// </summary>
     public IActionResult Index()
     {
@@ -26,7 +25,7 @@ public class HomeController : Controller
     }
 
     /// <summary>
-    /// Serves the generic Privacy Policy text page.
+    /// Shows the privacy policy page, which explains how your data is handled.
     /// </summary>
     public IActionResult Privacy()
     {
@@ -34,8 +33,7 @@ public class HomeController : Controller
     }
 
     /// <summary>
-    /// Global error handling action bound by the exception middleware.
-    /// Extracts the trace identifier to display to the user for support ticketing.
+    /// Shows a special error page if something goes wrong with the application, helping you report the issue.
     /// </summary>
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

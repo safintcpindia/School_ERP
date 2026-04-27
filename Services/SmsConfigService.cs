@@ -7,7 +7,7 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// This class provides business logic and data access services for SmsConfigService.
+    /// This service handles the actual work of managing SMS configuration, including saving and retrieving gateway settings from the database.
     /// </summary>
     public class SmsConfigService : ISmsConfigService
     {
@@ -18,6 +18,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves the current SMS gateway settings from the database.
+        /// </summary>
         public MstSmsConfigViewModel? GetSmsConfig()
         {
             var dt = _sqlHelper.ExecuteQuery("sp_SmsConfig_Get", null!);
@@ -26,7 +29,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Upserts the gateway URL and secret key blocks into the master properties table via sp_SmsConfig_Upsert.
+        /// Saves or updates SMS gateway settings (like the gateway name, API link, and secret key) in the database.
         /// </summary>
         public (bool success, string message) UpsertSmsConfig(MstSmsConfigUpsertRequest request, int userId)
         {
@@ -48,6 +51,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database information about SMS settings into a format the application can use.
+        /// </summary>
         private MstSmsConfigViewModel MapRowToViewModel(DataRow row)
         {
             return new MstSmsConfigViewModel

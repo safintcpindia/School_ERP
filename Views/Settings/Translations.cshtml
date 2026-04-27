@@ -129,16 +129,15 @@
                         Value: value
                     }),
                     success: function(response) {
-                        if (response.success) {
                             input.data('original', value);
                             btn.addClass('d-none');
-                            // Optional: show toast/notification
+                            showToast('Translation updated successfully!', 'success');
                         } else {
-                            alert('Error: ' + response.message);
+                            showToast(response.message || 'Error updating translation', 'error');
                         }
                     },
                     error: function() {
-                        alert('Error communicating with server');
+                        showToast('Error communicating with server', 'error');
                     }
                 });
             });

@@ -403,11 +403,11 @@
 
         function openModal(id) {
             if (id === 0 && !permCanAdd) {
-                Swal.fire('Permission', 'You do not have permission to add organisations.', 'warning');
+                showToast('You do not have permission to add organisations.', 'warning');
                 return;
             }
             if (id > 0 && !permCanEdit) {
-                Swal.fire('Permission', 'You do not have permission to edit organisations.', 'warning');
+                showToast('You do not have permission to edit organisations.', 'warning');
                 return;
             }
             form.reset();
@@ -446,11 +446,11 @@
         async function saveOrg() {
             const oid = parseInt(document.getElementById('OrganisationID').value) || 0;
             if (oid === 0 && !permCanAdd) {
-                Swal.fire('Permission', 'You do not have permission to add organisations.', 'warning');
+                showToast('You do not have permission to add organisations.', 'warning');
                 return;
             }
             if (oid > 0 && !permCanEdit) {
-                Swal.fire('Permission', 'You do not have permission to edit organisations.', 'warning');
+                showToast('You do not have permission to edit organisations.', 'warning');
                 return;
             }
             if (!validateOrgForm()) return;
@@ -481,48 +481,42 @@
             
             if (result.success) {
                 modal.hide();
-                Swal.fire('Success', result.message, 'success').then(() => location.reload());
+                showToast(result.message, 'success');
+                setTimeout(() => location.reload(), 2000);
             } else {
-                Swal.fire('Error', result.message, 'error');
+                showToast(result.message, 'error');
             }
         }
 
         async function toggleStatus(id, isActive) {
             if (!permCanEdit) {
-                Swal.fire('Permission', 'You do not have permission to change status.', 'warning').then(() => location.reload());
+                showToast('You do not have permission to change status.', 'warning');
+                location.reload();
                 return;
             }
             const res = await fetch(`/Organisation/ToggleStatus?id=${id}&isActive=${isActive}`, { method: 'POST' });
             const result = await res.json();
             if (!result.success) {
-                Swal.fire('Error', result.message, 'error').then(() => location.reload());
+                showToast(result.message, 'error');
+                setTimeout(() => location.reload(), 2000);
             }
         }
 
         async function deleteOrg(id) {
             if (!permCanDelete) {
-                Swal.fire('Permission', 'You do not have permission to delete organisations.', 'warning');
+                showToast('You do not have permission to delete organisations.', 'warning');
                 return;
             }
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "This will soft-delete the organisation!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    const res = await fetch(`/Organisation/Delete?id=${id}`, { method: 'POST' });
-                    const resData = await res.json();
-                    if (resData.success) {
-                        Swal.fire('Deleted!', resData.message, 'success').then(() => location.reload());
-                    } else {
-                        Swal.fire('Error', resData.message, 'error');
-                    }
+            if (confirm('Are you sure you want to delete this organisation? This will soft-delete the organisation!')) {
+                const res = await fetch(`/Organisation/Delete?id=${id}`, { method: 'POST' });
+                const resData = await res.json();
+                if (resData.success) {
+                    showToast(resData.message, 'success');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showToast(resData.message, 'error');
                 }
-            });
+            }
         }
     </script>
 }

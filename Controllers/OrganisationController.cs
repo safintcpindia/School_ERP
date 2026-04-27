@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for OrganisationController.
+    /// This controller manages the organization settings, allowing you to set up and maintain the details of different school campuses or branches.
     /// </summary>
     public class OrganisationController : Controller
     {
@@ -21,6 +21,9 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the main list of all organizations or campuses registered in the system.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
             var response = await _organisationClient.GetAllOrganisationsAsync();
@@ -31,6 +34,9 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Gets the details of a specific organization so you can view or edit its information.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetOrganisation(int id)
         {
@@ -42,6 +48,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, data = response.Data });
         }
 
+        /// <summary>
+        /// Saves a new organization's details or updates an existing one with the information you provided.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] OrganisationUpsertRequest request)
         {
@@ -55,6 +64,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Turns an organization's active status on or off, determining if it's currently in use.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int id, bool isActive)
         {
@@ -65,6 +77,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Permanently removes an organization record from the system.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {

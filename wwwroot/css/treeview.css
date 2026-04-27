@@ -15,30 +15,33 @@
     color: #333;
 }
 
-.tree-grid th {
-    background: #f8f9fa;
-    padding: 10px 8px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-    font-weight: 600;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+    .tree-grid th {
+        background: #f8f9fa;
+        padding: 10px 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
 
 .tree-row {
-    border-bottom: 1px solid #efefef;
+    -border-bottom: 1px solid #efefef;
     transition: background-color 0.1s;
 }
-
-.tree-row:hover {
-    background-color: #f5f9ff;
+.tree-row tr:last-child{
+    border-bottom:0 !important;
 }
 
-.tree-row td {
-    padding: 6px 8px;
-    vertical-align: middle;
-}
+    .tree-row:hover {
+        background-color: #f5f9ff;
+    }
+
+    .tree-row td {
+        padding: 6px 8px;
+        vertical-align: middle;
+    }
 
 /* ID Column */
 .id-column {
@@ -75,9 +78,9 @@
     border-left: 1px dotted #ccc;
 }
 
-.tree-line-v.last {
-    bottom: 50% !important; /* Stop halfway for the last sibling */
-}
+    .tree-line-v.last {
+        bottom: 50% !important; /* Stop halfway for the last sibling */
+    }
 
 /* Dotted horizontal lines */
 .tree-line-h {
@@ -105,15 +108,15 @@
     user-select: none;
 }
 
-.tree-toggle:hover {
-    border-color: #0d6efd;
-    color: #0d6efd;
-}
+    .tree-toggle:hover {
+        border-color: #0d6efd;
+        color: #0d6efd;
+    }
 
-.tree-toggle i {
-    font-size: 8px;
-    font-weight: bold;
-}
+    .tree-toggle i {
+        font-size: 8px;
+        font-weight: bold;
+    }
 
 /* Icons */
 .tree-icon {

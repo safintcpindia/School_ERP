@@ -77,14 +77,33 @@ class ThemeCustomizer {
 		
 		if (document.body) {
 			if (e === "mini") {
+				
 			document.body.classList.add("mini-sidebar");
 			} else {
 			document.body.classList.remove("mini-sidebar");
 			}
 		}
-
+		
 		t && (this.config.sidenav.size = e, this.setSwitchFromConfig());
 	}	
+
+	// custom code for toggel theme sidebar
+	toggleSidebarStyle() {
+		
+		let currentSize = this.html.getAttribute("data-layout");
+		
+		if (!currentSize) {
+			currentSize = this.config.sidenav.size;
+		}
+
+		let newSize = (currentSize === "mini") ? "default" : "mini";
+
+		this.changeLeftbarSize(newSize);
+
+		this.config.sidenav.size = newSize;
+		sessionStorage.setItem("__THEME_CONFIG__", JSON.stringify(this.config));
+	}
+
 	changeThemeColor(e) {
 		this.config.color.color = e, this.html.setAttribute("data-color", e), this.setSwitchFromConfig()
 	}
@@ -162,6 +181,7 @@ class ThemeCustomizer {
 		window.innerWidth <= 767.98 ? e.changeLeftbarSize("full-width", !1) : 767 <= window.innerWidth && window.innerWidth <= 1140 ? "full-width" !== e.config.sidenav.size && "hidden" !== e.config.sidenav.size && ("hover-view" === e.config.sidenav.size ? e.changeLeftbarSize("condensed") : e.changeLeftbarSize("condensed", !1)) : (e.changeLeftbarSize(e.config.sidenav.size))
 	}
 	setSwitchFromConfig() {
+		
 		sessionStorage.setItem("__THEME_CONFIG__", JSON.stringify(this.config)), document.querySelectorAll(".right-bar input[type=checkbox]").forEach(function(e) {
 			e.checked = !1
 		});

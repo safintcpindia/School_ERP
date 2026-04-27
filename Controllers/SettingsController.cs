@@ -9,7 +9,7 @@ using System.Linq;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for SettingsController.
+    /// This controller is the central hub for all system settings, including company details, roles, email, SMS, and more.
     /// </summary>
     public class SettingsController : Controller
     {
@@ -50,7 +50,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Serves the high-level General Settings layout interface.
+        /// Shows the general settings page for the school's main information.
         /// </summary>
         public IActionResult CompanyMaster()
         {
@@ -59,8 +59,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Serves the Roles and Permissions master matrix interface.
-        /// Loads all static system roles on page-load to construct the master data table.
+        /// Shows the page where you can manage user roles and what each role is allowed to do.
         /// </summary>
         public async Task<IActionResult> Roles()
         {
@@ -86,8 +85,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Retrieves the hierarchical permission constraints linked to a specific RoleID.
-        /// Consumed by AJAX to build the dual-modal checkbox tree.
+        /// Gets the list of allowed actions for a specific role to show them on the screen.
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetPermissions(int roleId)
@@ -100,7 +98,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Handles AJAX form dispatches for creating or modifying a structural role.
+        /// Saves a new user role or updates an existing one.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> SaveRole([FromBody] RoleUpsertRequest request)
@@ -125,7 +123,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Submits the checked tree boxes back to the persistence layer for a bulk map override.
+        /// Saves the chosen list of allowed actions for a specific role.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> SaveRolePermissions([FromBody] MstRolePermissionSaveRequest request)
@@ -138,7 +136,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Academic Session period configuration view.
+        /// Shows the page for setting up academic sessions (school years).
         /// </summary>
         public IActionResult Sessions()
         {
@@ -147,7 +145,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Global financial currency configuration view.
+        /// Shows the page for managing the different types of money used in the system.
         /// </summary>
         public IActionResult Currencies()
         {
@@ -156,7 +154,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Renders the SMTP gateway setup view and binds the active mail server constraints if they exist.
+        /// Shows the page where you configure the email server for sending notifications.
         /// </summary>
         public async Task<IActionResult> EmailSettings()
         {
@@ -167,7 +165,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Mutates the global SMTP credentials or outgoing host profile.
+        /// Saves the email server settings you provided.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> SaveEmailSettings([FromBody] MstEmailConfigUpsertRequest request)
@@ -180,7 +178,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Renders the API integration settings for SMS communication gateways.
+        /// Shows the page where you configure the SMS gateway for sending text messages.
         /// </summary>
         public async Task<IActionResult> SmsSettings()
         {
@@ -191,7 +189,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Modifies the active SMS gateway URL payloads and keys.
+        /// Saves the SMS gateway settings you provided.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> SaveSmsSettings([FromBody] MstSmsConfigUpsertRequest request)
@@ -204,7 +202,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Locales definition page for dynamic module mapping.
+        /// Shows the page for managing the different languages the system supports.
         /// </summary>
         public IActionResult Languages()
         {
@@ -213,7 +211,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Deep-dives into a specific locale (e.g. "en_US") to view dictionary JSON overrides.
+        /// Shows the page where you can change specific words or phrases for a chosen language.
         /// </summary>
         public async Task<IActionResult> Translations(string id)
         {
@@ -229,7 +227,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Granular REST update for one dictionary phrase translation.
+        /// Saves the updated translation for a specific word or phrase.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> UpdateTranslation([FromBody] TranslationUpdateModel model)
@@ -241,15 +239,21 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Redirects you to the main menu setup page.
+        /// </summary>
         public IActionResult SidebarMenu()
         {
             return RedirectToAction("Index", "MasterMenu");
         }
 
+        /// <summary>
+        /// Shows the notification settings page.
+        /// </summary>
         public IActionResult Notifications() => View();
         
         /// <summary>
-        /// Lists third party gateway configurations available to the billing module.
+        /// Shows the page for managing different ways payments can be made (like Razorpay).
         /// </summary>
         public async Task<IActionResult> PaymentMethods()
         {
@@ -263,7 +267,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Inserts or updates a billing gateway instance.
+        /// Saves or updates a payment method's details.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> SavePaymentMethod([FromBody] MstPaymentMethodUpsertRequest request)
@@ -279,7 +283,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Permanently drops a payment connector record.
+        /// Permanently removes a payment method from the system.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> DeletePaymentMethod(int id)
@@ -292,7 +296,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Enables/Disables frontend presence of a gateway.
+        /// Turns a payment method on or off.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> TogglePaymentStatus(int id, bool isActive)
@@ -305,23 +309,82 @@ namespace SchoolERP.Net.Controllers
         }
 
         // Region: Legacy / Empty Layout Hooks
+        /// <summary>
+        /// Shows the history of system backups.
+        /// </summary>
         public IActionResult BackupHistory() => View();
+
+        /// <summary>
+        /// Shows the page for setting up what appears at the top and bottom of printed documents.
+        /// </summary>
         public IActionResult PrintHeaderFooter() => View();
+
+        /// <summary>
+        /// Shows the page for managing internal system fields.
+        /// </summary>
         public IActionResult SystemFields() => View();
+
+        /// <summary>
+        /// Shows the settings for student profile information.
+        /// </summary>
         public IActionResult StudentProfile() => View();
+
+        /// <summary>
+        /// Shows the page for managing different parts (modules) of the application.
+        /// </summary>
         public IActionResult Modules() => View();
+
+        /// <summary>
+        /// Shows the settings for allowed file types.
+        /// </summary>
         public IActionResult FileType() => View();
+
+        /// <summary>
+        /// Shows the page for adding your own custom data fields.
+        /// </summary>
         public IActionResult CustomFields() => View();
+
+        /// <summary>
+        /// Shows the settings for security 'captcha' tests.
+        /// </summary>
         public IActionResult Captcha() => View();
+
+        /// <summary>
+        /// Shows the page for uploading the school's logo.
+        /// </summary>
         public IActionResult Logo() => View();
+
+        /// <summary>
+        /// Shows the page for changing the login screen background.
+        /// </summary>
         public IActionResult LoginPageBG() => View();
+
+        /// <summary>
+        /// Shows the settings for student and guardian information.
+        /// </summary>
         public IActionResult StudentGuardian() => View();
+
+        /// <summary>
+        /// Shows the settings for automatically generating ID numbers.
+        /// </summary>
         public IActionResult IDAutoGen() => View();
+
+        /// <summary>
+        /// Shows the settings for different types of attendance.
+        /// </summary>
         public IActionResult AttendanceType() => View();
+
+        /// <summary>
+        /// Shows the system maintenance page.
+        /// </summary>
         public IActionResult Maintenance() => View();
+
+        /// <summary>
+        /// Shows various other small settings.
+        /// </summary>
         public IActionResult Miscellaneous() => View();
         /// <summary>
-        /// Unified Company Master module setup.
+        /// Shows the main page for managing all registered companies and branches.
         /// </summary>
         public async Task<IActionResult> Companies()
         {
@@ -371,6 +434,9 @@ namespace SchoolERP.Net.Controllers
             }
         }
 
+        /// <summary>
+        /// Saves a new company or updates an existing one.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> SaveCompany([FromBody] MstCompanyUpsertRequest request)
         {
@@ -384,6 +450,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Permanently removes a company from the records.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> DeleteCompany(int id)
         {
@@ -394,6 +463,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Gets the details of a specific company for viewing or editing.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetCompany(int id)
         {
@@ -404,6 +476,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, data = response.Data, message = response.Message });
         }
 
+        /// <summary>
+        /// Turns a company's active status on or off.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleCompanyStatus(int id, bool isActive)
         {
@@ -415,8 +490,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Unified users index module bound under settings layout.
-        /// Generates the list of Users and populates dropdown definitions via backend.
+        /// Shows the main page for managing all user accounts in the system.
         /// </summary>
         public async Task<IActionResult> Users()
         {
@@ -437,7 +511,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Upserts an administrative user form.
+        /// Saves a new user account or updates an existing one.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> SaveUser([FromBody] UserUpsertRequest request)
@@ -453,7 +527,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Toggles lock/active statuses.
+        /// Turns a user account on or off.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int userId, bool isActive)
@@ -466,7 +540,7 @@ namespace SchoolERP.Net.Controllers
         }
 
         /// <summary>
-        /// Deletes a user.
+        /// Permanently removes a user account.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> DeleteUser(int id)

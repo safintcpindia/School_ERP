@@ -4,6 +4,9 @@ using System.Security.Claims;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of checking user permissions. It looks at who the user is and what roles they have to decide if they should be allowed to access certain parts of the application.
+    /// </summary>
     public sealed class UserMenuPermissionService : IUserMenuPermissionService
     {
         private readonly IUserManagementService _userManagementService;
@@ -13,6 +16,9 @@ namespace SchoolERP.Net.Services
             _userManagementService = userManagementService;
         }
 
+        /// <summary>
+        /// Extracts the user's ID from their login information.
+        /// </summary>
         public int GetCurrentUserId(ClaimsPrincipal user)
         {
             var idClaim = user?.FindFirst(ClaimTypes.NameIdentifier) ?? user?.FindFirst("UserId");
@@ -21,6 +27,9 @@ namespace SchoolERP.Net.Services
             return id;
         }
 
+        /// <summary>
+        /// Determines if a user has the right to perform a specific action (like viewing or adding data) on a specific part of the website.
+        /// </summary>
         public bool Has(ClaimsPrincipal user, string menuUrlPrefix, string permissionName)
         {
             var userId = GetCurrentUserId(user);
@@ -41,6 +50,9 @@ namespace SchoolERP.Net.Services
                  p.MenuURL.Contains(key, StringComparison.OrdinalIgnoreCase)));
         }
 
+        /// <summary>
+        /// Checks if the logged-in user is a 'Super Admin' who has permission to do everything in the system.
+        /// </summary>
         private static bool IsSuperAdmin(ClaimsPrincipal user)
         {
             if (user?.Identity?.IsAuthenticated != true) return false;
@@ -53,6 +65,9 @@ namespace SchoolERP.Net.Services
                 IsSuperAdminValue(c.Value));
         }
 
+        /// <summary>
+        /// A small helper tool that checks if a text value means 'Super Admin', ignoring spaces or special characters.
+        /// </summary>
         private static bool IsSuperAdminValue(string? value)
         {
             if (string.IsNullOrWhiteSpace(value)) return false;

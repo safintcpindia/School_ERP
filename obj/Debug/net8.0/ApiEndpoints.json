@@ -360,6 +360,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.MasterMenuApiController",
+    "Method": "UpdateOrder",
+    "RelativePath": "api/MasterMenuApi/update-order",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orders",
+        "Type": "System.Collections.Generic.List\u00601[[SchoolERP.Net.Models.MenuOrderRequest, SchoolERP.Net, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SchoolERP.Net.Controllers.Api.OrganisationApiController",
     "Method": "Delete",
     "RelativePath": "api/OrganisationApi/Delete/{id}",
@@ -683,6 +699,32 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SessionApiController",
+    "Method": "GetUserCurrentSession",
+    "RelativePath": "api/SessionApi/GetUserCurrentSession",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.SessionApiController",
+    "Method": "SetCurrent",
+    "RelativePath": "api/SessionApi/SetCurrent",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.SetCurrentSessionRequest",
         "IsRequired": true
       }
     ],

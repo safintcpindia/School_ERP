@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// This class provides business logic and data access services for LocalizationService.
+    /// This service handles the actual work of translating the application's text. It reads translations from files and keeps them ready so the application can quickly show the right words in the user's chosen language.
     /// </summary>
     public class LocalizationService : ILocalizationService
     {
@@ -27,8 +27,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Retrieves an explicit string match from the rapid access RAM cache.
-        /// If the exact translation key is missing, it dynamically falls back to the requested raw key itself natively.
+        /// Takes a 'key' (like 'LoginButton') and returns the actual word in the user's language (like 'Sign In'). If no translation is found, it shows the key itself.
         /// </summary>
         public string GetString(string key)
         {
@@ -40,6 +39,9 @@ namespace SchoolERP.Net.Services
             return key; // Return the key itself if no translation is found
         }
 
+        /// <summary>
+        /// Loads all translations for the current language into the application's memory for fast access.
+        /// </summary>
         public Dictionary<string, string> GetAllStrings()
         {
             string culture = GetCurrentLanguage();
@@ -69,11 +71,17 @@ namespace SchoolERP.Net.Services
             return translations;
         }
 
+        /// <summary>
+        /// Fetches all translated text for a specific language.
+        /// </summary>
         public Dictionary<string, string> GetTranslations(string language)
         {
             return GetTranslationsForLanguage(language);
         }
 
+        /// <summary>
+        /// Writes translation changes to a file so they are remembered for next time.
+        /// </summary>
         public void SaveTranslations(string language, Dictionary<string, string> translations)
         {
             // Update to use the new path if saving is needed
@@ -93,6 +101,9 @@ namespace SchoolERP.Net.Services
             _cache.Set(cacheKey, translations, TimeSpan.FromHours(1));
         }
 
+        /// <summary>
+        /// A private tool that loads translations from a specific language file into memory.
+        /// </summary>
         private Dictionary<string, string> GetTranslationsForLanguage(string language)
         {
             string cacheKey = CacheKeyPrefix + language;
@@ -113,18 +124,27 @@ namespace SchoolERP.Net.Services
             return translations;
         }
 
+        /// <summary>
+        /// Remembers the user's language choice by saving it in a small file (cookie) on their browser.
+        /// </summary>
         public void SetLanguage(string languageCode)
         {
             var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) };
             _httpContextAccessor.HttpContext.Response.Cookies.Append("Language", languageCode, options);
         }
 
+        /// <summary>
+        /// Checks the user's browser settings to see which language they prefer.
+        /// </summary>
         public string GetCurrentLanguage()
         {
             var cookieValue = _httpContextAccessor.HttpContext.Request.Cookies["Language"];
             return string.IsNullOrEmpty(cookieValue) ? "English" : cookieValue;
         }
 
+        /// <summary>
+        /// Looks through the system's folders to see which languages have been set up and are ready to be used.
+        /// </summary>
         public List<string> GetAvailableLanguages()
         {
             string path = Path.Combine(_webHostEnvironment.WebRootPath, "language");

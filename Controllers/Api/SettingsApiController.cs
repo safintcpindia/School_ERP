@@ -11,7 +11,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// This class handles HTTP routing and API requests for SettingsApiController.
+    /// This controller provides the technical endpoints for managing system translations and localization settings through the API.
     /// </summary>
     public class SettingsApiController : ControllerBase
     {
@@ -25,9 +25,8 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Pulls the complete localized dictionary for a specified ISO language code.
+        /// Gets all the translated words and phrases for a specific language (like English or Hindi).
         /// </summary>
-        /// <param name="language">e.g., 'en_US' or 'fr_FR'</param>
         [HttpGet("translations/{language}")]
         public IActionResult GetTranslations(string language)
         {
@@ -36,9 +35,8 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Mutates a single translated string definition in the backend JSON catalog.
+        /// Changes the translation for one specific word or phrase in a chosen language.
         /// </summary>
-        /// <param name="model">Contains the Language locale, Dictionary Key, and new Text Value.</param>
         [HttpPost("translations/update")]
         public IActionResult UpdateTranslation([FromBody] TranslationUpdateModel model)
         {

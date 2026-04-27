@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for SessionsController.
+    /// This controller manages the academic sessions (like '2023-24' or '2024-25'), allowing you to define the school years used in the system.
     /// </summary>
     public class SessionsController : Controller
     {
@@ -22,6 +22,9 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the main list of all academic sessions defined in the system.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
             var response = await _sessionClient.GetAllAsync();
@@ -32,6 +35,9 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Gets the details of a specific academic session so you can view or edit its dates and name.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetSession(int id)
         {
@@ -43,6 +49,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, data = response.Data });
         }
 
+        /// <summary>
+        /// Saves a new academic session or updates an existing one with the dates and name you provided.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] MstSessionUpsertRequest request)
         {
@@ -56,6 +65,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Turns an academic session on or off, determining if it can be selected for work.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int id, bool isActive)
         {
@@ -66,6 +78,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Permanently removes an academic session from the system's records.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -76,25 +91,17 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Sets the chosen academic session as the 'active' one for the current user's session.
+        /// </summary>
         [HttpPost]
-        public IActionResult SetCurrent([FromBody] SetCurrentSessionRequest request)
+        public async Task<IActionResult> SetCurrent([FromBody] SetCurrentSessionRequest request)
         {
             if (request == null || request.SessionId <= 0)
                 return Json(new { success = false, message = "Invalid session selection." });
 
-            Response.Cookies.Append(
-                "CurrentSessionId",
-                request.SessionId.ToString(),
-                new CookieOptions
-                {
-                    Path = "/",
-                    HttpOnly = false,
-                    IsEssential = true,
-                    SameSite = SameSiteMode.Lax,
-                    Secure = Request.IsHttps
-                });
-
-            return Json(new { success = true });
+            var response = await _sessionClient.SetCurrentSessionAsync(request);
+            return Json(new { success = response.Success, message = response.Message });
         }
     }
 }

@@ -1115,7 +1115,7 @@ Author URL: https://themeforest.net/user/dreamstechnologies
 }
 
 .sidebar .sidebar-menu>ul li .submenu>ul li a {
-    padding: 8px 4px 8px 40px;
+    padding: 8px 4px 8px 50px;
     font-size: 14px;
     position: relative;
     color: var(--menu-item-color);
@@ -1152,7 +1152,7 @@ Author URL: https://themeforest.net/user/dreamstechnologies
     position: absolute;
     border-left: 1.5px dashed var(--menu-item-border);
     height: 100%;
-    left: 20px;
+    left: 30px;
     top: 0;
 }
 
@@ -1162,7 +1162,7 @@ Author URL: https://themeforest.net/user/dreamstechnologies
     font-family: "tabler-icons";
     font-size: 8px;
     color: var(--menu-item-border);
-    left: 16px;
+    left: 26px;
     background-color: var(--menu-item-border);
     border-radius: 50rem;
     width: 10px;
@@ -1395,7 +1395,7 @@ Author URL: https://themeforest.net/user/dreamstechnologies
         text-align: center;
     }
     .expand-menu.mini-sidebar .sidebar .sidebar-menu {
-        padding: 24px 24px 0;
+        padding: 20px 20px 0;
     }
     .expand-menu.mini-sidebar .sidebar .sidebar-menu ul li a .count {
         display: flex;

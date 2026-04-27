@@ -1,10 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SchoolERP.Net.Models
 {
-    /// <summary>
-    /// This class represents the data structure and schema for MenuViewModel.
-    /// </summary>
     public class MenuViewModel
     {
         public int MenuID { get; set; }
@@ -23,9 +22,6 @@ namespace SchoolERP.Net.Models
         public DateTime? ModifiedOn { get; set; }
     }
 
-    /// <summary>
-    /// This class represents the data structure and schema for MenuUpsertRequest.
-    /// </summary>
     public class MenuUpsertRequest
     {
         public int MenuID { get; set; }
@@ -48,9 +44,12 @@ namespace SchoolERP.Net.Models
         public bool IsActive { get; set; }
     }
 
-    /// <summary>
-    /// This class represents the data structure and schema for MenusPageViewModel.
-    /// </summary>
+    public class MenuOrderRequest
+    {
+        public int MenuID { get; set; }
+        public int DisplayOrder { get; set; }
+    }
+
     public class MenusPageViewModel
     {
         public List<MenuViewModel> Menus { get; set; } = new();

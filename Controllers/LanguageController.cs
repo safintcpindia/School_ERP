@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for LanguageController.
+    /// This controller manages the languages available in the system, letting you add new ones or change existing ones.
     /// </summary>
     public class LanguageController : Controller
     {
@@ -22,6 +22,9 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the main list of all languages that the system currently supports.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
             var response = await _languageClient.GetAllAsync();
@@ -32,6 +35,9 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Gets the details of a specific language so you can see its settings or edit it.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetLanguage(int id)
         {
@@ -43,6 +49,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, data = response.Data });
         }
 
+        /// <summary>
+        /// Saves a new language or updates an existing one with the details you provided.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] MstLanguageUpsertRequest request)
         {
@@ -56,6 +65,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Turns a language on or off, determining if it can be used in the system.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int id, bool isActive)
         {
@@ -66,6 +78,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Permanently removes a language from the system's records.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {

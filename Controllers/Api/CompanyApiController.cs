@@ -10,6 +10,9 @@ namespace SchoolERP.Net.Controllers.Api
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    /// <summary>
+    /// This controller provides the technical endpoints for managing school companies and branches through the API.
+    /// </summary>
     public class CompanyApiController : ControllerBase
     {
         private readonly ICompanyService _companyService;
@@ -19,6 +22,9 @@ namespace SchoolERP.Net.Controllers.Api
             _companyService = companyService;
         }
 
+        /// <summary>
+        /// Gets the full list of all registered school companies from the system.
+        /// </summary>
         [HttpGet("GetAll")]
         public IActionResult GetAll(bool includeDeleted = false)
         {
@@ -26,6 +32,9 @@ namespace SchoolERP.Net.Controllers.Api
             return Ok(ApiResponse<List<MstCompanyViewModel>>.SuccessResponse(data));
         }
 
+        /// <summary>
+        /// Gets the details of one specific school company using its unique ID number.
+        /// </summary>
         [HttpGet("GetByID/{id}")]
         public IActionResult GetByID(int id)
         {
@@ -34,6 +43,9 @@ namespace SchoolERP.Net.Controllers.Api
             return Ok(ApiResponse<MstCompanyViewModel>.SuccessResponse(data));
         }
 
+        /// <summary>
+        /// Creates a new school company or updates an existing one with the information provided.
+        /// </summary>
         [HttpPost("Upsert")]
         public IActionResult Upsert([FromBody] MstCompanyUpsertRequest request)
         {
@@ -43,6 +55,9 @@ namespace SchoolERP.Net.Controllers.Api
             return Ok(new { success, message });
         }
 
+        /// <summary>
+        /// Permanently removes a school company's record from the system.
+        /// </summary>
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
         {
@@ -51,6 +66,9 @@ namespace SchoolERP.Net.Controllers.Api
             return Ok(new { success, message });
         }
 
+        /// <summary>
+        /// Turns a school company's active status on or off.
+        /// </summary>
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)
         {

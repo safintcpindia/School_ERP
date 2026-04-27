@@ -7,6 +7,9 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service performs the actual work of managing company information, such as saving, updating, or deleting school records from the database.
+    /// </summary>
     public class CompanyService : ICompanyService
     {
         private readonly SqlHelper _sqlHelper;
@@ -16,11 +19,14 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a complete list of all companies from the database.
+        /// </summary>
         public List<MstCompanyViewModel> GetAllCompanies(bool includeDeleted = false)
         {
             var list = new List<MstCompanyViewModel>();
-            var parameters = new[] { new SqlParameter("@IncludeDeleted", includeDeleted) };
-            var dt = _sqlHelper.ExecuteQuery("sp_Companies_GetAll", parameters);
+            //var parameters = new[] { new SqlParameter("@IncludeDeleted", includeDeleted) };
+            var dt = _sqlHelper.ExecuteQuery("sp_Companies_GetAll",null);
 
             foreach (DataRow row in dt.Rows)
             {
@@ -29,6 +35,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up a specific company's details based on its unique ID.
+        /// </summary>
         public MstCompanyViewModel? GetCompanyByID(int companyId)
         {
             var parameters = new[] { new SqlParameter("@CompanyId", companyId) };
@@ -37,6 +46,9 @@ namespace SchoolERP.Net.Services
             return MapRowToViewModel(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves company information. If the company already exists, it updates it; otherwise, it creates a new one.
+        /// </summary>
         public (bool success, string message) UpsertCompany(MstCompanyUpsertRequest request, int userId)
         {
             try
@@ -66,6 +78,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a company's record from the database.
+        /// </summary>
         public (bool success, string message) DeleteCompany(int companyId, int userId)
         {
             try
@@ -81,6 +96,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a company is currently active or inactive.
+        /// </summary>
         public (bool success, string message) ToggleStatus(int companyId, bool isActive, int userId)
         {
             try
@@ -97,6 +115,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database information into a format that the application can easily display.
+        /// </summary>
         private MstCompanyViewModel MapRowToViewModel(DataRow row)
         {
             var model = new MstCompanyViewModel

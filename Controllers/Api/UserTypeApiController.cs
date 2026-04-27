@@ -12,7 +12,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// Exposes core dictionary mappings for generic system types (e.g. Employee vs Student).
+    /// This controller provides the technical endpoints for managing different categories of users (like 'Employee' or 'Student') through the API.
     /// </summary>
     public class UserTypeApiController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Reads the array of User Type metadata structures.
+        /// Gets the full list of all defined user categories from the system.
         /// </summary>
         [HttpGet]
         public IActionResult GetAll()
@@ -34,7 +34,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Fetches a distinct configuration profile for a single user type ID.
+        /// Gets the details of one specific user category using its unique ID number.
         /// </summary>
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
@@ -47,7 +47,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Enters new mapping categories into the data layer natively.
+        /// Saves a new user category or updates an existing one with the name you provided.
         /// </summary>
         [HttpPost("save")]
         public IActionResult Save([FromBody] MstUserTypeUpsertRequest request)
@@ -65,7 +65,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Strips a mapping from active views organically without dropping foreign keys.
+        /// Turns a user category on or off.
         /// </summary>
         [HttpPost("toggle-status")]
         public IActionResult ToggleStatus([FromQuery] int typeId, [FromQuery] bool isActive)

@@ -7,7 +7,7 @@ using SchoolERP.Net.Models.Common;
 namespace SchoolERP.Net.Services.Clients
 {
     /// <summary>
-    /// This class provides business logic and data access services for SettingsClientService.
+    /// This service handles the actual work of sending requests to the main system to manage system settings and translations in the database via an API.
     /// </summary>
     public class SettingsClientService : BaseApiClient, ISettingsClientService
     {
@@ -15,11 +15,17 @@ namespace SchoolERP.Net.Services.Clients
         {
         }
 
+        /// <summary>
+        /// Sends a request to the server to fetch all translated words and phrases for the chosen language.
+        /// </summary>
         public async Task<ApiResponse<Dictionary<string, string>>> GetTranslationsAsync(string language)
         {
             return await GetAsync<Dictionary<string, string>>($"api/SettingsApi/translations/{language}");
         }
 
+        /// <summary>
+        /// Sends a request to the server to change a translation for a specific word or phrase.
+        /// </summary>
         public async Task<ApiResponse<bool>> UpdateTranslationAsync(TranslationUpdateModel model)
         {
             return await PostAsync<bool>("api/SettingsApi/translations/update", model);

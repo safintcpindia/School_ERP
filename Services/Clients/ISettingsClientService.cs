@@ -5,9 +5,19 @@ using SchoolERP.Net.Models.Common;
 
 namespace SchoolERP.Net.Services.Clients
 {
+    /// <summary>
+    /// This interface defines the rules for how the application communicates with the main system to manage language translations and general settings.
+    /// </summary>
     public interface ISettingsClientService
     {
+        /// <summary>
+        /// Asks the main system for all text translations for a specific language.
+        /// </summary>
         Task<ApiResponse<Dictionary<string, string>>> GetTranslationsAsync(string language);
+
+        /// <summary>
+        /// Sends a request to the main system to update a specific translated piece of text.
+        /// </summary>
         Task<ApiResponse<bool>> UpdateTranslationAsync(TranslationUpdateModel model);
     }
 }

@@ -7,7 +7,7 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// This class provides business logic and data access services for EmailConfigService.
+    /// This service handles the actual work of managing email configuration, including saving and retrieving server settings from the database.
     /// </summary>
     public class EmailConfigService : IEmailConfigService
     {
@@ -18,6 +18,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves the current email server settings from the database.
+        /// </summary>
         public MstEmailConfigViewModel? GetEmailConfig()
         {
             var dt = _sqlHelper.ExecuteQuery("sp_EmailConfig_Get", null!);
@@ -26,8 +29,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Maps standard payload structures into SQL params targeting `sp_EmailConfig_Upsert`.
-        /// Encompasses SSL/TLS toggle commands.
+        /// Saves or updates email server settings (like server address, port, and security options) in the database.
         /// </summary>
         public (bool success, string message) UpsertEmailConfig(MstEmailConfigUpsertRequest request, int userId)
         {
@@ -52,6 +54,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database information about email settings into a format the application can use.
+        /// </summary>
         private MstEmailConfigViewModel MapRowToViewModel(DataRow row)
         {
             return new MstEmailConfigViewModel

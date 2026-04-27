@@ -103,6 +103,7 @@ Template Name: Preclinic - Bootstrap Admin Template
 		const $body = $('body');
 		const $html = $('html');
 		const isMini = $body.hasClass('mini-sidebar');
+		
 		const isFullWidth = $html.attr('data-layout') === 'full-width';
 		const isHidden = $html.attr('data-layout') === 'hidden';
 	

@@ -1,7 +1,9 @@
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using SchoolERP.Net.Filters;
 using SchoolERP.Net.Data;
@@ -130,6 +132,15 @@ builder.Services.AddHttpClient<IPaymentMethodClientService, PaymentMethodClientS
 });
 
 
+// Configure Global Authorization Policy
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
+
+
 // Configure JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "SchoolERP_Default_Key_1234567890";
 builder.Services.AddAuthentication(options =>
@@ -163,6 +174,17 @@ builder.Services.AddAuthentication(options =>
                 {
                     context.Token = cookieToken;
                 }
+            }
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            // If it's not an API request and we're not already heading to Login, redirect to Login page
+            var path = context.Request.Path;
+            if (!path.StartsWithSegments("/api") && !path.StartsWithSegments("/Auth"))
+            {
+                context.HandleResponse();
+                context.Response.Redirect("/Auth/Login");
             }
             return Task.CompletedTask;
         }

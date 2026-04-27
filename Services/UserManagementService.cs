@@ -8,9 +8,7 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// Core implementation service for User Management.
-    /// Interacts directly with the database using the SQLHelper class for executing stored procedures.
-    /// Manages data access for User Types, Roles, Permissions, and their relational matrices.
+    /// This service handles the actual work of managing user categories, roles, and permissions, ensuring the right people have access to the right parts of the system.
     /// </summary>
     public class UserManagementService : IUserManagementService
     {
@@ -24,9 +22,7 @@ namespace SchoolERP.Net.Services
         // --- User Types ---
         
         /// <summary>
-        /// Retrieves all User Types from the database.
-        /// Iterates over the DataTable returned by the stored procedure 'sp_UserTypes_GetAll'
-        /// and maps it to a list of View Models.
+        /// Retrieves a list of all user categories from the database.
         /// </summary>
         public List<MstUserTypeViewModel> GetAllUserTypes()
         {
@@ -46,6 +42,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up a specific user category's details from the database.
+        /// </summary>
         public MstUserTypeViewModel? GetUserTypeByID(int userTypeID)
         {
             var dt = _sqlHelper.ExecuteQuery("sp_UserTypes_GetByID", new[] { new SqlParameter("@UserTypeID", userTypeID) });
@@ -62,8 +61,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Upserts (Inserts if new, Updates if exists) a User Type.
-        /// Executes 'sp_UserTypes_Upsert' expecting a tuple result containing the action success and a server message.
+        /// Saves or updates a user category in the database.
         /// </summary>
         public (bool success, string message) UpsertUserType(MstUserTypeUpsertRequest request, int userId, string ipAddress)
         {
@@ -84,6 +82,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a user category is active or not.
+        /// </summary>
         public (bool success, string message) ToggleUserTypeStatus(int userTypeID, bool isActive, int userId, string ipAddress)
         {
             try
@@ -101,6 +102,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a user category from the database.
+        /// </summary>
         public (bool success, string message) DeleteUserType(int userTypeID, int userId, string ipAddress)
         {
             try
@@ -120,7 +124,7 @@ namespace SchoolERP.Net.Services
         // --- Roles ---
         
         /// <summary>
-        /// Retrieves the complete list of system Roles mapping directly from 'sp_Roles_GetAll'.
+        /// Retrieves a list of all roles from the database.
         /// </summary>
         public List<MstRoleViewModel> GetAllRoles()
         {
@@ -140,6 +144,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up a specific role's details from the database.
+        /// </summary>
         public MstRoleViewModel? GetRoleByID(int roleID)
         {
             var dt = _sqlHelper.ExecuteQuery("sp_Roles_GetByID", new[] { new SqlParameter("@RoleID", roleID) });
@@ -156,8 +163,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Executes Role creation/updating. Crucially returns the updated or inserted RoleId to
-        /// support immediate permission-grant routines on the UI.
+        /// Saves or updates a role in the database.
         /// </summary>
         public (bool success, string message, int roleId) UpsertRole(MstRoleUpsertRequest request, int userId, string ipAddress)
         {
@@ -192,6 +198,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message, 0); }
         }
 
+        /// <summary>
+        /// Updates whether a role is active or not.
+        /// </summary>
         public (bool success, string message) ToggleRoleStatus(int roleID, bool isActive, int userId, string ipAddress)
         {
             try
@@ -209,6 +218,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a role from the database.
+        /// </summary>
         public (bool success, string message) DeleteRole(int roleID, int userId, string ipAddress)
         {
             try
@@ -228,7 +240,7 @@ namespace SchoolERP.Net.Services
         // --- Permissions ---
         
         /// <summary>
-        /// Retrieves the global list of explicit permission actions/nodes mapped via 'sp_Permissions_GetAll'.
+        /// Retrieves a list of all possible actions/permissions from the database.
         /// </summary>
         public List<MstPermissionViewModel> GetAllPermissions()
         {
@@ -248,6 +260,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up a specific permission's details from the database.
+        /// </summary>
         public MstPermissionViewModel? GetPermissionByID(int permissionID)
         {
             var dt = _sqlHelper.ExecuteQuery("sp_Permissions_GetByID", new[] { new SqlParameter("@PermissionID", permissionID) });
@@ -263,6 +278,9 @@ namespace SchoolERP.Net.Services
             };
         }
 
+        /// <summary>
+        /// Saves or updates a permission in the database.
+        /// </summary>
         public (bool success, string message) UpsertPermission(MstPermissionUpsertRequest request, int userId, string ipAddress)
         {
             try
@@ -282,6 +300,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a permission is currently usable.
+        /// </summary>
         public (bool success, string message) TogglePermissionStatus(int permissionID, bool isActive, int userId, string ipAddress)
         {
             try
@@ -299,6 +320,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a permission from the database.
+        /// </summary>
         public (bool success, string message) DeletePermission(int permissionID, int userId, string ipAddress)
         {
             try
@@ -318,8 +342,7 @@ namespace SchoolERP.Net.Services
         // --- Role Permission Tree ---
         
         /// <summary>
-        /// Calculates the deep matrix grid structure of Menu->Permission nodes based on Role access.
-        /// Generates the flattened list used to build the HTML tree arrays on the View.
+        /// Fetches the full list of allowed actions for a role from the database.
         /// </summary>
         public List<RoleMenuPermissionViewModel> GetPermissionsMatrix(int roleId)
         {
@@ -331,7 +354,7 @@ namespace SchoolERP.Net.Services
             if (!HasMatrixColumns(dt))
                 return list;
 
-            string? menuIdColumn = FindColumnName(dt, "MENUID", "MenuID", "MenuId");
+            string? menuIdColumn = FindColumnName(dt, "MENUID", "MenuID", "MenuId","MenuIcon");
             if (string.IsNullOrWhiteSpace(menuIdColumn))
                 throw new ArgumentException("Column 'MenuID' does not belong to table.");
 
@@ -341,6 +364,7 @@ namespace SchoolERP.Net.Services
                 {
                     MenuID = Convert.ToInt32(row[menuIdColumn]),
                     MenuName = row["MenuName"]?.ToString() ?? "",
+                    MenuIcon = row["MenuIcon"]?.ToString() ?? "",
                     ParentID = row["ParentID"] != DBNull.Value ? Convert.ToInt32(row["ParentID"]) : null,
                     PermissionID = Convert.ToInt32(row["PermissionID"]),
                     PermissionName = row["PermissionName"]?.ToString() ?? "",
@@ -352,8 +376,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Serializes the array of (MenuID:PermissionID) combinations into a single string 
-        /// which is parsed dynamically by SQL 'sp_Roles_SavePermissions', performing a bulk transaction purge-insert.
+        /// Saves the mapping of actions to roles in the database.
         /// </summary>
         public (bool success, string message) SaveRolePermissions(MstRolePermissionSaveRequest request, int adminId, string ipAddress)
         {
@@ -378,6 +401,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Retrieves the combined list of all actions a specific user is permitted to perform.
+        /// </summary>
         public List<UserPermissionViewModel> GetUserPermissions(int userId)
         {
             var list = new List<UserPermissionViewModel>();

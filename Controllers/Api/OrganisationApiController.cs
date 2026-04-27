@@ -11,7 +11,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// Processes physical campuses, chains, or district descriptors binding the domain mapping.
+    /// This controller provides the technical endpoints for managing school organizations and campuses through the API.
     /// </summary>
     public class OrganisationApiController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Reads all organizational blocks (allows opting into reading deactivated elements).
+        /// Gets the full list of all registered organizations or campuses from the system.
         /// </summary>
         [HttpGet("GetAll")]
         public IActionResult GetAll(bool includeDeleted = false)
@@ -33,7 +33,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Queries detailed mapping constants for a single specific branch code.
+        /// Gets the details of one specific organization using its unique ID number.
         /// </summary>
         [HttpGet("GetByID/{id}")]
         public IActionResult GetByID(int id)
@@ -44,7 +44,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Forces insertion or metadata changes to a campus properties structure.
+        /// Saves a new organization's details or updates an existing one with the information provided.
         /// </summary>
         [HttpPost("Upsert")]
         public IActionResult Upsert([FromBody] OrganisationUpsertRequest request)
@@ -56,7 +56,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Structurally removes an organization block hierarchy.
+        /// Permanently removes an organization's record from the system.
         /// </summary>
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
@@ -67,7 +67,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Suppresses visibility for a division natively without triggering destructive cleanses.
+        /// Turns an organization's active status on or off.
         /// </summary>
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)

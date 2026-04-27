@@ -127,7 +127,7 @@
                 </div>
             </div>
             <div class="modal-body">
-                <div id="roleModalNotice" class="alert alert-warning py-2 small d-none mb-3" role="alert"></div>
+                @* Local alert div removed in favor of global toast system *@
                 <input type="hidden" id="roleId" value="0" />
                 <div class="mb-3">
                     <input type="text" id="roleName" class="form-control" placeholder="Enter role name" />
@@ -204,11 +204,11 @@
 
         function openRoleModal(id, name, desc) {
             if (id === 0 && !permCanAdd) {
-                alert('You do not have permission to add roles.');
+                showToast('You do not have permission to add roles.', 'warning');
                 return;
             }
             if (id > 0 && !permCanEdit) {
-                alert('You do not have permission to edit roles.');
+                showToast('You do not have permission to edit roles.', 'warning');
                 return;
             }
             clearRoleModalValidation();
@@ -222,7 +222,7 @@
         async function saveRole() {
             const rid = parseInt(document.getElementById('roleId').value);
             if (rid === 0 && !permCanAdd) {
-                alert('You do not have permission to add roles.');
+                showToast('You do not have permission to add roles.', 'warning');
                 return;
             }
             if (rid > 0 && !permCanEdit) {
@@ -259,13 +259,13 @@
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error saving role');
+                showToast('Error saving role', 'error');
             }
         }
 
         async function managePermissions(roleId, roleName) {
             if (!permCanView && !permCanEdit) {
-                alert('You do not have permission to view role permissions.');
+                showToast('You do not have permission to view role permissions.', 'warning');
                 return;
             }
             document.getElementById('currentRoleId').value = roleId;
@@ -282,11 +282,11 @@
                 if (result.success) {
                     renderTree(result.permissions);
                 } else {
-                    alert(result.message);
+                    showToast(result.message, 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error loading permissions');
+                showToast('Error loading permissions', 'error');
             }
         }
 
@@ -443,7 +443,7 @@
 
         async function savePermissions() {
             if (!permCanEdit) {
-                alert('You do not have permission to save role permissions.');
+                showToast('You do not have permission to save role permissions.', 'warning');
                 return;
             }
             const roleId = parseInt(document.getElementById('currentRoleId').value);
@@ -463,14 +463,14 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert('Permissions updated successfully!');
+                    showToast('Permissions updated successfully!', 'success');
                     permissionsOffcanvas.hide();
                 } else {
-                    alert(result.message);
+                    showToast(result.message, 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error saving permissions');
+                showToast('Error saving permissions', 'error');
             }
         }
     </script>

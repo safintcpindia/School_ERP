@@ -3,14 +3,18 @@ using System.Security.Claims;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// Resolves the signed-in user id and checks menu URL–scoped permissions (same rules as <see cref="Helpers.PermissionHelper.HasPermissionByUrl"/>).
+    /// This interface defines the rules for checking if a user has permission to view a specific page or perform a certain action.
     /// </summary>
     public interface IUserMenuPermissionService
     {
+        /// <summary>
+        /// Gets the unique ID of the person currently logged in.
+        /// </summary>
         int GetCurrentUserId(ClaimsPrincipal user);
 
-        /// <param name="menuUrlPrefix">Example: "/Role", "/Settings". Trailing slash is ignored.</param>
-        /// <param name="permissionName">Example: View, Add, Edit, Delete.</param>
+        /// <summary>
+        /// Checks if the logged-in user is allowed to do something (like 'Edit' or 'Delete') on a specific page.
+        /// </summary>
         bool Has(ClaimsPrincipal user, string menuUrlPrefix, string permissionName);
     }
 }

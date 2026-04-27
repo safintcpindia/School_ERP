@@ -10,7 +10,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// This class handles HTTP routing and API requests for UtilityApiController.
+    /// This controller provides various helpful technical endpoints, such as changing the system language or getting dashboard summaries.
     /// </summary>
     public class UtilityApiController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Fires a state mutation changing the active session's rendering locale constraint.
+        /// Changes the language used in the system to your chosen one.
         /// </summary>
         [HttpPost("set-language")]
         public IActionResult SetLanguage([FromQuery] string language)
@@ -32,7 +32,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Computes quick aggregate counts mapped to the master analytics dashboard context.
+        /// Gets a quick summary of important numbers to show on the main dashboard.
         /// </summary>
         [HttpGet("dashboard-summary")]
         public IActionResult GetDashboardSummary()

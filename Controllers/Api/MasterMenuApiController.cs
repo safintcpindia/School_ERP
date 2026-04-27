@@ -13,8 +13,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// Serves as the UI framework routing generator.
-    /// Provides raw datasets to construct the frontend application's navigation sidebar.
+    /// This controller provides technical endpoints for setting up and organizing the application's sidebar navigation menus.
     /// </summary>
     public class MasterMenuApiController : ControllerBase
     {
@@ -26,7 +25,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Reads the master list of all available navigation nodes globally.
+        /// Gets the full list of all navigation menus available in the system.
         /// </summary>
         [HttpGet]
         public IActionResult GetAllMenus()
@@ -36,7 +35,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Queries a single UI module's property set (icon, redirect paths, sort order).
+        /// Gets the details of one specific menu item using its unique ID number.
         /// </summary>
         [HttpGet("{id}")]
         public IActionResult GetMenuById(int id)
@@ -47,7 +46,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Deploys a new routing leaf or updates an existing branch directly in the architecture DB.
+        /// Saves a new menu item or updates an existing one with the details you provided.
         /// </summary>
         [HttpPost("save")]
         public IActionResult Save([FromBody] MenuUpsertRequest request)
@@ -74,7 +73,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Masks a menu option from rendering without severing DB relation graphs.
+        /// Turns a menu item's visibility on or off.
         /// </summary>
         [HttpPost("toggle-status")]
         public IActionResult ToggleStatus([FromQuery] int menuId, [FromQuery] bool isActive)
@@ -87,6 +86,28 @@ namespace SchoolERP.Net.Controllers.Api
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
             var (result, message) = _menuService.ToggleMenuStatus(menuId, isActive, userId, mainAccountId, sessionId, ipAddress);
+            
+            if (result > 0)
+                return Ok(ApiResponse<bool>.SuccessResponse(true, message));
+
+            return BadRequest(ApiResponse<bool>.ErrorResponse(message));
+        }
+
+        /// <summary>
+        /// Changes the order in which menu items appear in the navigation sidebar.
+        /// </summary>
+        [HttpPost("update-order")]
+        public IActionResult UpdateOrder([FromBody] List<MenuOrderRequest> orders)
+        {
+            if (orders == null || !orders.Any()) return BadRequest(ApiResponse<bool>.ErrorResponse("No order data provided."));
+
+            int userId = GetCurrentUserId();
+            if (userId <= 0)
+                return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+            
+            string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+            var (result, message) = _menuService.UpdateMenuOrder(orders, userId, ipAddress);
             
             if (result > 0)
                 return Ok(ApiResponse<bool>.SuccessResponse(true, message));

@@ -53,15 +53,36 @@
             });
         },
 
-        setNotice: function (elementId, message) {
-            var el = byId(elementId);
-            if (!el) return;
-            el.textContent = message || '';
-            el.classList.toggle('d-none', !message);
+        setNotice: function (elementId, message, type) {
+            if (!message) return;
+            
+            // If type is not provided, try to infer it from elementId or message
+            if (!type) {
+                var msg = message.toLowerCase();
+                var eid = (elementId || '').toLowerCase();
+                if (msg.includes('success') || msg.includes('saved') || msg.includes('updated')) type = 'success';
+                else if (msg.includes('error') || msg.includes('failed') || msg.includes('invalid') || eid.includes('err')) type = 'error';
+                else type = 'info';
+            }
+
+            if (typeof window.showToast === 'function') {
+                window.showToast(message, type);
+            } else {
+                // Fallback to legacy behavior if global toast not ready
+                var el = byId(elementId);
+                if (el) {
+                    el.textContent = message;
+                    el.classList.remove('d-none');
+                }
+            }
         },
 
         clearNotice: function (elementId) {
-            this.setNotice(elementId, '');
+            var el = byId(elementId);
+            if (el) {
+                el.textContent = '';
+                el.classList.add('d-none');
+            }
         },
 
         isNonEmpty: function (v) {

@@ -8,7 +8,7 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// This class provides business logic and data access services for SessionService.
+    /// This service handles the actual work of managing academic sessions, such as saving session names and tracking which session a user is currently logged into in the database.
     /// </summary>
     public class SessionService : ISessionService
     {
@@ -19,6 +19,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a list of all academic sessions from the database.
+        /// </summary>
         public List<MstSessionViewModel> GetAllSessions(bool includeDeleted = false)
         {
             var list = new List<MstSessionViewModel>();
@@ -32,6 +35,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a single session using its ID.
+        /// </summary>
         public MstSessionViewModel? GetSessionByID(int sessionId)
         {
             var parameters = new[] { new SqlParameter("@SessionId", sessionId) };
@@ -41,8 +47,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Inserts or modifies a chronological filtering boundary by tying it to user auditing signatures.
-        /// Returns a boolean mapping of the 'sp_Sessions_Upsert' success tuple.
+        /// Saves or updates academic session information in the database.
         /// </summary>
         public (bool success, string message) UpsertSession(MstSessionUpsertRequest request, int userId)
         {
@@ -61,6 +66,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a session record from the database.
+        /// </summary>
         public (bool success, string message) DeleteSession(int sessionId, int userId)
         {
             try
@@ -76,6 +84,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a session is currently available for use.
+        /// </summary>
         public (bool success, string message) ToggleSessionStatus(int sessionId, bool isActive, int userId)
         {
             try
@@ -92,6 +103,43 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Saves the user's current session choice in the database so they stay in the same session even after refreshing.
+        /// </summary>
+        public (bool success, string message) UpdateUserCurrentSession(int userId, int sessionId)
+        {
+            try
+            {
+                var parameters = new[]
+                {
+                    new SqlParameter("@UserID", userId),
+                    new SqlParameter("@DoneBy", userId),
+                    new SqlParameter("@CurrentSessionId", sessionId)
+                };
+                var dt = _sqlHelper.ExecuteQuery("sp_Users_UpdateCurrentSession", parameters);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString() ?? "");
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        /// <summary>
+        /// Retrieves the user's currently selected academic session from the database.
+        /// </summary>
+        public int? GetUserCurrentSession(int userId)
+        {
+            try
+            {
+                var parameters = new[] { new SqlParameter("@UserID", userId) };
+                var dt = _sqlHelper.ExecuteQuery("sp_Users_GetCurrentSession", parameters);
+                if (dt.Rows.Count == 0 || dt.Rows[0]["SessionId"] == DBNull.Value) return null;
+                return Convert.ToInt32(dt.Rows[0]["SessionId"]);
+            }
+            catch { return null; }
+        }
+
+        /// <summary>
+        /// A helper tool that converts raw database data about sessions into a format the application can easily work with.
+        /// </summary>
         private MstSessionViewModel MapRowToViewModel(DataRow row)
         {
             return new MstSessionViewModel

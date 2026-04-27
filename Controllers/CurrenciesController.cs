@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SchoolERP.Net.Controllers
 {
     /// <summary>
-    /// This class handles HTTP routing and API requests for CurrenciesController.
+    /// This controller manages the currency settings page, where you can see, add, or change the different types of money used in the system.
     /// </summary>
     public class CurrenciesController : Controller
     {
@@ -22,6 +22,9 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the main list of all currencies available in the system.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
             var response = await _currencyClient.GetAllAsync();
@@ -32,6 +35,9 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Gets the details of one specific currency so you can view or edit it.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetCurrency(int id)
         {
@@ -43,6 +49,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, data = response.Data });
         }
 
+        /// <summary>
+        /// Saves a new currency or updates an existing one with the information you provided.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] MstCurrencyUpsertRequest request)
         {
@@ -56,6 +65,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Turns a currency on or off, making it active or inactive in the system.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int id, bool isActive)
         {
@@ -66,6 +78,9 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = response.Success, message = response.Message });
         }
 
+        /// <summary>
+        /// Permanently removes a currency from the system's records.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {

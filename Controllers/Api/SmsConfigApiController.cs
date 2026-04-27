@@ -11,7 +11,7 @@ namespace SchoolERP.Net.Controllers.Api
     [ApiController]
     [Authorize]
     /// <summary>
-    /// This class handles HTTP routing and API requests for SmsConfigApiController.
+    /// This controller provides the technical endpoints for configuring the SMS gateway settings through the API.
     /// </summary>
     public class SmsConfigApiController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Extracts active API routes and integration keys for SMS transmission modules.
+        /// Gets the current SMS gateway settings (like the API URL and keys) from the system.
         /// </summary>
         [HttpGet("Get")]
         public IActionResult GetConfig()
@@ -40,7 +40,7 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
-        /// Applies new parameters for an SMS service provider integration.
+        /// Saves or updates the SMS gateway settings with the information you provided.
         /// </summary>
         [HttpPost("Upsert")]
         public IActionResult UpsertConfig([FromBody] MstSmsConfigUpsertRequest request)

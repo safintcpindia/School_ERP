@@ -8,7 +8,7 @@ using SchoolERP.Net.Models;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// This class provides business logic and data access services for PaymentMethodService.
+    /// This service handles the actual work of managing payment method details, such as saving API keys and secrets for payment gateways in the database.
     /// </summary>
     public class PaymentMethodService : IPaymentMethodService
     {
@@ -19,6 +19,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a list of all payment methods from the database.
+        /// </summary>
         public List<MstPaymentMethodViewModel> GetAllPaymentMethods(bool includeDeleted = false)
         {
             var list = new List<MstPaymentMethodViewModel>();
@@ -32,6 +35,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific payment method using its ID.
+        /// </summary>
         public MstPaymentMethodViewModel? GetPaymentMethodById(int paymentId)
         {
             var parameters = new[] { new SqlParameter("@PaymentId", paymentId) };
@@ -41,7 +47,7 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Upserts payment configurations securely directly firing the 'sp_PaymentMethods_Upsert' layer.
+        /// Saves or updates payment gateway information like keys and secrets in the database.
         /// </summary>
         public (bool success, string message) UpsertPaymentMethod(MstPaymentMethodUpsertRequest request, int userId)
         {
@@ -61,6 +67,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a payment method record from the database.
+        /// </summary>
         public (bool success, string message) DeletePaymentMethod(int paymentId, int userId)
         {
             try
@@ -76,6 +85,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a payment method is currently enabled for use.
+        /// </summary>
         public (bool success, string message) TogglePaymentMethodStatus(int paymentId, bool isActive, int userId)
         {
             try
@@ -92,6 +104,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database information about payment methods into a format that the application can easily use.
+        /// </summary>
         private MstPaymentMethodViewModel MapRowToViewModel(DataRow row)
         {
             return new MstPaymentMethodViewModel

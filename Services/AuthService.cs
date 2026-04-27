@@ -9,7 +9,7 @@ using SchoolERP.Net.Utilities;
 namespace SchoolERP.Net.Services
 {
     /// <summary>
-    /// This class provides business logic and data access services for AuthService.
+    /// This service handles the actual work of logging users in. It checks the database and provides a secure pass (token) if the user is who they say they are.
     /// </summary>
     public class AuthService : IAuthService
     {
@@ -23,11 +23,8 @@ namespace SchoolERP.Net.Services
         }
 
         /// <summary>
-        /// Validates plaintext passwords against database hashes via 'sp_User_Login_Secure'.
-        /// Produces a JWT Bearer token natively if validation succeeds.
+        /// This function takes a username and password, asks the database if they match, and returns the user's information along with a security token if successful.
         /// </summary>
-        /// <param name="username">User's registered ID or email.</param>
-        /// <param name="password">Raw plaintext password submitted from client.</param>
         public async Task<(int Success, string Message, UserSessionModel User)> LoginAsync(string username, string password)
         {
             try
@@ -60,37 +57,7 @@ namespace SchoolERP.Net.Services
                 if (!await reader.NextResultAsync() || !await reader.ReadAsync())
                     return (0, "Error fetching user details", null);
 
-                TimeSpan startTime = TimeSpan.Zero;
-                TimeSpan endTime = TimeSpan.Zero;
-
-                if (reader["StartTime"] != DBNull.Value)
-                {
-                    startTime = TimeSpan.Parse(reader["StartTime"].ToString());
-                }
-                if (reader["EndTime"] != DBNull.Value)
-                {
-                    endTime = TimeSpan.Parse(reader["EndTime"].ToString());
-                }
-                TimeSpan currentTime = DateTime.Now.TimeOfDay;
-
-                bool isEligible;
-
-                if (startTime <= endTime)
-                {
-                    // Normal same-day range
-                    isEligible = currentTime >= startTime && currentTime <= endTime;
-                }
-                else
-                {
-                    // Overnight range (crosses midnight)
-                    isEligible = currentTime >= startTime || currentTime <= endTime;
-                }
-                if(startTime != TimeSpan.Zero && endTime != TimeSpan.Zero)
-                {
-                    if (isEligible == false)
-                        return (0, "Login is not allowed at this time.", null);
-                }
-
+                
                 
 
                 var user = new UserSessionModel
@@ -126,6 +93,9 @@ namespace SchoolERP.Net.Services
             }
         }
 
+        /// <summary>
+        /// A small tool used to safely get text information from the database, even if it might be missing.
+        /// </summary>
         private static string? GetOptionalString(IDataRecord record, string columnName)
         {
             for (int i = 0; i < record.FieldCount; i++)

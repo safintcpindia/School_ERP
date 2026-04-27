@@ -10,9 +10,7 @@ using SchoolERP.Net.Models.Common;
 namespace SchoolERP.Net.Services.Clients
 {
     /// <summary>
-    /// Serves as the foundational HTTP proxy layer for all Blazor/MVC frontend components.
-    /// Intercepts raw JSON payloads, automatically unwrapping them into typed <c>ApiResponse&lt;T&gt;</c> structures
-    /// and gracefully catching network-level timeouts or HTTP fault codes locally.
+    /// This is a base tool that handles all the technical details of sending and receiving data through the internet for the application.
     /// </summary>
     public abstract class BaseApiClient
     {
@@ -30,6 +28,9 @@ namespace SchoolERP.Net.Services.Clients
             };
         }
 
+        /// <summary>
+        /// Sends a request to 'get' or 'read' information from the server.
+        /// </summary>
         protected async Task<ApiResponse<T>> GetAsync<T>(string url)
         {
             try
@@ -45,6 +46,9 @@ namespace SchoolERP.Net.Services.Clients
             }
         }
 
+        /// <summary>
+        /// Sends a request to 'create' or 'submit' new information to the server.
+        /// </summary>
         protected async Task<ApiResponse<T>> PostAsync<T>(string url, object data)
         {
             try
@@ -63,6 +67,9 @@ namespace SchoolERP.Net.Services.Clients
             }
         }
 
+        /// <summary>
+        /// Sends a request to 'update' or 'change' existing information on the server.
+        /// </summary>
         protected async Task<ApiResponse<T>> PutAsync<T>(string url, object data)
         {
             try
@@ -81,6 +88,9 @@ namespace SchoolERP.Net.Services.Clients
             }
         }
 
+        /// <summary>
+        /// Sends a request to 'remove' or 'delete' information from the server.
+        /// </summary>
         protected async Task<ApiResponse<T>> DeleteAsync<T>(string url)
         {
             try
@@ -96,6 +106,9 @@ namespace SchoolERP.Net.Services.Clients
             }
         }
 
+        /// <summary>
+        /// Automatically adds the user's secret 'security token' to the request so the server knows who is asking.
+        /// </summary>
         private void AttachBearerToken(HttpRequestMessage request)
         {
             var token = _httpContextAccessor.HttpContext?.Request?.Cookies["token"];
@@ -104,9 +117,7 @@ namespace SchoolERP.Net.Services.Clients
         }
 
         /// <summary>
-        /// Sinks the raw native response content into memory.
-        /// Identifies whether the JSON wraps a generic data structure or a standardized 'ApiResponse' object, 
-        /// unpacking the Success flag naturally regardless of API divergence.
+        /// A tool that carefully reads the data sent back by the server and checks if everything went smoothly or if there was an error.
         /// </summary>
         private async Task<ApiResponse<T>> HandleResponse<T>(HttpResponseMessage response)
         {

@@ -82,13 +82,13 @@
 
                         <!-- Logo Normal -->
                         <span class="logo-light">
-                            <span class="logo-lg"><img src="assets/img/logo.svg" alt="logo"></span>
-                            <span class="logo-sm"><img src="assets/img/logo-small.svg" alt="small logo"></span>
+                            <span class="logo-lg"><img src="~/assets/img/logo.svg" alt="logo"></span>
+                            <span class="logo-sm"><img src="~/assets/img/logo-small.svg" alt="small logo"></span>
                         </span>
 
                         <!-- Logo Dark -->
                         <span class="logo-dark">
-                            <span class="logo-lg"><img src="assets/img/logo-white.svg" alt="dark logo"></span>
+                            <span class="logo-lg"><img src="~/assets/img/logo-white.svg" alt="dark logo"></span>
                         </span>
                     </a>
 
@@ -136,6 +136,13 @@
                         </button>
                     </div> *@
 
+
+                    <div class="header-item d-none d-sm-flex me-2">
+                        <button class="topbar-link btn btn-icon topbar-link" id="light-dark-mode" type="button">
+                            <i class="ti ti-calendar-week fs-16"></i>
+                        </button>
+                    </div>
+
                    
                     <!-- Light/Dark Mode Button -->
                     <div class="header-item d-none d-sm-flex me-2">
@@ -170,7 +177,7 @@
 
                     <!-- Notification Dropdown -->
                     <div class="header-item">
-                        <div class="dropdown me-3">
+                        <div class="dropdown me-2">
 
                             <button class="topbar-link btn btn-icon topbar-link dropdown-toggle drop-arrow-none" data-bs-toggle="dropdown" data-bs-offset="0,24" type="button" aria-haspopup="false" aria-expanded="false">
                                 <i class="ti ti-bell-check fs-16 animate-ring"></i>
@@ -299,16 +306,25 @@
                         </div>
                     </div>
 
+                    <div class="header-item d-none d-sm-flex me-2">
+                        <button class="topbar-link btn btn-icon topbar-link" id="light-dark-mode" type="button">
+                            <i class="ti ti-replace-user fs-16"></i>
+                        </button>
+                    </div>
+
                     <!-- User Dropdown -->
                     <div class="dropdown profile-dropdown d-flex align-items-center justify-content-center">
                         <a href="javascript:void(0);" class="topbar-link dropdown-toggle drop-arrow-none position-relative" data-bs-toggle="dropdown" data-bs-offset="0,22" aria-haspopup="false" aria-expanded="false">
-                            <img src="assets/img/users/user-01.jpg" width="32" class="rounded-circle d-flex" alt="user-image">
-                            <span class="online text-success"><i class="ti ti-circle-filled d-flex bg-white rounded-circle border border-1 border-white"></i></span>
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="~/assets/img/users/user-01.jpg" width="32" class="rounded-circle d-flex" alt="user-image">
+                                @* <span class="online text-success"><i class="ti ti-circle-filled d-flex bg-white rounded-circle border border-1 border-white"></i></span> *@
+                                <span class="fw-semibold">@User.Identity.Name <i class="ti ti-chevron-down"></i></span>
+                            </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-md p-2">
 
                             <div class="d-flex align-items-center bg-light rounded-3 p-2 mb-2">
-                                <img src="assets/img/users/user-01.jpg" class="rounded-circle" width="42" height="42" alt="">
+                                <img src="~/assets/img/users/user-01.jpg" class="rounded-circle" width="42" height="42" alt="">
                                 <div class="ms-2">
                                     <p class="fw-medium text-dark mb-0">@User.Identity.Name</p>
                                     
@@ -316,22 +332,22 @@
                             </div>
 
                             <!-- Item-->
-                            <a href="profile-settings.html" class="dropdown-item">
+                            <a href="#" class="dropdown-item">
                                 <i class="ti ti-user-circle me-1 align-middle"></i>
                                 <span class="align-middle">@Localizer.GetString("profile")</span>
                             </a>
 
                             <!-- Item-->
-                            <a href="account-settings.html" class="dropdown-item">
+                            <a href="#" class="dropdown-item">
                                 <i class="ti ti-settings me-1 align-middle"></i>
                                 <span class="align-middle">@Localizer.GetString("system_setting")</span>
                             </a>
 
                             <!-- item -->
-                            <div class="form-check form-switch form-check-reverse d-flex align-items-center justify-content-between dropdown-item mb-0">
+                           @*  <div class="form-check form-switch form-check-reverse d-flex align-items-center justify-content-between dropdown-item mb-0">
                                 <label class="form-check-label" for="notify"><i class="ti ti-bell me-1"></i>Notifications</label>
                                 <input class="form-check-input me-0" type="checkbox" role="switch" id="notify">
-                            </div>
+                            </div> *@
 
                             <!-- Item-->
                             <!-- <a href="transactions.html" class="dropdown-item">
@@ -524,6 +540,13 @@
             <div class="content pb-0">
                 @RenderBody()
             </div>
+
+            <!-- Footer Start -->
+            <div class="footer text-center bg-white p-2 border-top position-sticky bottom-0">
+                <p class="text-dark mb-0">Copyright &copy; 2026 - All right reserved Shivkarma Infotech Solutions.</p>
+            </div>
+            <!-- Footer End -->
+
         </div>
 
     </div>
@@ -672,14 +695,6 @@
 
             if (!ddl || !titleEl || !btnSave) return;
 
-            function getCookie(name) {
-                try {
-                    const parts = (`; ${document.cookie}`).split(`; ${name}=`);
-                    if (parts.length === 2) return parts.pop().split(';').shift() || '';
-                } catch { }
-                return '';
-            }
-
             async function fetchSessions() {
                 const resp = await fetch('/api/SessionApi/GetAll?includeDeleted=false', { method: 'GET' });
                 const payload = await resp.json();
@@ -687,6 +702,16 @@
                     throw new Error(payload?.message || 'Failed to load sessions');
                 }
                 return payload.data;
+            }
+
+            async function fetchUserCurrentSession() {
+                try {
+                    const resp = await fetch('/api/SessionApi/GetUserCurrentSession', { method: 'GET' });
+                    const payload = await resp.json();
+                    return payload.success ? (payload.data || 0) : 0;
+                } catch {
+                    return 0;
+                }
             }
 
             function setLoadingState(message) {
@@ -711,13 +736,12 @@
                 btnSave.disabled = sessions.length === 0;
             }
 
-            function selectDefaultSession(sessions) {
-                const cookieSessionId = parseInt(getCookie('CurrentSessionId') || '0', 10);
-                const fromCookie = cookieSessionId
-                    ? (sessions.find(s => s && s.sessionId === cookieSessionId) || null)
+            function selectDefaultSession(sessions, dbSessionId) {
+                const fromDb = dbSessionId
+                    ? (sessions.find(s => s && s.sessionId === dbSessionId) || null)
                     : null;
 
-                const active = fromCookie || sessions.find(s => s && s.isActive === true) || sessions[0] || null;
+                const active = fromDb || sessions.find(s => s && s.isActive === true) || sessions[0] || null;
                 if (!active) {
                     titleEl.textContent = '—';
                     ddl.value = '';
@@ -731,9 +755,12 @@
             async function init() {
                 try {
                     setLoadingState('Loading…');
-                    const sessions = await fetchSessions();
+                    const [sessions, currentSessionId] = await Promise.all([
+                        fetchSessions(),
+                        fetchUserCurrentSession()
+                    ]);
                     populateSessions(sessions);
-                    selectDefaultSession(sessions);
+                    selectDefaultSession(sessions, currentSessionId);
                 } catch (e) {
                     console.error(e);
                     setLoadingState('No sessions');
@@ -768,9 +795,119 @@
             init();
         })();
     </script>
+    <script>
+        /**
+         * Sidebar Toggle & Persistence Logic
+         * Overrides default script.js behavior to ensure ThemeCustomizer state is preserved.
+         */
+        $(document).ready(function () {
+            if (typeof ThemeCustomizer !== 'undefined') {
+                // Initialize customizer if not already assigned to window
+                if (!window.themeCustomizer) {
+                    window.themeCustomizer = new ThemeCustomizer();
+                    window.themeCustomizer.init();
+                }
+
+                function toggleSidebarStyle() {
+                    let html = document.documentElement;
+                    let currentSize = html.getAttribute("data-layout");
+
+                    // Fallback if attribute is missing
+                    if (!currentSize) {
+                        currentSize = window.themeCustomizer.config.sidenav.size || "default";
+                    }
+
+                    let newSize = (currentSize === "mini") ? "default" : "mini";
+
+                    // Apply layout: This updates <html> data-layout, toggles <body> .mini-sidebar class,
+                    // and persists the state to sessionStorage via ThemeCustomizer's internal methods.
+                    window.themeCustomizer.changeLeftbarSize(newSize);
+
+                    // Force UI refresh for responsive elements (tables, charts, etc.)
+                    window.dispatchEvent(new Event('resize'));
+                }
+
+                // Unbind the conflicting handlers from assets/js/script.js to prevent double-toggling
+                $(document).off('click', '#toggle_btn');
+                $(document).off('click', '#toggle_btn2');
+
+                // Re-bind both toggle buttons to the persistent handler
+                $(document).on('click', '#toggle_btn, #toggle_btn2', function (e) {
+                    e.preventDefault();
+                    toggleSidebarStyle();
+                    return false;
+                });
+            }
+        });
+    </script>
+
 
     @RenderSection("Scripts", required: false)
+    
+    <!-- Global Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+        <div id="globalToast" class="toast align-items-center border-0 text-white" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2">
+                    <i id="globalToastIcon" class="ti ti-info-circle fs-5"></i>
+                    <div id="globalToastMessage"></div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        /**
+         * Global Toast Helper
+         * param {string} message - The message to display
+         * param {string} type - 'success', 'error', 'warning', 'info'
+         */
+        window.showToast = function (message, type) {
+            const toastEl = document.getElementById('globalToast');
+            const messageEl = document.getElementById('globalToastMessage');
+            const iconEl = document.getElementById('globalToastIcon');
+            
+            if (!toastEl || !messageEl) return;
+
+            // Handle boolean type (compatibility with older showToast(msg, isSuccess))
+            let toastType = type;
+            if (typeof type === 'boolean') {
+                toastType = type ? 'success' : 'error';
+            }
+
+            // Reset classes
+            toastEl.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info');
+            iconEl.className = 'ti fs-5';
+
+            // Set type specifics
+            switch (toastType?.toLowerCase()) {
+                case 'success':
+                    toastEl.classList.add('bg-success');
+                    iconEl.classList.add('ti-circle-check');
+                    break;
+                case 'error':
+                case 'danger':
+                    toastEl.classList.add('bg-danger');
+                    iconEl.classList.add('ti-alert-circle');
+                    break;
+                case 'warning':
+                    toastEl.classList.add('bg-warning');
+                    iconEl.classList.add('ti-alert-triangle');
+                    break;
+                case 'info':
+                default:
+                    toastEl.classList.add('bg-info');
+                    iconEl.classList.add('ti-info-circle');
+                    break;
+            }
+
+            messageEl.textContent = message;
+            
+            const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 4000 });
+            toast.show();
+        };
+    </script>
 </body>
 
 </html>

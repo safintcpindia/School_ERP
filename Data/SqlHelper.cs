@@ -68,6 +68,27 @@ namespace SchoolERP.Net.Data
             return dt;
         }
 
+        public DataSet ExecuteDataSet(string spName, SqlParameter[] parameters)
+        {
+            DataSet ds = new DataSet();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(spName, conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    if (parameters != null)
+                    {
+                        cmd.Parameters.AddRange(parameters);
+                    }
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        da.Fill(ds);
+                    }
+                }
+            }
+            return ds;
+        }
+
         public SqlDataReader ExecuteReader(string spName, SqlParameter[] parameters, SqlConnection conn)
         {
             SqlCommand cmd = new SqlCommand(spName, conn);

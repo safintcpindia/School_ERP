@@ -19,5 +19,11 @@ namespace SchoolERP.Net.Services.Clients
         /// Sends a request to the main system to update a specific translated piece of text.
         /// </summary>
         Task<ApiResponse<bool>> UpdateTranslationAsync(TranslationUpdateModel model);
+
+        Task<ApiResponse<List<FieldModel>>> GetAllFieldsAsync(bool? isSystemField = null, string belongsTo = null);
+        Task<ApiResponse<FieldModel>> GetFieldByIDAsync(int id);
+        Task<ApiResponse<bool>> UpsertFieldAsync(FieldViewModel model);
+        Task<ApiResponse<bool>> DeleteFieldAsync(int id);
+        Task<ApiResponse<bool>> ToggleFieldStatusAsync(int id, bool isActive);
     }
 }

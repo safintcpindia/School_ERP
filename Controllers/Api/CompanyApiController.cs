@@ -33,6 +33,17 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         /// <summary>
+        /// Gets the list of companies assigned to the currently logged-in user.
+        /// </summary>
+        [HttpGet("GetAssignedCompanies")]
+        public IActionResult GetAssignedCompanies()
+        {
+            int userId = GetCurrentUserId();
+            var data = _companyService.GetCompaniesByUserId(userId);
+            return Ok(ApiResponse<List<MstCompanyViewModel>>.SuccessResponse(data));
+        }
+
+        /// <summary>
         /// Gets the details of one specific school company using its unique ID number.
         /// </summary>
         [HttpGet("GetByID/{id}")]
@@ -75,6 +86,29 @@ namespace SchoolERP.Net.Controllers.Api
             int userId = GetCurrentUserId();
             var (success, message) = _companyService.ToggleStatus(id, isActive, userId);
             return Ok(new { success, message });
+        }
+
+        /// <summary>
+        /// Sets the chosen school company as the currently 'active' one for the user in the database.
+        /// </summary>
+        [HttpPost("SetCurrent")]
+        public IActionResult SetCurrent([FromBody] SetCurrentCompanyRequest request)
+        {
+            int userId = GetCurrentUserId();
+            var (success, message) = _companyService.UpdateUserCurrentCompany(userId, request.CompanyId);
+            if (!success) return BadRequest(ApiResponse<dynamic>.ErrorResponse(message));
+            return Ok(ApiResponse<dynamic>.SuccessResponse(null, message));
+        }
+
+        /// <summary>
+        /// Gets the ID of the school company that the user is currently working in.
+        /// </summary>
+        [HttpGet("GetUserCurrentCompany")]
+        public IActionResult GetUserCurrentCompany()
+        {
+            int userId = GetCurrentUserId();
+            var companyId = _companyService.GetUserCurrentCompany(userId);
+            return Ok(ApiResponse<int?>.SuccessResponse(companyId));
         }
 
         private int GetCurrentUserId()

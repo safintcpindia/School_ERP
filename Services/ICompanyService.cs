@@ -14,6 +14,11 @@ namespace SchoolERP.Net.Services
         List<MstCompanyViewModel> GetAllCompanies(bool includeDeleted = false);
 
         /// <summary>
+        /// Gets a list of companies assigned to a specific user.
+        /// </summary>
+        List<MstCompanyViewModel> GetCompaniesByUserId(int userId);
+
+        /// <summary>
         /// Finds and returns the details of a specific company using its ID number.
         /// </summary>
         MstCompanyViewModel? GetCompanyByID(int companyId);
@@ -32,5 +37,15 @@ namespace SchoolERP.Net.Services
         /// Turns a company's active status on or off (e.g., to temporarily disable it).
         /// </summary>
         (bool success, string message) ToggleStatus(int companyId, bool isActive, int userId);
+
+        /// <summary>
+        /// Updates which company a specific user is currently working in.
+        /// </summary>
+        (bool success, string message) UpdateUserCurrentCompany(int userId, int companyId);
+
+        /// <summary>
+        /// Checks which company a user is currently using.
+        /// </summary>
+        int? GetUserCurrentCompany(int userId);
     }
 }

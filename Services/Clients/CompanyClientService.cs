@@ -24,6 +24,14 @@ namespace SchoolERP.Net.Services.Clients
         }
 
         /// <summary>
+        /// Sends a request to the server to get a list of school companies assigned to the current user.
+        /// </summary>
+        public async Task<ApiResponse<List<MstCompanyViewModel>>> GetAssignedCompaniesAsync()
+        {
+            return await GetAsync<List<MstCompanyViewModel>>("api/CompanyApi/GetAssignedCompanies");
+        }
+
+        /// <summary>
         /// Sends a request to the server to look up details for a specific company by its ID.
         /// </summary>
         public async Task<ApiResponse<MstCompanyViewModel>> GetByIDAsync(int id)
@@ -53,6 +61,22 @@ namespace SchoolERP.Net.Services.Clients
         public async Task<ApiResponse<dynamic>> ToggleStatusAsync(int id, bool isActive)
         {
             return await PostAsync<dynamic>($"api/CompanyApi/ToggleStatus?id={id}&isActive={isActive}", null);
+        }
+
+        /// <summary>
+        /// Sends a request to the server to save the user's preferred active school company.
+        /// </summary>
+        public async Task<ApiResponse<dynamic>> SetCurrentCompanyAsync(SetCurrentCompanyRequest request)
+        {
+            return await PostAsync<dynamic>("api/CompanyApi/SetCurrent", request);
+        }
+
+        /// <summary>
+        /// Sends a request to the server to find out which school company the user is currently working with.
+        /// </summary>
+        public async Task<ApiResponse<int?>> GetUserCurrentCompanyAsync()
+        {
+            return await GetAsync<int?>("api/CompanyApi/GetUserCurrentCompany");
         }
     }
 }

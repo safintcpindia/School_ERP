@@ -33,7 +33,7 @@ namespace SchoolERP.Net.Controllers
             var model = new MenusPageViewModel
             {
                 Menus = menus,
-                ParentMenus = menus.Where(m => m.ParentID == null).ToList()
+                ParentMenus = menus // Provide all menus to support multi-level selection
             };
             return View(model);
         }

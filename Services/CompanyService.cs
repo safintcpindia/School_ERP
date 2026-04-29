@@ -27,12 +27,31 @@ namespace SchoolERP.Net.Services
             var list = new List<MstCompanyViewModel>();
             //var parameters = new[] { new SqlParameter("@IncludeDeleted", includeDeleted) };
             var dt = _sqlHelper.ExecuteQuery("sp_Companies_GetAll",null);
-
+ 
             foreach (DataRow row in dt.Rows)
             {
                 list.Add(MapRowToViewModel(row));
             }
             return list;
+        }
+
+        /// <summary>
+        /// Retrieves a list of companies assigned to a specific user.
+        /// </summary>
+        public List<MstCompanyViewModel> GetCompaniesByUserId(int userId)
+        {
+            var allCompanies = GetAllCompanies(false);
+            var assignedCompanyIds = new HashSet<int>();
+
+            var parameters = new[] { new SqlParameter("@UserID", userId) };
+            var dt = _sqlHelper.ExecuteQuery("sp_UserCompanies_GetByUser", parameters);
+
+            foreach (DataRow row in dt.Rows)
+            {
+                assignedCompanyIds.Add(Convert.ToInt32(row["CompanyID"]));
+            }
+
+            return allCompanies.Where(c => assignedCompanyIds.Contains(c.CompanyId)).ToList();
         }
 
         /// <summary>
@@ -113,6 +132,40 @@ namespace SchoolERP.Net.Services
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString() ?? "");
             }
             catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        /// <summary>
+        /// Saves the user's current company choice in the database.
+        /// </summary>
+        public (bool success, string message) UpdateUserCurrentCompany(int userId, int companyId)
+        {
+            try
+            {
+                var parameters = new[]
+                {
+                    new SqlParameter("@UserID", userId),
+                    new SqlParameter("@DoneBy", userId),
+                    new SqlParameter("@CurrentCompanyId", companyId)
+                };
+                var dt = _sqlHelper.ExecuteQuery("sp_Users_UpdateCurrentCompany", parameters);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString() ?? "");
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        /// <summary>
+        /// Retrieves the user's currently selected company from the database.
+        /// </summary>
+        public int? GetUserCurrentCompany(int userId)
+        {
+            try
+            {
+                var parameters = new[] { new SqlParameter("@UserID", userId) };
+                var dt = _sqlHelper.ExecuteQuery("sp_Users_GetCurrentCompany", parameters);
+                if (dt.Rows.Count == 0 || dt.Rows[0]["CompanyId"] == DBNull.Value) return null;
+                return Convert.ToInt32(dt.Rows[0]["CompanyId"]);
+            }
+            catch { return null; }
         }
 
         /// <summary>

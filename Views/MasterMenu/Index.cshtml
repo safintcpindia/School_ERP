@@ -338,9 +338,9 @@
                         <label class="form-label">Parent Menu</label>
                         <select class="form-select form-control searchable-select" id="ddlParentId">
                             <option value="">None (Root Menu)</option>
-                            @foreach (var p in (Model.ParentMenus ?? new List<MenuViewModel>()))
+                            @foreach (var row in flatRows)
                             {
-                                <option value="@p.MenuID">@p.MenuName</option>
+                                <option value="@row.Menu.MenuID">@Html.Raw(new string('\u00A0', row.Depth * 4)) @row.Menu.MenuName</option>
                             }
                         </select>
                     </div>

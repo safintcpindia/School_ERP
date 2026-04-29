@@ -1,0 +1,283 @@
+@model SchoolERP.Net.Models.HRStaffPageViewModel
+@{
+    ViewData["Title"] = "Staff Directory";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+        <h6 class="fw-bold mb-0">Staff Directory</h6>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-1">
+        <a asp-action="AddStaff" class="btn btn-primary d-inline-flex align-items-center">
+            <i class="ti ti-plus me-1"></i>Add Staff
+        </a>
+        <button type="button" id="btnTopEdit" class="btn btn-warning d-inline-flex align-items-center" onclick="handleEdit()" disabled>
+            <i class="ti ti-edit me-1"></i>Edit
+        </button>
+        <button type="button" id="btnTopDelete" class="btn btn-danger d-inline-flex align-items-center" onclick="handleDelete()" disabled>
+            <i class="ti ti-trash me-1"></i>Delete
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="window.print()"><i class="ti ti-printer me-1"></i> Print</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-tbl-outer mb-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <input type="text" id="txtSearch" class="form-control w-25 me-3" placeholder="Search by name or code..." onkeyup="filterStaff()" />
+                    <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
+                        <div class="dropdown">
+                            <a href="#" class="btn btn-white border btn-lg" data-bs-toggle="dropdown">
+                                <i class="ti ti-filter text-gray-5 me-1"></i>Filters
+                            </a>
+                            <div class="dropdown-menu dropdown-lg dropdown-menu-end filter-dropdown p-0">
+                                <div class="d-flex align-items-center justify-content-between border-bottom filter-header py-2">
+                                    <h6 class="mb-0 fw-bold px-3">Filter Options</h6>
+                                    <button type="button" class="btn text-primary fs-6" onclick="filterStaff()">Apply</button>
+                                </div>
+                                <div class="p-3">
+                                    <div class="mb-2">
+                                        <label class="form-label mb-1">Role</label>
+                                        <select id="fltRole" class="form-select select2">
+                                            <option value="">All Roles</option>
+                                            @foreach(var r in Model.Roles) { <option value="@r.RoleName">@r.RoleName</option> }
+                                        </select>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label mb-1">Department</label>
+                                        <select id="fltDept" class="form-select select2">
+                                            <option value="">All Departments</option>
+                                            @foreach(var d in Model.Departments) { <option value="@d.DepartmentName">@d.DepartmentName</option> }
+                                        </select>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label mb-1">Designation</label>
+                                        <select id="fltDesig" class="form-select select2">
+                                            <option value="">All Designations</option>
+                                            @foreach(var d in Model.Designations) { <option value="@d.DesignationName">@d.DesignationName</option> }
+                                        </select>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-light w-100 mt-2" onclick="resetFilters()">Reset Filters</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-muted rounded px-1 py-1 d-flex gap-1">
+                            <button onclick="switchView('list')" id="btn-list-view" class="btn btn-sm rounded btn-primary">
+                                <i class="ti ti-list fs-14"></i>
+                            </button>
+                            <button onclick="switchView('card')" id="btn-card-view" class="btn btn-sm rounded btn-white border">
+                                <i class="ti ti-layout-grid fs-14"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Containers -->
+    <div class="col-12" id="staffContainer">
+        <div id="card-view-container" class="row d-none"></div>
+        <div id="list-view-container" class="card shadow-tbl">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">#</th>
+                                <th>Staff ID</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Mobile</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let allStaff = [];
+    let currentView = 'list';
+    let selectedStaffID = null;
+
+    $(document).ready(function() {
+        $('.select2').select2({ width: '100%' });
+        loadStaff();
+    });
+
+    function loadStaff() {
+        $('#list-tbody, #card-view-container').html('<tr><td colspan="7" class="text-center py-5"><div class="spinner-border text-primary"></div></td></tr>');
+        
+        fetch('/api/HumanResourceApi/GetAllStaff')
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    allStaff = res.data || [];
+                    renderStaff(allStaff);
+                } else {
+                    alert(res.message || 'Error loading staff');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                $('#list-tbody').html('<tr><td colspan="7" class="text-center text-danger py-4">Failed to load staff records.</td></tr>');
+            });
+    }
+
+    function renderStaff(data) {
+        const listBody = document.getElementById('list-tbody');
+        const cardContainer = document.getElementById('card-view-container');
+        listBody.innerHTML = '';
+        cardContainer.innerHTML = '';
+        selectedStaffID = null;
+        toggleTopButtons();
+
+        if (data.length === 0) {
+            listBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">No staff records found.</td></tr>';
+            cardContainer.innerHTML = '<div class="col-12 text-center py-5 text-muted">No staff records found.</div>';
+            return;
+        }
+
+        data.forEach(s => {
+            const photoUrl = s.photoDoc ? `data:image/png;base64,${s.photoDoc}` : '/assets/img/profiles/avatar-01.jpg';
+            
+            // List Row
+            const row = `<tr>
+                <td><input type="radio" name="staffSelect" onclick="selectStaff(${s.staffID})"></td>
+                <td><span class="fw-bold">${s.staffCode}</span></td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar avatar-sm me-2">
+                            <img src="${photoUrl}" class="rounded-circle" alt="" width="30" height="30" style="object-fit:cover;">
+                        </div>
+                        <span class="text-dark fw-semibold">${s.firstName} ${s.lastName || ''}</span>
+                    </div>
+                </td>
+                <td><span class="badge bg-primary-transparent">${s.roleName || 'N/A'}</span></td>
+                <td>${s.departmentName || 'N/A'}</td>
+                <td>${s.designationName || 'N/A'}</td>
+                <td>${s.mobileNo || 'N/A'}</td>
+            </tr>`;
+            listBody.insertAdjacentHTML('beforeend', row);
+
+            // Card
+            const card = `<div class="col-xl-3 col-md-4 col-sm-6 mb-3">
+                <div class="card border shadow-sm h-100 staff-card position-relative" onclick="selectStaffCard(${s.staffID}, this)">
+                    <div class="card-body text-center p-3">
+                        <div class="position-absolute top-0 start-0 p-2">
+                             <input type="radio" name="staffSelectCard" id="radCard_${s.staffID}" onclick="event.stopPropagation(); selectStaff(${s.staffID})">
+                        </div>
+                        <img src="${photoUrl}" class="rounded-circle mb-2" width="70" height="70" style="object-fit:cover; border: 2px solid #eee;">
+                        <h6 class="mb-0 text-truncate">${s.firstName} ${s.lastName || ''}</h6>
+                        <small class="text-muted d-block mb-2 text-truncate">${s.designationName || 'No Designation'}</small>
+                        <div class="d-flex flex-column gap-1 text-start fs-13 mt-2 border-top pt-2">
+                            <span class="text-truncate"><i class="ti ti-id me-1 text-primary"></i>${s.staffCode}</span>
+                            <span class="text-truncate"><i class="ti ti-building me-1 text-primary"></i>${s.departmentName || 'N/A'}</span>
+                            <span class="text-truncate"><i class="ti ti-phone me-1 text-primary"></i>${s.mobileNo || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            cardContainer.insertAdjacentHTML('beforeend', card);
+        });
+    }
+
+    function selectStaff(id) {
+        selectedStaffID = id;
+        toggleTopButtons();
+        
+        // Sync radio buttons between views
+        if (currentView === 'card') {
+             $(`#radCard_${id}`).prop('checked', true);
+             $('.staff-card').removeClass('border-primary shadow');
+             $(`#radCard_${id}`).closest('.staff-card').addClass('border-primary shadow');
+        }
+    }
+
+    function selectStaffCard(id, el) {
+        $(el).find('input[type="radio"]').click();
+    }
+
+    function toggleTopButtons() {
+        const disabled = selectedStaffID === null;
+        $('#btnTopEdit').prop('disabled', disabled);
+        $('#btnTopDelete').prop('disabled', disabled);
+    }
+
+    function handleEdit() {
+        if (selectedStaffID) {
+            location.href = `/HumanResource/AddStaff/${selectedStaffID}`;
+        }
+    }
+
+    function handleDelete() {
+        if (selectedStaffID) {
+            deleteStaff(selectedStaffID);
+        }
+    }
+
+    function filterStaff() {
+        const search = document.getElementById('txtSearch').value.toLowerCase();
+        const role = document.getElementById('fltRole').value;
+        const dept = document.getElementById('fltDept').value;
+        const desig = document.getElementById('fltDesig').value;
+
+        const filtered = allStaff.filter(s => {
+            const matchesSearch = (s.firstName + ' ' + (s.lastName || '')).toLowerCase().includes(search) || 
+                                 s.staffCode.toLowerCase().includes(search);
+            const matchesRole = !role || s.roleName === role;
+            const matchesDept = !dept || s.departmentName === dept;
+            const matchesDesig = !desig || s.designationName === desig;
+            return matchesSearch && matchesRole && matchesDept && matchesDesig;
+        });
+
+        renderStaff(filtered);
+    }
+
+    function resetFilters() {
+        document.getElementById('txtSearch').value = '';
+        $('#fltRole, #fltDept, #fltDesig').val('').trigger('change');
+        renderStaff(allStaff);
+    }
+
+    function switchView(view) {
+        currentView = view;
+        if (view === 'list') {
+            $('#list-view-container').removeClass('d-none');
+            $('#card-view-container').addClass('d-none');
+            $('#btn-list-view').addClass('btn-primary').removeClass('btn-white border');
+            $('#btn-card-view').removeClass('btn-primary').addClass('btn-white border');
+        } else {
+            $('#list-view-container').addClass('d-none');
+            $('#card-view-container').removeClass('d-none');
+            $('#btn-card-view').addClass('btn-primary').removeClass('btn-white border');
+            $('#btn-list-view').removeClass('btn-primary').addClass('btn-white border');
+        }
+    }
+
+    function deleteStaff(id) {
+        if (!confirm('Are you sure you want to delete this staff record? This will also delete their user account.')) return;
+
+        fetch(`/api/HumanResourceApi/DeleteStaff/${id}`, { method: 'POST' })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    alert(res.message);
+                    loadStaff();
+                } else {
+                    alert(res.message);
+                }
+            });
+    }
+</script>
+}

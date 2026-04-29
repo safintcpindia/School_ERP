@@ -105,6 +105,10 @@
                         <span id="activeSessionTitle">—</span> <i class="ti ti-pencil ms-1 fs-15 align-middle"></i>
                     </button>
 
+                    <button class="me-3 fw-bold btn btn-info" data-bs-toggle="modal" data-bs-target="#company-selection" type="button">
+                        <span id="activeCompanyTitle">—</span> <i class="ti ti-building ms-1 fs-15 align-middle"></i>
+                    </button>
+
                     @* <!-- Search -->
                     <div class="me-auto d-flex align-items-center header-search d-lg-flex d-none">
                         <!-- Search -->
@@ -394,6 +398,27 @@
 </div>
 </div>
 
+        <div class="modal fade" id="company-selection">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-between align-items-center">
+                        <h6 class="modal-title">Select Company</h6>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-success btn-sm" id="btnSaveCompany"><i class="ti ti-cloud me-1"></i> Save</button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="" class="form-label">Company</label>
+                            <select name="ddlCompanySelection" id="ddlCompanySelection" class="form-select mb-3">
+                                <option value="">Loading…</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Sidenav Menu Start -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-logo">
@@ -422,64 +447,86 @@
                             PermHelper.LoadPermissions(currentUserId);
                         }
 
-                        // Fetches all active UI elements and groups them by ParentID to form a dynamic 2-level nested tree matrix.
+                        // Fetches all active UI elements and groups them by ParentID to form a dynamic multi-level nested tree matrix.
                         var activeMenus = MenuService.GetAllMenus().Where(m => m.IsActive).OrderBy(m => m.DisplayOrder).ToList();
+                        var menuDict = activeMenus.ToDictionary(m => m.MenuID);
                         var permittedMenuIds = activeMenus.Where(m => PermHelper.HasPermission(m.MenuID, "View")).Select(m => m.MenuID).ToHashSet();
-                        var parentMenuIds = activeMenus.Where(m => m.ParentID.HasValue && permittedMenuIds.Contains(m.MenuID)).Select(m => m.ParentID.Value).Distinct().ToHashSet();
-                        var allMenus = activeMenus.Where(m => permittedMenuIds.Contains(m.MenuID) || parentMenuIds.Contains(m.MenuID)).ToList();
-                        var rootMenus = allMenus.Where(m => m.ParentID == null).ToList();
-                    }
-
-                    <!--<ul>
-                        <li><a href="#"><i class="ti ti-box"></i> <span>Home</span></a></li>
-                        <li><a href="#">About us</a></li>
-                    </ul>-->
-                    <ul>
-                        <!-- <li class="menu-title"><span>@Localizer.GetString("main_menu")</span></li>   -->                     
-                        @foreach (var menu in rootMenus)
+                        
+                        var showMenuIds = new HashSet<int>();
+                        foreach (var id in permittedMenuIds)
                         {
-                            var children = allMenus.Where(m => m.ParentID == menu.MenuID).ToList();
-                            if (children.Any())
+                            showMenuIds.Add(id);
+                            // Recursively add all parents to ensure hierarchy is visible
+                            var current = menuDict.ContainsKey(id) ? menuDict[id] : null;
+                            while (current != null && current.ParentID.HasValue)
                             {
-
-                                <li>
-                                    <ul>
-                                        <li class="submenu">
-                                            <a href="javascript:void(0);">
-                                                <i class="@(menu.MenuIcon ?? "ti ti-box")"></i><span> @menu.MenuName</span>
-                                                <span class="menu-arrow"></span>
-                                            </a>
-                                            <ul>
-
-                                                @foreach (var child in children)
-
-                                                {
-                                                    <li>
-                                                        <a href="@child.MenuURL">
-
-                                                            @child.MenuName
-                                                        </a>
-                                                    </li>
-
-                                                }
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-
-                            }
-                            else
-                            {
-                                <li class="submenu">
-                                    <a href="@menu.MenuURL">
-                                        <i class="@(menu.MenuIcon ?? "ti ti-box")"></i> <span>
-                                            @menu.MenuName
-                                            </span>
-                                    </a>
-                                </li>
+                                if (showMenuIds.Add(current.ParentID.Value))
+                                    current = menuDict.ContainsKey(current.ParentID.Value) ? menuDict[current.ParentID.Value] : null;
+                                else
+                                    break;
                             }
                         }
+                        var allMenus = activeMenus.Where(m => showMenuIds.Contains(m.MenuID)).ToList();
+                        var rootMenus = allMenus.Where(m => m.ParentID == null).ToList();
 
+                        void RenderMenu(int? parentId, int depth)
+                        {
+                            var children = allMenus.Where(m => m.ParentID == parentId).ToList();
+                            if (!children.Any()) return;
+
+                            foreach (var menu in children)
+                            {
+                                var subChildren = allMenus.Where(m => m.ParentID == menu.MenuID).ToList();
+                                if (subChildren.Any())
+                                {
+                                    if (depth == 0)
+                                    {
+                                        <li>
+                                            <ul>
+                                                <li class="submenu submenu-two">
+                                                    <a href="javascript:void(0);">
+                                                        <i class="@(menu.MenuIcon ?? "ti ti-box")"></i>
+                                                        <span>@menu.MenuName</span>
+                                                        <span class="menu-arrow inside-submenu"></span>
+                                                    </a>
+                                                    <ul>
+                                                        @{ RenderMenu(menu.MenuID, depth + 1); }
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="submenu submenu-two">
+                                            <a href="javascript:void(0);">
+                                                <span>@menu.MenuName</span>
+                                                <span class="menu-arrow inside-submenu"></span>
+                                            </a>
+                                            <ul>
+                                                @{ RenderMenu(menu.MenuID, depth + 1); }
+                                            </ul>
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li>
+                                        <a href="@menu.MenuURL">
+                                            @if (depth == 0)
+                                            {
+                                                <i class="@(menu.MenuIcon ?? "ti ti-box")"></i>
+                                            }
+                                            <span>@menu.MenuName</span>
+                                        </a>
+                                    </li>
+                                }
+                            }
+                        }
+                    }
+
+                    <ul>
+                        @{ RenderMenu(null, 0); }
 
                         <li class="menu-title"><span>@Localizer.GetString("settings")</span></li>
                         <li>
@@ -490,7 +537,6 @@
                                         <span class="menu-arrow"></span>
                                     </a>
                                     <ul>
-
                                         <li class="submenu submenu-two">
                                             <a href="javascript:void(0);">@Localizer.GetString("general_setting") <span
                                                     class="menu-arrow inside-submenu"></span>
@@ -622,13 +668,13 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>    
    
 
-    <!-- Main JS -->
-
-    <script src="~/assets/js/script.js"></script>
-
     <!-- Daterangepikcer JS -->
     <script src="~/assets/js/moment.min.js"></script>
+    <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/assets/plugins/choices.js/public/assets/scripts/choices.min.js"></script>
+
+    <!-- Main JS -->
+    <script src="~/assets/js/script.js"></script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -783,6 +829,113 @@
                     const res = await resp.json();
                     if (!res || res.success !== true) {
                         throw new Error(res?.message || 'Could not set current session.');
+                    }
+                    window.location.reload();
+                } catch (e) {
+                    console.error(e);
+                    btnSave.disabled = false;
+                    ddl.disabled = false;
+                }
+            });
+
+            init();
+        })();
+
+        (function () {
+            const ddl = document.getElementById('ddlCompanySelection');
+            const titleEl = document.getElementById('activeCompanyTitle');
+            const btnSave = document.getElementById('btnSaveCompany');
+
+            if (!ddl || !titleEl || !btnSave) return;
+
+            async function fetchCompanies() {
+                const resp = await fetch('/api/CompanyApi/GetAssignedCompanies', { method: 'GET' });
+                const payload = await resp.json();
+                if (!payload || payload.success !== true || !Array.isArray(payload.data)) {
+                    throw new Error(payload?.message || 'Failed to load companies');
+                }
+                return payload.data;
+            }
+
+            async function fetchUserCurrentCompany() {
+                try {
+                    const resp = await fetch('/api/CompanyApi/GetUserCurrentCompany', { method: 'GET' });
+                    const payload = await resp.json();
+                    return payload.success ? (payload.data || 0) : 0;
+                } catch {
+                    return 0;
+                }
+            }
+
+            function setLoadingState(message) {
+                ddl.innerHTML = '';
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = message || 'Loading…';
+                ddl.appendChild(opt);
+                ddl.disabled = true;
+                btnSave.disabled = true;
+            }
+
+            function populateCompanies(companies) {
+                ddl.innerHTML = '';
+                for (const c of companies) {
+                    const opt = document.createElement('option');
+                    opt.value = String(c.companyId);
+                    opt.textContent = c.schoolName || `Company #${c.companyId}`;
+                    ddl.appendChild(opt);
+                }
+                ddl.disabled = companies.length === 0;
+                btnSave.disabled = companies.length === 0;
+            }
+
+            function selectDefaultCompany(companies, dbCompanyId) {
+                const fromDb = dbCompanyId
+                    ? (companies.find(c => c && c.companyId === dbCompanyId) || null)
+                    : null;
+
+                const active = fromDb || companies.find(c => c && c.isActive === true) || companies[0] || null;
+                if (!active) {
+                    titleEl.textContent = '—';
+                    ddl.value = '';
+                    return null;
+                }
+                titleEl.textContent = active.schoolName || '—';
+                ddl.value = String(active.companyId);
+                return active;
+            }
+
+            async function init() {
+                try {
+                    setLoadingState('Loading…');
+                    const [companies, currentCompanyId] = await Promise.all([
+                        fetchCompanies(),
+                        fetchUserCurrentCompany()
+                    ]);
+                    populateCompanies(companies);
+                    selectDefaultCompany(companies, currentCompanyId);
+                } catch (e) {
+                    console.error(e);
+                    setLoadingState('No companies');
+                    titleEl.textContent = '—';
+                }
+            }
+
+            btnSave.addEventListener('click', async function () {
+                const selectedId = parseInt(ddl.value || '0', 10);
+                if (!selectedId) return;
+
+                btnSave.disabled = true;
+                ddl.disabled = true;
+                try {
+                    const resp = await fetch('/Company/SetCurrent', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ companyId: selectedId })
+                    });
+                    const res = await resp.json();
+                    if (!res || res.success !== true) {
+                        throw new Error(res?.message || 'Could not set current company.');
                     }
                     window.location.reload();
                 } catch (e) {

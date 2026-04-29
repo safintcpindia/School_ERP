@@ -12,160 +12,269 @@
     <div>
         <h6 class="fw-bold mb-0">ID Auto Generation</h6>
     </div>
-    <button class="btn btn-success" onclick="openAddModal()">
-        <i class="ti ti-cloud me-1"></i> Save
-    </button>
+    <div class="d-flex gap-1">
+        <button class="btn btn-success shadow-sm" onclick="saveAllSettings()">
+            <i class="ti ti-cloud me-1"></i> Save All
+        </button>
+    </div>
 </div>
 
-<div class="col-xl-12">
-    <div class="card shadow-tbl-outer">       
-        <div class="card-body">
-            <h6 class="mb-2">Student Admission No. Auto Generation</h6>
-            <div class="bg-light rounded-3 p-3 mb-3">           
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="mb-2">
-                        <label for="input-label" class="form-label"> Auto Admission No.</label>
-                        <div>
-                            <div class="form-check form-check-inline mb-2">
-                                <input type="radio" id="customRadiocolor1" name="customRadiocolor" class="form-check-input" checked>
-                                <label class="form-check-label" for="customRadiocolor1">Disabled</label>
-                            </div>
-                            <div class="form-check form-check-inline  mb-2">
-                                <input type="radio" id="customRadiocolor2" name="customRadiocolor" class="form-check-input">
-                                <label class="form-check-label" for="customRadiocolor2">Enabled</label>
-                            </div>
+<div class="row">
+    <!-- Student Admission No. Section -->
+    <div class="col-xl-12 mb-3">
+        <div class="card shadow-tbl-outer h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="fw-bold mb-0">Student Admission No. Auto Generation</h6>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="chkStudentEnabled">
+                        <label class="form-check-label" for="chkStudentEnabled">Enable Auto Generation</label>
+                    </div>
+                </div>
+                
+                <div class="bg-light rounded-3 p-3">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Prefix</label>
+                            <input type="text" id="txtStudentPrefix" class="form-control" placeholder="e.g. ADM">
                         </div>
-                    </div>
-                </div>
-                <div class="col-xl-4">
-                    <div class="mb-2">
-                        <label for="" class="form-label">Admission No. Prefix</label>
-                        <input type="text" value="EDITH" class="form-control">
-                    </div>
-                </div>
-                <div class="col-xl-4">
-                    <div class="mb-2">
-                        <label for="" class="form-label">Admission No. Digit</label>
-                        <select name="" id="" class="form-select form-control">
-                            <option value="">Select</option>
-                            <option value="" selected>1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-xl-4">
-                    <div class="mb-2">
-                        <label for="" class="form-label">Admission Start From</label>
-                        <input type="text" value="0001" class="form-control">
-                    </div>
-                </div>
-                    <div class="col-lg-12 col-md-12">
-                        <div class="mb-2">
-                            <label for="choices-multiple-remove-button" class="form-label">ID Text</label>
-                            <select class="form-select form-control" id="choices-multiple-remove-button" data-choices data-choices-removeItem name="choices-multiple-remove-button" multiple>
-                                <option value="Choice 1">Class</option>
-                                <option value="Choice 2">Section</option>                                
+                        <div class="col-md-4">
+                            <label class="form-label">Digit Count</label>
+                            <select id="ddlStudentDigitCount" class="form-select">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4" selected>4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
                             </select>
                         </div>
-                    </div>
-                @* <div class="col-xl-12">
-                    <label for="" class="form-label">ID Text</label>
-                    <select id="mySelect" multiple="multiple" style="width: 100%">
-                        <option value="1">Class</option>
-                        <option value="2">Section</option>
-                    </select>
-                </div> *@
-            </div>
-            </div>
-            
-            <h6 class="mb-2">Staff ID Auto Generation</h6>
-            <div class="bg-light rounded-3 p-3">
-                <div class="row">
-                <div class="col-xl-12">
-                    <div class="mb-2">
-                        <label for="input-label" class="form-label"> Auto Staff ID</label>
-                        <div>
-                            <div class="form-check form-check-inline mb-2">
-                                <input type="radio" id="customRadiocolor1" name="customRadiocolor" class="form-check-input" checked>
-                                <label class="form-check-label" for="customRadiocolor1">Disabled</label>
-                            </div>
-                            <div class="form-check form-check-inline  mb-2">
-                                <input type="radio" id="customRadiocolor2" name="customRadiocolor" class="form-check-input">
-                                <label class="form-check-label" for="customRadiocolor2">Enabled</label>
-                            </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Start From</label>
+                            <input type="number" id="txtStudentStartNo" class="form-control" value="1" min="1">
                         </div>
-                    </div>
-                </div>
-                <div class="col-xl-4">
-                    <div class="mb-2">
-                        <label for="" class="form-label">Staff ID Prefix </label>
-                        <input type="text" value="EDITH" class="form-control">
-                    </div>
-                </div>
-                <div class="col-xl-4">
-                    <div class="mb-2">
-                        <label for="" class="form-label">Staff No. Digit</label>
-                        <select name="" id="" class="form-select form-control">
-                            <option value="">Select</option>
-                            <option value="" selected>1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-xl-4">
-                    <div class="mb-2">
-                        <label for="" class="form-label">Staff ID Start From</label>
-                        <input type="text" value="0001" class="form-control">
-                    </div>
-                </div>
-
-                @* <div class="col-xl-12">
-                <label for="" class="form-label">ID Text</label>
-                <select id="mySelect" multiple="multiple" style="width: 100%">
-                <option value="1">Role</option>
-                <option value="2">Designation</option>
-                </select>
-                </div> *@
-
-                    <div class="col-lg-12 col-md-12">
-                        <div class="mb-2">
-                            <label for="choices-multiple-remove-button" class="form-label">ID Text</label>
-                            <select class="form-select form-control" id="choices-multiple-remove-button" data-choices data-choices-removeItem name="choices-multiple-remove-button" multiple>
-                                <option value="Choice 1">Role</option>
-                                <option value="Choice 2">Designation</option>
-                                <option value="Choice 3">Department</option>                                
+                        <div class="col-12">
+                            <label class="form-label">Include System Fields (In Order)</label>
+                            <select id="ddlStudentFields" class="form-select" multiple>
+                                <!-- Populated dynamically -->
                             </select>
+                            <small class="text-muted">Selected fields will be appended to the prefix before the sequence number.</small>
+                        </div>
+                        <div class="col-12">
+                            <div class="p-2 border rounded bg-white">
+                                <span class="text-muted small d-block">ID Preview:</span>
+                                <span id="previewStudentID" class="fw-bold text-primary fs-18">ADM-0001</span>
+                            </div>
                         </div>
                     </div>
-                @* <div class="col-xl-12">
-                    <label for="" class="form-label">ID Text</label>
-                    <select id="mySelect2" multiple="multiple" style="width: 100%">
-                        <option value="1">Role</option>
-                        <option value="2">Designation</option>
-                        <option value="2">Department</option>
-                    </select>
-                </div> *@
-
-                @* <div class="col-xl-6">
-                <div class="mb-3 form-check form-check-inline">
-                <input type="checkbox" class="form-check-input" name="name" value="" />  Role
                 </div>
-                <div class="mb-3 form-check form-check-inline">
-                <input type="checkbox" class="form-check-input" name="name" value="" />  Designation
-                </div>
-                <div class="mb-3 form-check form-check-inline">
-                <input type="checkbox" class="form-check-input" name="name" value="" />  Designation
-                </div>
-                </div> *@
             </div>
-            </div>
-            @*  <div class="text-end mt-3">
-            <button class="btn btn-primary">Save</button>
-            </div> *@
         </div>
     </div>
 
+    <!-- Staff ID Section -->
+    <div class="col-xl-12">
+        <div class="card shadow-tbl-outer h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="fw-bold mb-0">Staff ID Auto Generation</h6>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="chkStaffEnabled">
+                        <label class="form-check-label" for="chkStaffEnabled">Enable Auto Generation</label>
+                    </div>
+                </div>
+
+                <div class="bg-light rounded-3 p-3">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Prefix</label>
+                            <input type="text" id="txtStaffPrefix" class="form-control" placeholder="e.g. STF">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Digit Count</label>
+                            <select id="ddlStaffDigitCount" class="form-select">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4" selected>4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Start From</label>
+                            <input type="number" id="txtStaffStartNo" class="form-control" value="1" min="1">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Include System Fields (In Order)</label>
+                            <select id="ddlStaffFields" class="form-select" multiple>
+                                <!-- Populated dynamically -->
+                            </select>
+                            <small class="text-muted">Selected fields will be appended to the prefix before the sequence number.</small>
+                        </div>
+                        <div class="col-12">
+                            <div class="p-2 border rounded bg-white">
+                                <span class="text-muted small d-block">ID Preview:</span>
+                                <span id="previewStaffID" class="fw-bold text-info fs-18">STF-0001</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+<script>
+    const IV = window.InlineFormValidation;
+    let studentChoice = null;
+    let staffChoice   = null;
+
+    $(document).ready(async () => {
+        initChoices();
+        await Promise.all([
+            loadSystemFields(),
+            loadCurrentSettings()
+        ]);
+        updatePreviews();
+        bindChangeEvents();
+    });
+
+    function initChoices() {
+        const config = { removeItemButton: true, placeholder: true, placeholderValue: 'Select fields to include' };
+        studentChoice = new Choices('#ddlStudentFields', config);
+        staffChoice   = new Choices('#ddlStaffFields', config);
+    }
+
+    async function loadSystemFields() {
+        try {
+            console.log('Fetching system fields...');
+            // Try plural form first (students/staff)
+            let [stdRes, stfRes] = await Promise.all([
+                fetch('/api/SettingsApi/fields?belongsTo=students&isSystemField=true').then(r => r.json()),
+                fetch('/api/SettingsApi/fields?belongsTo=staff&isSystemField=true').then(r => r.json())
+            ]);
+
+            console.log('Student fields response:', stdRes);
+            console.log('Staff fields response:', stfRes);
+
+            // If plural returns nothing, try singular
+            if (stdRes.success && (!stdRes.data || stdRes.data.length === 0)) {
+                console.log('Plural "students" returned no data, trying "student"...');
+                stdRes = await fetch('/api/SettingsApi/fields?belongsTo=student&isSystemField=true').then(r => r.json());
+                console.log('Singular "student" response:', stdRes);
+            }
+
+            if (stdRes.success && stdRes.data) {
+                const stdOpts = stdRes.data.map(f => ({ value: f.fieldName, label: f.fieldName }));
+                studentChoice.setChoices(stdOpts, 'value', 'label', true);
+            }
+
+            if (stfRes.success && stfRes.data) {
+                const stfOpts = stfRes.data.map(f => ({ value: f.fieldName, label: f.fieldName }));
+                staffChoice.setChoices(stfOpts, 'value', 'label', true);
+            }
+        } catch (e) { 
+            console.error('Error loading fields:', e); 
+        }
+    }
+
+    async function loadCurrentSettings() {
+        try {
+            const res = await (await fetch('/api/SettingsApi/id-autogen/settings')).json();
+            if (res.success && res.data) {
+                res.data.forEach(s => {
+                    if (s.entityType === 'Student') {
+                        $('#chkStudentEnabled').prop('checked', s.isEnabled);
+                        $('#txtStudentPrefix').val(s.prefix);
+                        $('#ddlStudentDigitCount').val(s.digitCount);
+                        $('#txtStudentStartNo').val(s.startNo);
+                        if (s.fieldsToInclude) {
+                            studentChoice.setChoiceByValue(s.fieldsToInclude.split(','));
+                        }
+                    } else if (s.entityType === 'Staff') {
+                        $('#chkStaffEnabled').prop('checked', s.isEnabled);
+                        $('#txtStaffPrefix').val(s.prefix);
+                        $('#ddlStaffDigitCount').val(s.digitCount);
+                        $('#txtStaffStartNo').val(s.startNo);
+                        if (s.fieldsToInclude) {
+                            staffChoice.setChoiceByValue(s.fieldsToInclude.split(','));
+                        }
+                    }
+                });
+            }
+        } catch (e) { console.error('Error loading settings:', e); }
+    }
+
+    function updatePreviews() {
+        // Student Preview
+        let stdP = $('#txtStudentPrefix').val() || '';
+        const stdFields = studentChoice.getValue(true);
+        if (stdFields.length > 0) stdP += '-' + stdFields.join('-');
+        const stdSeq = String($('#txtStudentStartNo').val() || 1).padStart($('#ddlStudentDigitCount').val(), '0');
+        $('#previewStudentID').text(stdP + (stdP ? '-' : '') + stdSeq);
+
+        // Staff Preview
+        let stfP = $('#txtStaffPrefix').val() || '';
+        const stfFields = staffChoice.getValue(true);
+        if (stfFields.length > 0) stfP += '-' + stfFields.join('-');
+        const stfSeq = String($('#txtStaffStartNo').val() || 1).padStart($('#ddlStaffDigitCount').val(), '0');
+        $('#previewStaffID').text(stfP + (stfP ? '-' : '') + stfSeq);
+    }
+
+    function bindChangeEvents() {
+        $('input, select').on('change input', updatePreviews);
+        $('#ddlStudentFields, #ddlStaffFields').on('change', updatePreviews);
+    }
+
+    async function saveAllSettings() {
+        const btn = event.target.closest('button');
+        const originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
+
+        const studentData = {
+            entityType: 'Student',
+            isEnabled: $('#chkStudentEnabled').is(':checked'),
+            prefix: $('#txtStudentPrefix').val().trim(),
+            digitCount: parseInt($('#ddlStudentDigitCount').val()),
+            startNo: parseInt($('#txtStudentStartNo').val()),
+            fieldsToInclude: studentChoice.getValue(true)
+        };
+
+        const staffData = {
+            entityType: 'Staff',
+            isEnabled: $('#chkStaffEnabled').is(':checked'),
+            prefix: $('#txtStaffPrefix').val().trim(),
+            digitCount: parseInt($('#ddlStaffDigitCount').val()),
+            startNo: parseInt($('#txtStaffStartNo').val()),
+            fieldsToInclude: staffChoice.getValue(true)
+        };
+
+        try {
+            const [res1, res2] = await Promise.all([
+                fetch('/api/SettingsApi/id-autogen/save', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(studentData)
+                }).then(r => r.json()),
+                fetch('/api/SettingsApi/id-autogen/save', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(staffData)
+                }).then(r => r.json())
+            ]);
+
+            if (res1.success && res2.success) {
+                IV.setNotice('global', 'All settings saved successfully!', 'success');
+            } else {
+                IV.setNotice('global', (res1.message || res2.message || 'Error saving settings'), 'danger');
+            }
+        } catch (e) {
+            IV.setNotice('global', 'Network error while saving settings', 'danger');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+    }
+</script>
+}

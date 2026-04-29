@@ -116,8 +116,7 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@MenuKey", request.MenuKey ?? (object)DBNull.Value),
                     new SqlParameter("@IsActive", request.IsActive),
                     new SqlParameter("@UserID", userId),
-                    new SqlParameter("@MainAccountId", mainAccountId),
-                    new SqlParameter("@SessionId", sessionId),
+                    
                     new SqlParameter("@IPAddress", ipAddress)
                 };
 

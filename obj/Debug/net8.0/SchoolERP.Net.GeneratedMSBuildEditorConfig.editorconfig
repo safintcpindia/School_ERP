@@ -1,219 +1,343 @@
 is_global = true
 build_property.TargetFramework = net8.0
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
 build_property.ProjectTypeGuids = 
 build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SchoolERP.Net
 build_property.RootNamespace = SchoolERP.Net
-build_property.ProjectDir = C:\Users\DELL\Downloads\SchoolERP 25-4-2026\
+build_property.ProjectDir = C:\Users\svmim\Downloads\schoolerp_29042026\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\DELL\Downloads\SchoolERP 25-4-2026
+build_property.MSBuildProjectDirectory = C:\Users\svmim\Downloads\schoolerp_29042026
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Auth/Login.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Academics/Class.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNhZGVtaWNzXENsYXNzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Academics/ClassTimeTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNhZGVtaWNzXENsYXNzVGltZVRhYmxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Academics/Subject.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNhZGVtaWNzXFN1YmplY3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Academics/SubjectGroup.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNhZGVtaWNzXFN1YmplY3RHcm91cC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Auth/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Auth/Logout.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Auth/Logout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxMb2dvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Currencies/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Currencies/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VycmVuY2llc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Dashboard/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Dashboard/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Home/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Expense/ExpenseHead.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhwZW5zZVxFeHBlbnNlSGVhZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Expense/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhwZW5zZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Expense/Search.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhwZW5zZVxTZWFyY2guY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/FrontOffice/Complaint.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnRPZmZpY2VcQ29tcGxhaW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/FrontOffice/PhoneCallLog.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnRPZmZpY2VcUGhvbmVDYWxsTG9nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/FrontOffice/PostalDispatch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnRPZmZpY2VcUG9zdGFsRGlzcGF0Y2guY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/FrontOffice/PostalReceive.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnRPZmZpY2VcUG9zdGFsUmVjZWl2ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/FrontOffice/Setup.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnJvbnRPZmZpY2VcU2V0dXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Home/Privacy.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Language/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Hostel/HostelRoom.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdGVsXEhvc3RlbFJvb20uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Hostel/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdGVsXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Hostel/RoomType.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9zdGVsXFJvb21UeXBlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/HumanResource/AddStaff.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSHVtYW5SZXNvdXJjZVxBZGRTdGFmZi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/HumanResource/Department.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSHVtYW5SZXNvdXJjZVxEZXBhcnRtZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/HumanResource/Designation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSHVtYW5SZXNvdXJjZVxEZXNpZ25hdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/HumanResource/LeaveType.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSHVtYW5SZXNvdXJjZVxMZWF2ZVR5cGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/HumanResource/Staffs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSHVtYW5SZXNvdXJjZVxTdGFmZnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Income/IncomeHead.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jb21lXEluY29tZUhlYWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Income/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jb21lXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Income/Search.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jb21lXFNlYXJjaC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Language/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZ3VhZ2VcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/MasterMenu/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/MasterMenu/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyTWVudVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Organisation/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Organisation/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JnYW5pc2F0aW9uXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Permission/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Permission/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVybWlzc2lvblxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Role/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Role/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Sessions/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Section/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VjdGlvblxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Sessions/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vzc2lvbnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/AttendanceType.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/AttendanceType.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcQXR0ZW5kYW5jZVR5cGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/BackupHistory.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/BackupHistory.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcQmFja3VwSGlzdG9yeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Captcha.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Captcha.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcQ2FwdGNoYS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Companies.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Companies.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcQ29tcGFuaWVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/CompanyMaster.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/CompanyMaster.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcQ29tcGFueU1hc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Currencies.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Currencies.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcQ3VycmVuY2llcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/CustomFields.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/CustomFields.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcQ3VzdG9tRmllbGRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/EmailSettings.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/EmailSettings.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcRW1haWxTZXR0aW5ncy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/FileType.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/FileType.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcRmlsZVR5cGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/IdAutoGen.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/IdAutoGen.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcSWRBdXRvR2VuLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Languages.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Languages.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcTGFuZ3VhZ2VzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/LoginPageBG.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/LoginPageBG.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcTG9naW5QYWdlQkcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Logo.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Logo.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcTG9nby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Maintenance.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Maintenance.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcTWFpbnRlbmFuY2UuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Miscellaneous.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Miscellaneous.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcTWlzY2VsbGFuZW91cy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Modules.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Modules.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcTW9kdWxlcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Notifications.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Notifications.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcTm90aWZpY2F0aW9ucy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/PaymentMethods.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/PaymentMethods.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcUGF5bWVudE1ldGhvZHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/PrintHeaderFooter.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/PrintHeaderFooter.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcUHJpbnRIZWFkZXJGb290ZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Roles.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Roles.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcUm9sZXMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Sessions.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Sessions.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcU2Vzc2lvbnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/SidebarMenu.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/SidebarMenu.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcU2lkZWJhck1lbnUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/SmsSettings.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/SmsSettings.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcU21zU2V0dGluZ3MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/StudentGuardian.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/StudentGuardian.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcU3R1ZGVudEd1YXJkaWFuLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/StudentProfile.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/StudentProfile.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcU3R1ZGVudFByb2ZpbGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/SystemFields.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/SystemFields.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcU3lzdGVtRmllbGRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Translations.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Translations.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcVHJhbnNsYXRpb25zLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Settings/Users.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Settings/Users.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcVXNlcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Shared/Error.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Shared/Unauthorized.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Shared/Unauthorized.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFVuYXV0aG9yaXplZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/UserType/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Transport/PickupPoint.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhbnNwb3J0XFBpY2t1cFBvaW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Transport/RoutePickupPoints.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhbnNwb3J0XFJvdXRlUGlja3VwUG9pbnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Transport/Routes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhbnNwb3J0XFJvdXRlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Transport/VehicleAssign.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhbnNwb3J0XFZlaGljbGVBc3NpZ24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Transport/Vehicles.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhbnNwb3J0XFZlaGljbGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/UserType/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclR5cGVcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/User/Index - Copy (2).cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/User/Index - Copy (2).cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxJbmRleCAtIENvcHkgKDIpLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/User/Index - Copy.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/User/Index - Copy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxJbmRleCAtIENvcHkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/User/Index.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/User/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/_ViewImports.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/_ViewStart.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/DELL/Downloads/SchoolERP 25-4-2026/Views/Shared/_Layout.cshtml]
+[C:/Users/svmim/Downloads/schoolerp_29042026/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-d6iq6ee36x

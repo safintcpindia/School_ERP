@@ -40,6 +40,21 @@ builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddScoped<IEmailConfigService, EmailConfigService>();
 builder.Services.AddScoped<ISmsConfigService, SmsConfigService>();
 builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+builder.Services.AddScoped<ISectionService, SectionService>();
+builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<ISubjectGroupService, SubjectGroupService>();
+builder.Services.AddScoped<IFrontOfficeService, FrontOfficeService>();
+builder.Services.AddScoped<IHostelService, HostelService>();
+builder.Services.AddScoped<IFieldService, FieldService>();
+builder.Services.AddScoped<IAccountHeadService, AccountHeadService>();
+builder.Services.AddScoped<IAccountEntryService, AccountEntryService>();
+builder.Services.AddScoped<IPickupPointService, PickupPointService>();
+builder.Services.AddScoped<IRouteService, RouteService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IVehicleAssignService, VehicleAssignService>();
+builder.Services.AddScoped<IRoutePickupPointService, RoutePickupPointService>();
+builder.Services.AddScoped<IHumanResourceService, HumanResourceService>();
 builder.Services.AddScoped<SchoolERP.Net.Helpers.PermissionHelper>();
 
 
@@ -127,6 +142,76 @@ builder.Services.AddHttpClient<ISmsConfigClientService, SmsConfigClientService>(
 });
 
 builder.Services.AddHttpClient<IPaymentMethodClientService, PaymentMethodClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<ISectionClientService, SectionClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IClassClientService, ClassClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<ISubjectClientService, SubjectClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<ISubjectGroupClientService, SubjectGroupClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IFrontOfficeClientService, FrontOfficeClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IHostelClientService, HostelClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IAccountHeadClientService, AccountHeadClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IAccountEntryClientService, AccountEntryClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IPickupPointClientService, PickupPointClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IRouteClientService, RouteClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IVehicleClientService, VehicleClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IVehicleAssignClientService, VehicleAssignClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IRoutePickupPointClientService, RoutePickupPointClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IHumanResourceClientService, HumanResourceClientService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 });

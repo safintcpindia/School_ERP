@@ -1,0 +1,153 @@
+﻿
+@{
+    ViewData["Title"] = "ClassTimeTable";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+        <h6 class="fw-bold mb-0">Class Timetable</h6>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-1">
+
+        <a href="addTimeTable.html" class="btn btn-primary"><i class="ti ti-plus me-1"></i> Add</a>
+        <a href="#" class="btn btn-secondary"><i class="ti ti-printer me-1"></i>Print</a>
+    </div>
+
+
+    <!-- <a href="#" class="btn btn-danger"><i class="ti ti-trash me-1"></i>Delete</a> -->
+</div>
+
+<!-- End Page Header -->
+<!-- start row -->
+<div class="row">
+
+    <div class="col-xl-4">
+        <div class="card shadow border-0 rounded-2 overflow-hidden">
+            <ul class="list-group">
+                <li class="list-group-item bg-primary text-white"><b class="fs-6">Monday</b></li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-book"></i> Subject :</span> Math</li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-clock"></i> Time :</span> 1:00 PM - 3:00 PM</li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-user"></i> Teacher :</span> Sadgi Sharma (1003)</li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-building"></i> Room No :</span> 202</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card shadow border-0">
+            <ul class="list-group">
+                <li class="list-group-item bg-primary text-white"><b class="fs-6">Tuesday</b></li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-book"></i> Subject :</span> Math</li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-clock"></i> Time :</span> 1:00 PM - 3:00 PM</li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-user"></i> Teacher :</span> Sadgi Sharma (1003)</li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-building"></i> Room No :</span> 202</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card shadow border-0">
+            <ul class="list-group">
+                <li class="list-group-item bg-primary text-white"><b class="fs-6">Wednesday</b></li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-book"></i> Subject :</span> Math</li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-clock"></i> Time :</span> 1:00 PM - 3:00 PM</li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-user"></i> Teacher :</span> Sadgi Sharma (1003)</li>
+                <li class="list-group-item d-flex justify-content-between"><span class="fw-semibold"><i class="ti ti-building"></i> Room No :</span> 202</li>
+            </ul>
+        </div>
+    </div>
+    <!-- end col -->
+
+</div>
+<!-- end row -->
+<!-----Add/Edit Caregory------>
+<div class="modal fade" id="add">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h5 class="modal-title">Add Fees Discount</h5>
+                <div>
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary"><i class="ti ti-cloud me-1"></i> Save</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row row-gap-3">
+                    <div class="col-md-12">
+                        <label for="" class="form-label">Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="" class="form-label">Discount Code <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="" class="form-label">Percentage <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="" class="form-label">Amount <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="" class="form-label d-block">Discount Type</label>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" name="ft" id="nn">
+                            <label for="nn" class="form-check-label small">Fix Amount</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" name="ft" id="per">
+                            <label for="per" class="form-check-label small">Percentage</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="" class="form-label">Description </label>
+                        <textarea name="" id="" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-----Filter Design------>
+<div class="offcanvas offcanvas-end" id="filter">
+    <div class="offcanvas-header d-flex justify-content-between align-items-center">
+        <h5 class="offcanvas-title">Filter</h5>
+        <div>
+            <button class="btn btn-light" data-bs-dismiss="offcanvas">Close</button>
+            <button class="btn btn-primary" data-bs-dismiss="offcanvas">Filter</button>
+        </div>
+    </div>
+    <div class="offcanvas-body">
+
+        <div class="mb-3">
+            <label for="" class="form-label">Fees Group <span class="text-danger">*</span></label>
+            <select name="" id="" class="form-select form-control">
+                <option value="">Select</option>
+                <option value="">1st Class</option>
+                <option value="">2nd Class</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="" class="form-label">Class <span class="text-danger">*</span></label>
+            <select name="" id="" class="form-select form-control">
+                <option value="">Select</option>
+                <option value="">1st Class</option>
+                <option value="">2nd Class</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="" class="form-label">Section <span class="text-danger">*</span></label>
+            <select name="" id="" class="form-select form-control">
+                <option value="">Select</option>
+                <option value="">Section A</option>
+                <option value="">Section B</option>
+            </select>
+        </div>
+    </div>
+</div>
+<!-----End Filter Design------>
+

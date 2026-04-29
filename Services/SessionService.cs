@@ -131,7 +131,9 @@ namespace SchoolERP.Net.Services
             {
                 var parameters = new[] { new SqlParameter("@UserID", userId) };
                 var dt = _sqlHelper.ExecuteQuery("sp_Users_GetCurrentSession", parameters);
+                var s = dt.Rows[0]["SessionId"];
                 if (dt.Rows.Count == 0 || dt.Rows[0]["SessionId"] == DBNull.Value) return null;
+                
                 return Convert.ToInt32(dt.Rows[0]["SessionId"]);
             }
             catch { return null; }

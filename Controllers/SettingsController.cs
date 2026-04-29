@@ -322,7 +322,16 @@ namespace SchoolERP.Net.Controllers
         /// <summary>
         /// Shows the page for managing internal system fields.
         /// </summary>
-        public IActionResult SystemFields() => View();
+        /// <summary>
+        /// Shows the page for managing internal system fields.
+        /// </summary>
+        public async Task<IActionResult> SystemFields()
+        {
+            ViewData["Title"] = "System Fields";
+            var response = await _settingsClient.GetAllFieldsAsync(isSystemField: true);
+            var model = response.Success ? response.Data : new List<FieldModel>();
+            return View(model);
+        }
 
         /// <summary>
         /// Shows the settings for student profile information.
@@ -342,7 +351,16 @@ namespace SchoolERP.Net.Controllers
         /// <summary>
         /// Shows the page for adding your own custom data fields.
         /// </summary>
-        public IActionResult CustomFields() => View();
+        /// <summary>
+        /// Shows the page for adding your own custom data fields.
+        /// </summary>
+        public async Task<IActionResult> CustomFields()
+        {
+            ViewData["Title"] = "Custom Fields";
+            var response = await _settingsClient.GetAllFieldsAsync(isSystemField: false);
+            var model = response.Success ? response.Data : new List<FieldModel>();
+            return View(model);
+        }
 
         /// <summary>
         /// Shows the settings for security 'captcha' tests.

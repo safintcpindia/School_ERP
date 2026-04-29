@@ -30,5 +30,30 @@ namespace SchoolERP.Net.Services.Clients
         {
             return await PostAsync<bool>("api/SettingsApi/translations/update", model);
         }
+
+        public async Task<ApiResponse<List<FieldModel>>> GetAllFieldsAsync(bool? isSystemField = null, string belongsTo = null)
+        {
+            return await GetAsync<List<FieldModel>>($"api/SettingsApi/fields?isSystemField={isSystemField}&belongsTo={belongsTo}");
+        }
+
+        public async Task<ApiResponse<FieldModel>> GetFieldByIDAsync(int id)
+        {
+            return await GetAsync<FieldModel>($"api/SettingsApi/fields/{id}");
+        }
+
+        public async Task<ApiResponse<bool>> UpsertFieldAsync(FieldViewModel model)
+        {
+            return await PostAsync<bool>("api/SettingsApi/fields/upsert", model);
+        }
+
+        public async Task<ApiResponse<bool>> DeleteFieldAsync(int id)
+        {
+            return await DeleteAsync<bool>($"api/SettingsApi/fields/delete/{id}");
+        }
+
+        public async Task<ApiResponse<bool>> ToggleFieldStatusAsync(int id, bool isActive)
+        {
+            return await PostAsync<bool>("api/SettingsApi/fields/toggle-status", new { id, isActive });
+        }
     }
 }

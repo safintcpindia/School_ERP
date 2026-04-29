@@ -58,4 +58,9 @@ namespace SchoolERP.Net.Models
         public List<MstSessionViewModel> Sessions { get; set; } = new();
         public List<MstCurrencyViewModel> Currencies { get; set; } = new();
     }
+
+    public class SetCurrentCompanyRequest
+    {
+        public int CompanyId { get; set; }
+    }
 }

@@ -16,12 +16,16 @@ namespace SchoolERP.Net.Controllers.Api
         private readonly IPickupPointService _pickupPointService;
         private readonly ICompanyService _companySvc;
         private readonly ISessionService _sessionSvc;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public PickupPointApiController(IPickupPointService pickupPointService, ICompanyService companySvc, ISessionService sessionSvc)
+        private const string MenuPath = "/Transport/PickupPoint";
+
+        public PickupPointApiController(IPickupPointService pickupPointService, ICompanyService companySvc, ISessionService sessionSvc, IUserMenuPermissionService menuPerm)
         {
             _pickupPointService = pickupPointService;
             _companySvc = companySvc;
             _sessionSvc = sessionSvc;
+            _menuPerm = menuPerm;
         }
 
         private int GetUserId() => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("UserId"), out var id) ? id : 0;
@@ -46,6 +50,12 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("UpsertPickupPoint")]
         public IActionResult UpsertPickupPoint([FromBody] PickupPointUpsertRequest req)
         {
+            var isCreate = req.PickupPointID <= 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add pickup points." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit pickup points." });
+
             var res = _pickupPointService.UpsertPickupPoint(req, GetCompanyId(), GetSessionId(), GetUserId());
             return Ok(new { success = res.Success, message = res.Message });
         }
@@ -53,6 +63,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeletePickupPoint/{id}")]
         public IActionResult DeletePickupPoint(int id)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete pickup points." });
+
             var res = _pickupPointService.DeletePickupPoint(id, GetUserId());
             return Ok(new { success = res.Success, message = res.Message });
         }
@@ -60,6 +73,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("TogglePickupPointStatus")]
         public IActionResult TogglePickupPointStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change pickup point status." });
+
             var res = _pickupPointService.TogglePickupPointStatus(id, isActive, GetUserId());
             return Ok(new { success = res.Success, message = res.Message });
         }

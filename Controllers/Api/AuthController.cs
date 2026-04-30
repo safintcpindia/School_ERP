@@ -9,7 +9,7 @@ namespace SchoolERP.Net.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     /// <summary>
     /// This controller provides the technical endpoints for verifying user credentials and creating secure access tokens.
     /// </summary>

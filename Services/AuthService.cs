@@ -29,7 +29,11 @@ namespace SchoolERP.Net.Services
         {
             try
             {
+                // Step 1: Establish a connection to the school's central database.
                 using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+                
+                // Step 2: Prepare a secure request to check the user's credentials.
+                // We use a 'Stored Procedure' which is like a pre-written recipe on the database side for safety.
                 using var cmd = new SqlCommand("sp_User_Login_Secure", conn)
                 {
                     CommandType = CommandType.StoredProcedure
@@ -52,8 +56,8 @@ namespace SchoolERP.Net.Services
                 if (result == 0)
                     return (0, message, null);
 
-                // Password verification is performed inside the stored procedure.
-                // If result is success, move to next result for session data
+                // Step 7: If successful, the database provides a second set of data containing the user's profile.
+                // We move to this next set of information.
                 if (!await reader.NextResultAsync() || !await reader.ReadAsync())
                     return (0, "Error fetching user details", null);
 
@@ -77,6 +81,8 @@ namespace SchoolERP.Net.Services
                                    ?? GetOptionalString(reader, "TypeName")
                                    ?? string.Empty;
 
+                // Step 9: Generate a 'Security Token'. 
+                // This is like a digital ID card that the user carries around so they don't have to log in for every single click.
                 user.Token = _jwtHelper.GenerateToken(
                     user.Username,
                     user.DefaultRoleName,

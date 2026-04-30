@@ -7,22 +7,33 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing custom form fields and settings for automatically generating IDs (like Student Admission Numbers).
+    /// </summary>
     public class FieldService : IFieldService
     {
         private readonly SqlHelper _db;
         public FieldService(SqlHelper db) => _db = db;
 
+        /// <summary>
+        /// Retrieves a complete list of all custom fields for the current school and session from the database.
+        /// </summary>
         public List<FieldModel> GetAllFields(int companyId, int sessionId, bool? isSystemField = null, string belongsTo = null)
         {
             var list = new List<FieldModel>();
+            
+            // Step 1: Pack the search criteria (School, Session, System-only, or Category).
             var p = new[] {
                 new SqlParameter("@CompanyId", companyId),
                 new SqlParameter("@SessionId", sessionId),
                 new SqlParameter("@IsSystemField", (object?)isSystemField ?? DBNull.Value),
                 new SqlParameter("@BelongsTo", (object?)belongsTo ?? DBNull.Value)
             };
+            
+            // Step 2: Ask the database for all matching fields using the 'GetAll' recipe.
             foreach (DataRow row in _db.ExecuteQuery("sp_Mst_Fields_GetAll", p).Rows)
                 list.Add(MapField(row));
+                
             return list;
         }
 
@@ -33,10 +44,14 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapField(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a custom field record in the database.
+        /// </summary>
         public (bool Success, string Message) UpsertField(FieldViewModel model, int userId)
         {
             try
             {
+                // Step 1: Bundle all the new details about the custom field (Name, Type, Required status, etc.).
                 var p = new[] {
                     new SqlParameter("@FieldId", model.FieldId),
                     new SqlParameter("@BelongsTo", model.BelongsTo),
@@ -53,7 +68,11 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@SessionId", model.SessionID),
                     new SqlParameter("@UserId", userId)
                 };
+                
+                // Step 2: Send this bundle to the database to save or update the record.
                 var dt = _db.ExecuteQuery("sp_Mst_Fields_Upsert", p);
+                
+                // Step 3: Inform the user if the record was saved successfully.
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
             }
             catch (Exception ex) { return (false, ex.Message); }
@@ -108,11 +127,17 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Saves or updates the settings for how IDs are automatically created (e.g., Prefix like 'STU-' followed by numbers).
+        /// </summary>
         public (bool Success, string Message) SaveIDAutoGenSettings(IDAutoGenRequest request, int userId)
         {
             try
             {
+                // Step 1: Combine the list of fields to include in the ID into a single text string.
                 var fields = request.FieldsToInclude != null ? string.Join(",", request.FieldsToInclude) : "";
+                
+                // Step 2: Prepare all the configuration details (Prefix, Start Number, Length, etc.).
                 var p = new[] {
                     new SqlParameter("@EntityType", request.EntityType),
                     new SqlParameter("@IsEnabled", request.IsEnabled),
@@ -121,10 +146,13 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@StartNo", request.StartNo),
                     new SqlParameter("@FieldsToInclude", fields),
                     new SqlParameter("@CompanyId", request.CompanyID),
-                    new SqlParameter("@SessionId", request.SessionID),
+                    new SqlParameter("@SessionID", request.SessionID),
                     new SqlParameter("@UserId", userId)
                 };
+                
+                // Step 3: Update these settings in the database.
                 _db.ExecuteNonQuery("sp_Settings_IDAutoGen_Upsert", p);
+                
                 return (true, "Settings saved successfully.");
             }
             catch (Exception ex) { return (false, ex.Message); }

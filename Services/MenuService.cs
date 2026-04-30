@@ -207,8 +207,10 @@ namespace SchoolERP.Net.Services
             int successCount = 0;
             try
             {
+                // Step 1: Go through each menu item in the list one by one.
                 foreach (var order in orders)
                 {
+                    // Step 2: Prepare the specific ID and its new position (Order Number).
                     var parameters = new[]
                     {
                         new SqlParameter("@MenuID", order.MenuID),
@@ -216,10 +218,13 @@ namespace SchoolERP.Net.Services
                         new SqlParameter("@UserID", userId),
                         new SqlParameter("@IPAddress", ipAddress)
                     };
+                    
+                    // Step 3: Tell the database to update the order for this specific item.
                     _sqlHelper.ExecuteNonQuery("sp_Menus_UpdateOrder", parameters);
                     successCount++;
                 }
-
+ 
+                // Step 4: If every item was updated successfully, report success.
                 if (successCount == orders.Count)
                 {
                     return (1, "Menu order updated successfully");

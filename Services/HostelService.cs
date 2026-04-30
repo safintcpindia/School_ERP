@@ -7,25 +7,40 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing hostel facilities, such as saving, updating, or deleting hostel buildings and room records in the database.
+    /// </summary>
     public class HostelService : IHostelService
     {
         private readonly SqlHelper _db;
         public HostelService(SqlHelper db) => _db = db;
 
         // ─── ROOM TYPE ──────────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all room categories for the current school and session from the database.
+        /// </summary>
         public List<RoomTypeViewModel> GetAllRoomTypes(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<RoomTypeViewModel>();
+            
+            // Step 1: Prepare the specific details (school, session, deleted status) we want to look for.
             var p = new[] {
                 new SqlParameter("@CompanyID", companyId),
                 new SqlParameter("@SessionID", sessionId),
                 new SqlParameter("@IncludeDeleted", includeDeleted)
             };
+            
+            // Step 2: Ask the database for all matching room types using the 'GetAll' recipe.
+            // Step 3: For each record found, convert it into a format the application understands and add it to our list.
             foreach (DataRow row in _db.ExecuteQuery("sp_Mst_RoomType_GetAll", p).Rows)
                 list.Add(MapRoomType(row));
+                
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific room type using its unique ID.
+        /// </summary>
         public RoomTypeViewModel? GetRoomTypeByID(int id)
         {
             var p = new[] { new SqlParameter("@RoomTypeID", id) };
@@ -33,10 +48,14 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapRoomType(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a room type record in the database.
+        /// </summary>
         public (bool Success, string Message) UpsertRoomType(RoomTypeUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
             {
+                // Step 1: Bundle all the new information about the room type (Title, Description, etc.).
                 var p = new[] {
                     new SqlParameter("@RoomTypeID", req.RoomTypeID),
                     new SqlParameter("@CompanyID", companyId),
@@ -46,12 +65,23 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@IsActive", req.IsActive),
                     new SqlParameter("@UserId", userId)
                 };
+                
+                // Step 2: Send this bundle to the database to either create a new one or update the existing one.
                 var dt = _db.ExecuteQuery("sp_Mst_RoomType_Upsert", p);
+                
+                // Step 3: Return whether it worked and what the database said (e.g., 'Saved successfully').
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
             }
-            catch (Exception ex) { return (false, ex.Message); }
+            catch (Exception ex) 
+            { 
+                // If there's a technical error, report it back.
+                return (false, ex.Message); 
+            }
         }
 
+        /// <summary>
+        /// Deletes a room type's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteRoomType(int id, int userId)
         {
             try
@@ -63,6 +93,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a room type is currently active or inactive.
+        /// </summary>
         public (bool Success, string Message) ToggleRoomTypeStatus(int id, bool isActive, int userId)
         {
             try
@@ -94,6 +127,9 @@ namespace SchoolERP.Net.Services
         };
 
         // ─── HOSTEL ─────────────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all hostel buildings for the current school and session from the database.
+        /// </summary>
         public List<HostelViewModel> GetAllHostels(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<HostelViewModel>();
@@ -107,6 +143,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific hostel building using its unique ID.
+        /// </summary>
         public HostelViewModel? GetHostelByID(int id)
         {
             var p = new[] { new SqlParameter("@HostelID", id) };
@@ -114,10 +153,14 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapHostel(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a hostel building record in the database.
+        /// </summary>
         public (bool Success, string Message) UpsertHostel(HostelUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
             {
+                // Step 1: Prepare all the details about the hostel building.
                 var p = new[] {
                     new SqlParameter("@HostelID", req.HostelID),
                     new SqlParameter("@CompanyID", companyId),
@@ -130,12 +173,19 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@IsActive", req.IsActive),
                     new SqlParameter("@UserId", userId)
                 };
+                
+                // Step 2: Send the hostel building details to the database to save or update.
                 var dt = _db.ExecuteQuery("sp_Mst_Hostel_Upsert", p);
+                
+                // Step 3: Tell the user if the building record was saved successfully.
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
             }
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a hostel building's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteHostel(int id, int userId)
         {
             try
@@ -147,6 +197,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a hostel building is currently active or inactive.
+        /// </summary>
         public (bool Success, string Message) ToggleHostelStatus(int id, bool isActive, int userId)
         {
             try
@@ -182,6 +235,9 @@ namespace SchoolERP.Net.Services
         };
 
         // ─── HOSTEL ROOM ────────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all individual hostel rooms for the current school and session from the database.
+        /// </summary>
         public List<HostelRoomViewModel> GetAllHostelRooms(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<HostelRoomViewModel>();
@@ -195,6 +251,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific hostel room using its unique ID.
+        /// </summary>
         public HostelRoomViewModel? GetHostelRoomByID(int id)
         {
             var p = new[] { new SqlParameter("@RoomId", id) };
@@ -202,10 +261,14 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapHostelRoom(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a hostel room record in the database, including bed count and cost.
+        /// </summary>
         public (bool Success, string Message) UpsertHostelRoom(HostelRoomUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
             {
+                // Step 1: Pack the room details like bed count and cost per bed.
                 var p = new[] {
                     new SqlParameter("@RoomId", req.RoomId),
                     new SqlParameter("@HostelID", req.HostelID),
@@ -219,12 +282,19 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@IsActive", req.IsActive),
                     new SqlParameter("@UserId", userId)
                 };
+                
+                // Step 2: Update the specific room information in the database.
                 var dt = _db.ExecuteQuery("sp_Mst_HostelRoom_Upsert", p);
+                
+                // Step 3: Inform the user if the room update was successful.
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
             }
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a hostel room's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteHostelRoom(int id, int userId)
         {
             try
@@ -236,6 +306,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a hostel room is currently active or inactive.
+        /// </summary>
         public (bool Success, string Message) ToggleHostelRoomStatus(int id, bool isActive, int userId)
         {
             try

@@ -16,12 +16,14 @@ namespace SchoolERP.Net.Controllers.Api
         private readonly IAccountHeadService _accountHeadService;
         private readonly ICompanyService _companySvc;
         private readonly ISessionService _sessionSvc;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public AccountHeadApiController(IAccountHeadService accountHeadService, ICompanyService companySvc, ISessionService sessionSvc)
+        public AccountHeadApiController(IAccountHeadService accountHeadService, ICompanyService companySvc, ISessionService sessionSvc, IUserMenuPermissionService menuPerm)
         {
             _accountHeadService = accountHeadService;
             _companySvc = companySvc;
             _sessionSvc = sessionSvc;
+            _menuPerm = menuPerm;
         }
 
         private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "1");
@@ -63,6 +65,13 @@ namespace SchoolERP.Net.Controllers.Api
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
+                string menuPath = (req.HeadType == "Income") ? "/Income/IncomeHead" : "/Expense/ExpenseHead";
+                var isCreate = req.AccountHeadID <= 0;
+                if (isCreate && !_menuPerm.Has(User, menuPath, "Add"))
+                    return Ok(new { success = false, message = $"You do not have permission to add {req.HeadType.ToLower()} heads." });
+                if (!isCreate && !_menuPerm.Has(User, menuPath, "Edit"))
+                    return Ok(new { success = false, message = $"You do not have permission to edit {req.HeadType.ToLower()} heads." });
+
                 var result = _accountHeadService.UpsertAccountHead(req, CompanyId, SessionId, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -77,6 +86,13 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                var head = _accountHeadService.GetAccountHeadByID(id);
+                if (head == null) return Ok(new { success = false, message = "Head not found." });
+                string menuPath = (head.HeadType == "Income") ? "/Income/IncomeHead" : "/Expense/ExpenseHead";
+
+                if (!_menuPerm.Has(User, menuPath, "Delete"))
+                    return Ok(new { success = false, message = $"You do not have permission to delete {head.HeadType.ToLower()} heads." });
+
                 var result = _accountHeadService.DeleteAccountHead(id, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -91,6 +107,13 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                var head = _accountHeadService.GetAccountHeadByID(id);
+                if (head == null) return Ok(new { success = false, message = "Head not found." });
+                string menuPath = (head.HeadType == "Income") ? "/Income/IncomeHead" : "/Expense/ExpenseHead";
+
+                if (!_menuPerm.Has(User, menuPath, "Edit"))
+                    return Ok(new { success = false, message = $"You do not have permission to change {head.HeadType.ToLower()} head status." });
+
                 var result = _accountHeadService.ToggleAccountHeadStatus(id, isActive, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }

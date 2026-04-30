@@ -35,6 +35,7 @@ namespace SchoolERP.Net.Services
         {
             try
             {
+                // Step 1: Collect all the new details for the SMS gateway (Gateway Name, API URL, Security Key, etc.).
                 var parameters = new[]
                 {
                     new SqlParameter("@SmsId", request.SmsId),
@@ -45,7 +46,11 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@IsActive", request.IsActive),
                     new SqlParameter("@UserId", userId)
                 };
+                
+                // Step 2: Save or update this SMS configuration in the database.
                 var dt = _sqlHelper.ExecuteQuery("sp_SmsConfig_Upsert", parameters);
+                
+                // Step 3: Inform the user if the settings were saved correctly.
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString() ?? "");
             }
             catch (Exception ex) { return (false, ex.Message); }

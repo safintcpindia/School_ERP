@@ -47,7 +47,16 @@ namespace SchoolERP.Net.Services
             DataTable dt = _sqlHelper.ExecuteQuery("sp_Users_GetByID", parameters);
 
             if (dt.Rows.Count == 0) return null;
-            return MapRowToViewModel(dt.Rows[0]);
+            var user = MapRowToViewModel(dt.Rows[0]);
+
+            // Ensure company and role IDs are explicitly loaded if not returned by the SP
+            if (user.CompanyIDs == null || user.CompanyIDs.Count == 0)
+                user.CompanyIDs = GetUserCompanyIds(userId);
+            
+            if (user.RoleIDs == null || user.RoleIDs.Count == 0)
+                user.RoleIDs = GetUserRoleIds(userId);
+
+            return user;
         }
 
         /// <summary>

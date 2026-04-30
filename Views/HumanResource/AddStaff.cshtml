@@ -12,7 +12,9 @@
     }
     if (currentUserId > 0) PermHelper.LoadPermissions(currentUserId);
 
-    var canAdd = PermHelper.HasPermissionByUrl("/HumanResource/AddStaff", "Add");
+    var canAdd = PermHelper.HasPermissionByUrl("/HumanResource/Staffs", "Add");
+    var canEdit = PermHelper.HasPermissionByUrl("/HumanResource/Staffs", "Edit");
+    var canSave = (Model.EditStaff == null && canAdd) || (Model.EditStaff != null && canEdit);
 }
 
 <!-- Page Header -->
@@ -20,9 +22,12 @@
     <div>
         <h6 class="fw-bold mb-0">Add Staff</h6>
     </div>
-    <button type="button" class="btn btn-success d-inline-flex align-items-center" onclick="saveStaff()">
-        <i class="ti ti-cloud me-1"></i>Save
-    </button>
+    @if (canSave)
+    {
+        <button type="button" class="btn btn-success d-inline-flex align-items-center" onclick="saveStaff()">
+            <i class="ti ti-cloud me-1"></i>Save
+        </button>
+    }
 </div>
 <!-- End Page Header -->
 
@@ -42,17 +47,28 @@
                                 <input type="text" class="form-control bg-light" id="txtStaffCode" value="@(Model.EditStaff?.StaffCode ?? Model.NewStaffCode)" readonly placeholder="Auto-generated" />
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="mb-3">
-                                <label class="form-label">Role <span class="text-danger">*</span></label>
-                                <select class="form-select" id="ddlRole" required>
-                                    <option value="">Select Role</option>
-                                    @foreach(var r in Model.Roles) {
-                                        <option value="@r.RoleID" selected="@(Model.EditStaff?.RoleIDs?.Contains(r.RoleID) == true)">@r.RoleName</option>
-                                    }
-                                </select>
+                        @if (Model.EditStaff == null)
+                        {
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Role <span class="text-danger">*</span></label>
+                                    <select class="form-select select2" id="ddlRole" name="RoleIDs" multiple required>
+                                        @foreach (var r in Model.Roles)
+                                        {
+                                            <option value="@r.RoleID">@r.RoleName</option>
+                                        }
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            foreach (var rId in Model.EditStaff.RoleIDs)
+                            {
+                                <input type="hidden" name="RoleIDs" value="@rId" />
+                            }
+                            <input type="hidden" id="ddlRole" value="@(Model.EditStaff.RoleIDs.FirstOrDefault())" />
+                        }
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label class="form-label">Designation <span class="text-danger">*</span></label>
@@ -391,17 +407,28 @@
                                                 }
                                             </select>
                                         </div>
-                                        <div class="col-md-8">
-                                            <label class="form-label">Assigned Companies</label>
-                                            <div class="d-flex flex-wrap gap-3">
-                                                @foreach(var c in Model.Companies) {
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="compCheck" value="@c.CompanyId" id="comp_@c.CompanyId" @(Model.EditStaff?.CompanyIDs?.Contains(c.CompanyId) == true || Model.EditStaff == null ? "checked" : "")>
-                                                        <label class="form-check-label" for="comp_@c.CompanyId">@c.SchoolName</label>
-                                                    </div>
-                                                }
+                                        @if (Model.EditStaff == null)
+                                        {
+                                            <div class="col-md-8">
+                                                <label class="form-label">Assigned Companies</label>
+                                                <div class="d-flex flex-wrap gap-3">
+                                                    @foreach (var c in Model.Companies)
+                                                    {
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" name="compCheck" value="@c.CompanyId" id="comp_@c.CompanyId" checked>
+                                                            <label class="form-check-label" for="comp_@c.CompanyId">@c.SchoolName</label>
+                                                        </div>
+                                                    }
+                                                </div>
                                             </div>
-                                        </div>
+                                        }
+                                        else
+                                        {
+                                            foreach (var cId in Model.EditStaff.CompanyIDs)
+                                            {
+                                                <input type="hidden" name="compCheck" value="@cId" />
+                                            }
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -442,8 +469,23 @@
             return; 
         }
 
-        const roleID = parseInt(document.getElementById('ddlRole').value);
-        const companyIDs = Array.from(document.querySelectorAll('input[name="compCheck"]:checked')).map(c => parseInt(c.value));
+        let roleIDs = [];
+        const roleEl = document.getElementById('ddlRole');
+        if (roleEl.multiple) {
+            roleIDs = Array.from(roleEl.selectedOptions).map(o => parseInt(o.value)).filter(v => !isNaN(v));
+        } else if (roleEl.value) {
+            roleIDs = [parseInt(roleEl.value)];
+        }
+
+        // If in Edit mode, we might need to pull from hidden inputs if elements are disabled
+        if (roleIDs.length === 0) {
+            roleIDs = Array.from(document.querySelectorAll('input[type="hidden"][name="RoleIDs"]')).map(i => parseInt(i.value));
+        }
+
+        let companyIDs = Array.from(document.querySelectorAll('input[name="compCheck"]:checked')).map(c => parseInt(c.value));
+        if (companyIDs.length === 0) {
+            companyIDs = Array.from(document.querySelectorAll('input[type="hidden"][name="compCheck"]')).map(i => parseInt(i.value));
+        }
 
         // Read files
         const photoFile = document.getElementById('filePhoto').files[0];
@@ -523,7 +565,7 @@
             otherDocName: otherFile?.name,
 
             userTypeID: parseInt(document.getElementById('ddlUserType').value),
-            roleIDs: [roleID],
+            roleIDs: roleIDs,
             companyIDs: companyIDs,
             isActive: true
         };

@@ -8,11 +8,17 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing account entries, such as saving, updating, or searching income and expense transactions in the database.
+    /// </summary>
     public class AccountEntryService : IAccountEntryService
     {
         private readonly SqlHelper _db;
         public AccountEntryService(SqlHelper db) => _db = db;
 
+        /// <summary>
+        /// Retrieves a complete list of all account entries for a specific category (Income/Expense) from the database.
+        /// </summary>
         public List<AccountEntryViewModel> GetAllAccountEntries(int companyId, int sessionId, string entryType, bool includeDeleted = false)
         {
             var list = new List<AccountEntryViewModel>();
@@ -31,6 +37,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Searches for account entries based on specific criteria like date range and transaction type.
+        /// </summary>
         public List<AccountEntryViewModel> SearchAccountEntries(int companyId, int sessionId, string entryType, string searchType, string? dateFrom, string? dateTo)
         {
             var list = new List<AccountEntryViewModel>();
@@ -56,6 +65,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific account entry using its unique ID.
+        /// </summary>
         public AccountEntryViewModel? GetAccountEntryByID(int id)
         {
             var p = new[] { new SqlParameter("@AccountEntryID", id) };
@@ -63,6 +75,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapAccountEntry(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates an account entry record in the database, including amount and documentation details.
+        /// </summary>
         public (bool Success, string Message) UpsertAccountEntry(AccountEntryUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -90,6 +105,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes an account entry's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteAccountEntry(int id, int userId)
         {
             try
@@ -101,6 +119,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether an account entry is currently active or inactive.
+        /// </summary>
         public (bool Success, string Message) ToggleAccountEntryStatus(int id, bool isActive, int userId)
         {
             try
@@ -116,6 +137,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about an account entry into a format the application can easily use.
+        /// </summary>
         private static AccountEntryViewModel MapAccountEntry(DataRow r) => new()
         {
             AccountEntryID = Convert.ToInt32(r["AccountEntryID"]),

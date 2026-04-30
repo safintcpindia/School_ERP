@@ -26,11 +26,16 @@ namespace SchoolERP.Net.Controllers
         /// </summary>
         public async Task<IActionResult> Index()
         {
+            // Step 1: Ask the system for a list of all school campuses or branches registered.
             var response = await _organisationClient.GetAllOrganisationsAsync();
+            
+            // Step 2: Prepare the list to be shown on the management page.
             var model = new OrganisationPageViewModel
             {
                 Organisations = response.Success ? response.Data : new System.Collections.Generic.List<OrganisationViewModel>()
             };
+            
+            // Step 3: Open the 'Organisation' management page.
             return View(model);
         }
 
@@ -54,13 +59,17 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] OrganisationUpsertRequest request)
         {
+            // Step 1: Check if the user has the right permission to add or edit an organisation based on whether it already exists.
             var isCreate = request.OrganisationID <= 0;
             if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
                 return Json(new { success = false, message = "You do not have permission to add organisations." });
             if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
                 return Json(new { success = false, message = "You do not have permission to edit organisations." });
-
+ 
+            // Step 2: Send the new or updated organisation details to the backend system to be saved.
             var response = await _organisationClient.UpsertOrganisationAsync(request);
+            
+            // Step 3: Inform the user if the record was saved successfully.
             return Json(new { success = response.Success, message = response.Message });
         }
 

@@ -7,6 +7,9 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing class sections, such as saving, updating, or deleting section records in the database.
+    /// </summary>
     public class SectionService : ISectionService
     {
         private readonly SqlHelper _sqlHelper;
@@ -16,6 +19,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a complete list of all sections for the current school and session from the database.
+        /// </summary>
         public List<MstSectionViewModel> GetAllSections(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<MstSectionViewModel>();
@@ -34,6 +40,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Fetches all sections associated with a specific class ID.
+        /// </summary>
         public List<MstSectionViewModel> GetSectionsByClass(int classId)
         {
             var list = new List<MstSectionViewModel>();
@@ -47,6 +56,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific section using its unique ID.
+        /// </summary>
         public MstSectionViewModel? GetSectionByID(int sectionId)
         {
             var parameters = new[] { new SqlParameter("@SectionID", sectionId) };
@@ -55,6 +67,9 @@ namespace SchoolERP.Net.Services
             return MapRowToViewModel(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a section record in the database.
+        /// </summary>
         public (bool success, string message) UpsertSection(MstSectionUpsertRequest request, int companyId, int sessionId, int userId)
         {
             try
@@ -74,6 +89,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a section's record from the database.
+        /// </summary>
         public (bool success, string message) DeleteSection(int sectionId, int userId)
         {
             try
@@ -89,6 +107,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a section is currently active or inactive.
+        /// </summary>
         public (bool success, string message) ToggleSectionStatus(int sectionId, bool isActive, int userId)
         {
             try
@@ -105,6 +126,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about a section into a format the application can easily use.
+        /// </summary>
         private MstSectionViewModel MapRowToViewModel(DataRow row)
         {
             var model = new MstSectionViewModel

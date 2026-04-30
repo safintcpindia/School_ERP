@@ -16,12 +16,20 @@ namespace SchoolERP.Net.Controllers.Api
         private readonly IFrontOfficeService _svc;
         private readonly ICompanyService _companySvc;
         private readonly ISessionService _sessionSvc;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public FrontOfficeApiController(IFrontOfficeService svc, ICompanyService companySvc, ISessionService sessionSvc)
+        private const string SetupMenuPath = "/FrontOffice/Setup";
+        private const string ComplaintMenuPath = "/FrontOffice/Complaint";
+        private const string PostalReceiveMenuPath = "/FrontOffice/PostalReceive";
+        private const string PostalDispatchMenuPath = "/FrontOffice/PostalDispatch";
+        private const string PhoneCallLogMenuPath = "/FrontOffice/PhoneCallLog";
+
+        public FrontOfficeApiController(IFrontOfficeService svc, ICompanyService companySvc, ISessionService sessionSvc, IUserMenuPermissionService menuPerm)
         {
             _svc = svc;
             _companySvc = companySvc;
             _sessionSvc = sessionSvc;
+            _menuPerm = menuPerm;
         }
 
         private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "1");
@@ -48,6 +56,12 @@ namespace SchoolERP.Net.Controllers.Api
         public IActionResult UpsertPurpose([FromBody] MstFOPurposeUpsertRequest req)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            var isCreate = req.PurposeID <= 0;
+            if (isCreate && !_menuPerm.Has(User, SetupMenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add purposes." });
+            if (!isCreate && !_menuPerm.Has(User, SetupMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit purposes." });
+
             var (success, message) = _svc.UpsertPurpose(req, CompanyId, SessionId, UserId);
             return Ok(new { success, message });
         }
@@ -55,6 +69,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeletePurpose/{id}")]
         public IActionResult DeletePurpose(int id)
         {
+            if (!_menuPerm.Has(User, SetupMenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete purposes." });
+
             var (success, message) = _svc.DeletePurpose(id, UserId);
             return Ok(new { success, message });
         }
@@ -62,6 +79,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("TogglePurposeStatus")]
         public IActionResult TogglePurposeStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, SetupMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change purpose status." });
+
             var (success, message) = _svc.TogglePurposeStatus(id, isActive, UserId);
             return Ok(new { success, message });
         }
@@ -86,6 +106,12 @@ namespace SchoolERP.Net.Controllers.Api
         public IActionResult UpsertComplaintType([FromBody] MstFOComplaintTypeUpsertRequest req)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            var isCreate = req.ComplaintTypeID <= 0;
+            if (isCreate && !_menuPerm.Has(User, SetupMenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add complaint types." });
+            if (!isCreate && !_menuPerm.Has(User, SetupMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit complaint types." });
+
             var (success, message) = _svc.UpsertComplaintType(req, CompanyId, SessionId, UserId);
             return Ok(new { success, message });
         }
@@ -93,6 +119,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeleteComplaintType/{id}")]
         public IActionResult DeleteComplaintType(int id)
         {
+            if (!_menuPerm.Has(User, SetupMenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete complaint types." });
+
             var (success, message) = _svc.DeleteComplaintType(id, UserId);
             return Ok(new { success, message });
         }
@@ -100,6 +129,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("ToggleComplaintTypeStatus")]
         public IActionResult ToggleComplaintTypeStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, SetupMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change complaint type status." });
+
             var (success, message) = _svc.ToggleComplaintTypeStatus(id, isActive, UserId);
             return Ok(new { success, message });
         }
@@ -124,6 +156,12 @@ namespace SchoolERP.Net.Controllers.Api
         public IActionResult UpsertSource([FromBody] MstFOSourceUpsertRequest req)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            var isCreate = req.SourceID <= 0;
+            if (isCreate && !_menuPerm.Has(User, SetupMenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add sources." });
+            if (!isCreate && !_menuPerm.Has(User, SetupMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit sources." });
+
             var (success, message) = _svc.UpsertSource(req, CompanyId, SessionId, UserId);
             return Ok(new { success, message });
         }
@@ -131,6 +169,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeleteSource/{id}")]
         public IActionResult DeleteSource(int id)
         {
+            if (!_menuPerm.Has(User, SetupMenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete sources." });
+
             var (success, message) = _svc.DeleteSource(id, UserId);
             return Ok(new { success, message });
         }
@@ -138,6 +179,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("ToggleSourceStatus")]
         public IActionResult ToggleSourceStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, SetupMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change source status." });
+
             var (success, message) = _svc.ToggleSourceStatus(id, isActive, UserId);
             return Ok(new { success, message });
         }
@@ -162,6 +206,12 @@ namespace SchoolERP.Net.Controllers.Api
         public IActionResult UpsertReference([FromBody] MstFOReferenceUpsertRequest req)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            var isCreate = req.ReferenceID <= 0;
+            if (isCreate && !_menuPerm.Has(User, SetupMenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add references." });
+            if (!isCreate && !_menuPerm.Has(User, SetupMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit references." });
+
             var (success, message) = _svc.UpsertReference(req, CompanyId, SessionId, UserId);
             return Ok(new { success, message });
         }
@@ -169,6 +219,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeleteReference/{id}")]
         public IActionResult DeleteReference(int id)
         {
+            if (!_menuPerm.Has(User, SetupMenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete references." });
+
             var (success, message) = _svc.DeleteReference(id, UserId);
             return Ok(new { success, message });
         }
@@ -176,6 +229,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("ToggleReferenceStatus")]
         public IActionResult ToggleReferenceStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, SetupMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change reference status." });
+
             var (success, message) = _svc.ToggleReferenceStatus(id, isActive, UserId);
             return Ok(new { success, message });
         }
@@ -200,6 +256,12 @@ namespace SchoolERP.Net.Controllers.Api
         public IActionResult UpsertComplaint([FromBody] FOComplaintUpsertRequest req)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            var isCreate = req.ComplaintID <= 0;
+            if (isCreate && !_menuPerm.Has(User, ComplaintMenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add complaints." });
+            if (!isCreate && !_menuPerm.Has(User, ComplaintMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit complaints." });
+
             var (success, message) = _svc.UpsertComplaint(req, CompanyId, SessionId, UserId);
             return Ok(new { success, message });
         }
@@ -207,6 +269,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeleteComplaint/{id}")]
         public IActionResult DeleteComplaint(int id)
         {
+            if (!_menuPerm.Has(User, ComplaintMenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete complaints." });
+
             var (success, message) = _svc.DeleteComplaint(id, UserId);
             return Ok(new { success, message });
         }
@@ -214,6 +279,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("ToggleComplaintStatus")]
         public IActionResult ToggleComplaintStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, ComplaintMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change complaint status." });
+
             var (success, message) = _svc.ToggleComplaintStatus(id, isActive, UserId);
             return Ok(new { success, message });
         }
@@ -238,6 +306,12 @@ namespace SchoolERP.Net.Controllers.Api
         public IActionResult UpsertPostalReceive([FromBody] FOPostalReceiveUpsertRequest req)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            var isCreate = req.PostalReceiveID <= 0;
+            if (isCreate && !_menuPerm.Has(User, PostalReceiveMenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add postal receives." });
+            if (!isCreate && !_menuPerm.Has(User, PostalReceiveMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit postal receives." });
+
             var (success, message) = _svc.UpsertPostalReceive(req, CompanyId, SessionId, UserId);
             return Ok(new { success, message });
         }
@@ -245,6 +319,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeletePostalReceive/{id}")]
         public IActionResult DeletePostalReceive(int id)
         {
+            if (!_menuPerm.Has(User, PostalReceiveMenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete postal receives." });
+
             var (success, message) = _svc.DeletePostalReceive(id, UserId);
             return Ok(new { success, message });
         }
@@ -252,6 +329,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("TogglePostalReceiveStatus")]
         public IActionResult TogglePostalReceiveStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, PostalReceiveMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change postal receive status." });
+
             var (success, message) = _svc.TogglePostalReceiveStatus(id, isActive, UserId);
             return Ok(new { success, message });
         }
@@ -276,6 +356,12 @@ namespace SchoolERP.Net.Controllers.Api
         public IActionResult UpsertPostalDispatch([FromBody] FOPostalDispatchUpsertRequest req)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            var isCreate = req.PostalDispatchID <= 0;
+            if (isCreate && !_menuPerm.Has(User, PostalDispatchMenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add postal dispatches." });
+            if (!isCreate && !_menuPerm.Has(User, PostalDispatchMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit postal dispatches." });
+
             var (success, message) = _svc.UpsertPostalDispatch(req, CompanyId, SessionId, UserId);
             return Ok(new { success, message });
         }
@@ -283,6 +369,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeletePostalDispatch/{id}")]
         public IActionResult DeletePostalDispatch(int id)
         {
+            if (!_menuPerm.Has(User, PostalDispatchMenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete postal dispatches." });
+
             var (success, message) = _svc.DeletePostalDispatch(id, UserId);
             return Ok(new { success, message });
         }
@@ -290,6 +379,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("TogglePostalDispatchStatus")]
         public IActionResult TogglePostalDispatchStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, PostalDispatchMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change postal dispatch status." });
+
             var (success, message) = _svc.TogglePostalDispatchStatus(id, isActive, UserId);
             return Ok(new { success, message });
         }
@@ -314,6 +406,12 @@ namespace SchoolERP.Net.Controllers.Api
         public IActionResult UpsertPhoneCallLog([FromBody] FOPhoneCallLogUpsertRequest req)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            var isCreate = req.PhoneCallLogID <= 0;
+            if (isCreate && !_menuPerm.Has(User, PhoneCallLogMenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add phone call logs." });
+            if (!isCreate && !_menuPerm.Has(User, PhoneCallLogMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit phone call logs." });
+
             var (success, message) = _svc.UpsertPhoneCallLog(req, CompanyId, SessionId, UserId);
             return Ok(new { success, message });
         }
@@ -321,6 +419,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeletePhoneCallLog/{id}")]
         public IActionResult DeletePhoneCallLog(int id)
         {
+            if (!_menuPerm.Has(User, PhoneCallLogMenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete phone call logs." });
+
             var (success, message) = _svc.DeletePhoneCallLog(id, UserId);
             return Ok(new { success, message });
         }
@@ -328,6 +429,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("TogglePhoneCallLogStatus")]
         public IActionResult TogglePhoneCallLogStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, PhoneCallLogMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change phone call log status." });
+
             var (success, message) = _svc.TogglePhoneCallLogStatus(id, isActive, UserId);
             return Ok(new { success, message });
         }

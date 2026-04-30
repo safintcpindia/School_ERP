@@ -39,10 +39,10 @@ namespace SchoolERP.Net.Controllers
 
             var model = new UsersPageViewModel
             {
-                Users     = usersResponse.Success ? usersResponse.Data : new List<UserViewModel>(),
-                Roles     = rolesResponse.Success ? rolesResponse.Data : new List<RoleViewModel>(),
-                UserTypes = typesResponse.Success ? typesResponse.Data : new List<MstUserTypeViewModel>(),
-                Companies = companiesResponse.Success ? companiesResponse.Data : new List<MstCompanyViewModel>()
+                Users     = (usersResponse.Success && usersResponse.Data != null) ? usersResponse.Data : new List<UserViewModel>(),
+                Roles     = (rolesResponse.Success && rolesResponse.Data != null) ? rolesResponse.Data : new List<RoleViewModel>(),
+                UserTypes = (typesResponse.Success && typesResponse.Data != null) ? typesResponse.Data : new List<MstUserTypeViewModel>(),
+                Companies = (companiesResponse.Success && companiesResponse.Data != null) ? companiesResponse.Data : new List<MstCompanyViewModel>()
             };
 
             return View(model);

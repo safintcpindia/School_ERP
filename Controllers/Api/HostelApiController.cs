@@ -16,12 +16,18 @@ namespace SchoolERP.Net.Controllers.Api
         private readonly IHostelService _hostelService;
         private readonly ICompanyService _companySvc;
         private readonly ISessionService _sessionSvc;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public HostelApiController(IHostelService hostelService, ICompanyService companySvc, ISessionService sessionSvc)
+        private const string RoomTypeMenuPath = "/Hostel/RoomType";
+        private const string HostelMenuPath = "/Hostel";
+        private const string HostelRoomMenuPath = "/Hostel/HostelRoom";
+
+        public HostelApiController(IHostelService hostelService, ICompanyService companySvc, ISessionService sessionSvc, IUserMenuPermissionService menuPerm)
         {
             _hostelService = hostelService;
             _companySvc = companySvc;
             _sessionSvc = sessionSvc;
+            _menuPerm = menuPerm;
         }
 
         private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "1");
@@ -63,6 +69,12 @@ namespace SchoolERP.Net.Controllers.Api
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
+                var isCreate = req.RoomTypeID <= 0;
+                if (isCreate && !_menuPerm.Has(User, RoomTypeMenuPath, "Add"))
+                    return Ok(new { success = false, message = "You do not have permission to add room types." });
+                if (!isCreate && !_menuPerm.Has(User, RoomTypeMenuPath, "Edit"))
+                    return Ok(new { success = false, message = "You do not have permission to edit room types." });
+
                 var result = _hostelService.UpsertRoomType(req, CompanyId, SessionId, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -77,6 +89,9 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                if (!_menuPerm.Has(User, RoomTypeMenuPath, "Delete"))
+                    return Ok(new { success = false, message = "You do not have permission to delete room types." });
+
                 var result = _hostelService.DeleteRoomType(id, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -91,6 +106,9 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                if (!_menuPerm.Has(User, RoomTypeMenuPath, "Edit"))
+                    return Ok(new { success = false, message = "You do not have permission to change room type status." });
+
                 var result = _hostelService.ToggleRoomTypeStatus(id, isActive, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -136,6 +154,12 @@ namespace SchoolERP.Net.Controllers.Api
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
+                var isCreate = req.HostelID <= 0;
+                if (isCreate && !_menuPerm.Has(User, HostelMenuPath, "Add"))
+                    return Ok(new { success = false, message = "You do not have permission to add hostels." });
+                if (!isCreate && !_menuPerm.Has(User, HostelMenuPath, "Edit"))
+                    return Ok(new { success = false, message = "You do not have permission to edit hostels." });
+
                 var result = _hostelService.UpsertHostel(req, CompanyId, SessionId, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -150,6 +174,9 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                if (!_menuPerm.Has(User, HostelMenuPath, "Delete"))
+                    return Ok(new { success = false, message = "You do not have permission to delete hostels." });
+
                 var result = _hostelService.DeleteHostel(id, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -164,6 +191,9 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                if (!_menuPerm.Has(User, HostelMenuPath, "Edit"))
+                    return Ok(new { success = false, message = "You do not have permission to change hostel status." });
+
                 var result = _hostelService.ToggleHostelStatus(id, isActive, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -209,6 +239,12 @@ namespace SchoolERP.Net.Controllers.Api
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
+                var isCreate = req.RoomId <= 0;
+                if (isCreate && !_menuPerm.Has(User, HostelRoomMenuPath, "Add"))
+                    return Ok(new { success = false, message = "You do not have permission to add hostel rooms." });
+                if (!isCreate && !_menuPerm.Has(User, HostelRoomMenuPath, "Edit"))
+                    return Ok(new { success = false, message = "You do not have permission to edit hostel rooms." });
+
                 var result = _hostelService.UpsertHostelRoom(req, CompanyId, SessionId, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -223,6 +259,9 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                if (!_menuPerm.Has(User, HostelRoomMenuPath, "Delete"))
+                    return Ok(new { success = false, message = "You do not have permission to delete hostel rooms." });
+
                 var result = _hostelService.DeleteHostelRoom(id, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -237,6 +276,9 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                if (!_menuPerm.Has(User, HostelRoomMenuPath, "Edit"))
+                    return Ok(new { success = false, message = "You do not have permission to change hostel room status." });
+
                 var result = _hostelService.ToggleHostelRoomStatus(id, isActive, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }

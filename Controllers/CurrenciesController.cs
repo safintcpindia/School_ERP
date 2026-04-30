@@ -27,11 +27,16 @@ namespace SchoolERP.Net.Controllers
         /// </summary>
         public async Task<IActionResult> Index()
         {
+            // Step 1: Ask the system for a list of all different currencies (types of money) set up.
             var response = await _currencyClient.GetAllAsync();
+            
+            // Step 2: Prepare the data to be shown on the screen.
             var model = new MstCurrencyPageViewModel
             {
                 Currencies = response.Success ? response.Data : new List<MstCurrencyViewModel>()
             };
+            
+            // Step 3: Open the 'Currencies' management page.
             return View(model);
         }
 
@@ -55,13 +60,17 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] MstCurrencyUpsertRequest request)
         {
+            // Step 1: Check if the user is allowed to add or edit currencies based on whether the currency already exists.
             var isCreate = request.CurrencyId <= 0;
             if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
                 return Json(new { success = false, message = "You do not have permission to add currencies." });
             if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
                 return Json(new { success = false, message = "You do not have permission to edit currencies." });
 
+            // Step 2: Send the new currency details to the backend system to be saved.
             var response = await _currencyClient.UpsertAsync(request);
+
+            // Step 3: Inform the user if the record was saved successfully.
             return Json(new { success = response.Success, message = response.Message });
         }
 

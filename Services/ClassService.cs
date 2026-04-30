@@ -8,6 +8,9 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing school classes, such as saving, updating, or deleting class records in the database.
+    /// </summary>
     public class ClassService : IClassService
     {
         private readonly SqlHelper _sqlHelper;
@@ -17,6 +20,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a complete list of all classes for the current school and session from the database.
+        /// </summary>
         public List<MstClassViewModel> GetAllClasses(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<MstClassViewModel>();
@@ -35,6 +41,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific class using its unique ID.
+        /// </summary>
         public MstClassViewModel? GetClassByID(int classId)
         {
             var parameters = new[] { new SqlParameter("@ClassID", classId) };
@@ -43,6 +52,9 @@ namespace SchoolERP.Net.Services
             return MapRowToViewModel(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a class record in the database, including assigning sections to that class.
+        /// </summary>
         public (bool success, string message) UpsertClass(MstClassUpsertRequest request, int companyId, int sessionId, int userId)
         {
             try
@@ -64,6 +76,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a class's record from the database.
+        /// </summary>
         public (bool success, string message) DeleteClass(int classId, int userId)
         {
             try
@@ -79,6 +94,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a class is currently active or inactive.
+        /// </summary>
         public (bool success, string message) ToggleClassStatus(int classId, bool isActive, int userId)
         {
             try
@@ -95,6 +113,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about a class into a format the application can easily use.
+        /// </summary>
         private MstClassViewModel MapRowToViewModel(DataRow row)
         {
             var model = new MstClassViewModel

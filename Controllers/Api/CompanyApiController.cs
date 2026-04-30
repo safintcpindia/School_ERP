@@ -16,10 +16,14 @@ namespace SchoolERP.Net.Controllers.Api
     public class CompanyApiController : ControllerBase
     {
         private readonly ICompanyService _companyService;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public CompanyApiController(ICompanyService companyService)
+        private const string MenuPath = "/Settings";
+
+        public CompanyApiController(ICompanyService companyService, IUserMenuPermissionService menuPerm)
         {
             _companyService = companyService;
+            _menuPerm = menuPerm;
         }
 
         /// <summary>
@@ -38,6 +42,12 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpGet("GetAssignedCompanies")]
         public IActionResult GetAssignedCompanies()
         {
+            if (IsSuperAdmin())
+            {
+                var allData = _companyService.GetAllCompanies(false);
+                return Ok(ApiResponse<List<MstCompanyViewModel>>.SuccessResponse(allData));
+            }
+
             int userId = GetCurrentUserId();
             var data = _companyService.GetCompaniesByUserId(userId);
             return Ok(ApiResponse<List<MstCompanyViewModel>>.SuccessResponse(data));
@@ -62,6 +72,13 @@ namespace SchoolERP.Net.Controllers.Api
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             int userId = GetCurrentUserId();
+
+            var isCreate = request.CompanyId <= 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add companies." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit companies." });
+
             var (success, message) = _companyService.UpsertCompany(request, userId);
             return Ok(new { success, message });
         }
@@ -72,6 +89,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete companies." });
+
             int userId = GetCurrentUserId();
             var (success, message) = _companyService.DeleteCompany(id, userId);
             return Ok(new { success, message });
@@ -83,6 +103,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change status." });
+
             int userId = GetCurrentUserId();
             var (success, message) = _companyService.ToggleStatus(id, isActive, userId);
             return Ok(new { success, message });
@@ -113,8 +136,30 @@ namespace SchoolERP.Net.Controllers.Api
 
         private int GetCurrentUserId()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            return userIdClaim != null ? int.Parse(userIdClaim.Value) : 1; 
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+            return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0; 
+        }
+
+        private bool IsSuperAdmin()
+        {
+            if (User?.Identity?.IsAuthenticated != true) return false;
+
+            return User.Claims.Any(c =>
+                (string.Equals(c.Type, ClaimTypes.Role, StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(c.Type, "Role", StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(c.Type, "UserTypeName", StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(c.Type, "UserType", StringComparison.OrdinalIgnoreCase)) &&
+                IsSuperAdminValue(c.Value));
+        }
+
+        private static bool IsSuperAdminValue(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return false;
+            var normalized = value.Replace(" ", string.Empty)
+                .Replace("-", string.Empty)
+                .Replace("_", string.Empty)
+                .Trim();
+            return string.Equals(normalized, "SuperAdmin", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

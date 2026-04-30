@@ -7,6 +7,9 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing Front Office operations, such as saving visit purposes, complaints, postal records, and call logs in the database.
+    /// </summary>
     public class FrontOfficeService : IFrontOfficeService
     {
         private readonly SqlHelper _db;
@@ -20,6 +23,9 @@ namespace SchoolERP.Net.Services
         }
 
         // ─── PURPOSE ────────────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all visit purposes for the current school and session from the database.
+        /// </summary>
         public List<MstFOPurposeViewModel> GetAllPurposes(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<MstFOPurposeViewModel>();
@@ -33,6 +39,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific visit purpose using its unique ID.
+        /// </summary>
         public MstFOPurposeViewModel? GetPurposeByID(int id)
         {
             var p = new[] { new SqlParameter("@PurposeID", id) };
@@ -40,6 +49,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapPurpose(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a visit purpose record in the database.
+        /// </summary>
         public (bool, string) UpsertPurpose(MstFOPurposeUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -59,6 +71,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a visit purpose's record from the database.
+        /// </summary>
         public (bool, string) DeletePurpose(int id, int userId)
         {
             try
@@ -70,6 +85,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a visit purpose is currently active or inactive.
+        /// </summary>
         public (bool, string) TogglePurposeStatus(int id, bool isActive, int userId)
         {
             try
@@ -94,6 +112,9 @@ namespace SchoolERP.Net.Services
         };
 
         // ─── COMPLAINT TYPE ─────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all complaint categories for the current school and session from the database.
+        /// </summary>
         public List<MstFOComplaintTypeViewModel> GetAllComplaintTypes(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<MstFOComplaintTypeViewModel>();
@@ -107,6 +128,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific complaint type using its unique ID.
+        /// </summary>
         public MstFOComplaintTypeViewModel? GetComplaintTypeByID(int id)
         {
             var p = new[] { new SqlParameter("@ComplaintTypeID", id) };
@@ -114,6 +138,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapComplaintType(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a complaint type record in the database.
+        /// </summary>
         public (bool, string) UpsertComplaintType(MstFOComplaintTypeUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -133,6 +160,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a complaint type's record from the database.
+        /// </summary>
         public (bool, string) DeleteComplaintType(int id, int userId)
         {
             try
@@ -144,6 +174,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a complaint type is currently active or inactive.
+        /// </summary>
         public (bool, string) ToggleComplaintTypeStatus(int id, bool isActive, int userId)
         {
             try
@@ -168,6 +201,9 @@ namespace SchoolERP.Net.Services
         };
 
         // ─── SOURCE ─────────────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all inquiry sources for the current school and session from the database.
+        /// </summary>
         public List<MstFOSourceViewModel> GetAllSources(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<MstFOSourceViewModel>();
@@ -181,6 +217,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific inquiry source using its unique ID.
+        /// </summary>
         public MstFOSourceViewModel? GetSourceByID(int id)
         {
             var p = new[] { new SqlParameter("@SourceID", id) };
@@ -188,6 +227,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapSource(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates an inquiry source record in the database.
+        /// </summary>
         public (bool, string) UpsertSource(MstFOSourceUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -207,6 +249,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes an inquiry source's record from the database.
+        /// </summary>
         public (bool, string) DeleteSource(int id, int userId)
         {
             try
@@ -218,6 +263,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether an inquiry source is currently active or inactive.
+        /// </summary>
         public (bool, string) ToggleSourceStatus(int id, bool isActive, int userId)
         {
             try
@@ -242,6 +290,9 @@ namespace SchoolERP.Net.Services
         };
 
         // ─── REFERENCE ──────────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all reference categories for the current school and session from the database.
+        /// </summary>
         public List<MstFOReferenceViewModel> GetAllReferences(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<MstFOReferenceViewModel>();
@@ -255,6 +306,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific reference using its unique ID.
+        /// </summary>
         public MstFOReferenceViewModel? GetReferenceByID(int id)
         {
             var p = new[] { new SqlParameter("@ReferenceID", id) };
@@ -262,6 +316,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapReference(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a reference record in the database.
+        /// </summary>
         public (bool, string) UpsertReference(MstFOReferenceUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -281,6 +338,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a reference's record from the database.
+        /// </summary>
         public (bool, string) DeleteReference(int id, int userId)
         {
             try
@@ -292,6 +352,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a reference is currently active or inactive.
+        /// </summary>
         public (bool, string) ToggleReferenceStatus(int id, bool isActive, int userId)
         {
             try
@@ -316,6 +379,9 @@ namespace SchoolERP.Net.Services
         };
 
         // ─── COMPLAINT ──────────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all registered complaints for the current school and session from the database.
+        /// </summary>
         public List<FOComplaintViewModel> GetAllComplaints(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<FOComplaintViewModel>();
@@ -329,6 +395,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific complaint using its unique ID.
+        /// </summary>
         public FOComplaintViewModel? GetComplaintByID(int id)
         {
             var p = new[] { new SqlParameter("@ComplaintID", id) };
@@ -336,6 +405,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapComplaint(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a complaint record in the database, including details like who made it and who it is assigned to.
+        /// </summary>
         public (bool, string) UpsertComplaint(FOComplaintUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -364,6 +436,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a complaint's record from the database.
+        /// </summary>
         public (bool, string) DeleteComplaint(int id, int userId)
         {
             try
@@ -375,6 +450,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a complaint is currently active or archived.
+        /// </summary>
         public (bool, string) ToggleComplaintStatus(int id, bool isActive, int userId)
         {
             try
@@ -416,6 +494,9 @@ namespace SchoolERP.Net.Services
         };
 
         // ─── POSTAL RECEIVE ─────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all incoming postal records for the current school and session from the database.
+        /// </summary>
         public List<FOPostalReceiveViewModel> GetAllPostalReceives(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<FOPostalReceiveViewModel>();
@@ -429,6 +510,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific incoming postal record using its unique ID.
+        /// </summary>
         public FOPostalReceiveViewModel? GetPostalReceiveByID(int id)
         {
             var p = new[] { new SqlParameter("@PostalReceiveID", id) };
@@ -436,6 +520,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapPostalReceive(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates an incoming postal record in the database, including sender details and optional attachments.
+        /// </summary>
         public (bool, string) UpsertPostalReceive(FOPostalReceiveUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -462,6 +549,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes an incoming postal record from the database.
+        /// </summary>
         public (bool, string) DeletePostalReceive(int id, int userId)
         {
             try
@@ -473,6 +563,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether an incoming postal record is currently active or archived.
+        /// </summary>
         public (bool, string) TogglePostalReceiveStatus(int id, bool isActive, int userId)
         {
             try
@@ -508,6 +601,9 @@ namespace SchoolERP.Net.Services
         };
 
         // ─── POSTAL DISPATCH ────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all outgoing postal records for the current school and session from the database.
+        /// </summary>
         public List<FOPostalDispatchViewModel> GetAllPostalDispatches(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<FOPostalDispatchViewModel>();
@@ -521,6 +617,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific outgoing postal record using its unique ID.
+        /// </summary>
         public FOPostalDispatchViewModel? GetPostalDispatchByID(int id)
         {
             var p = new[] { new SqlParameter("@PostalDispatchID", id) };
@@ -528,6 +627,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapPostalDispatch(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates an outgoing postal record in the database, including recipient details and optional attachments.
+        /// </summary>
         public (bool, string) UpsertPostalDispatch(FOPostalDispatchUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -554,6 +656,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes an outgoing postal record from the database.
+        /// </summary>
         public (bool, string) DeletePostalDispatch(int id, int userId)
         {
             try
@@ -565,6 +670,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether an outgoing postal record is currently active or archived.
+        /// </summary>
         public (bool, string) TogglePostalDispatchStatus(int id, bool isActive, int userId)
         {
             try
@@ -600,6 +708,9 @@ namespace SchoolERP.Net.Services
         };
 
         // ─── PHONE CALL LOG ─────────────────────────────────────
+        /// <summary>
+        /// Retrieves a complete list of all phone call records for the current school and session from the database.
+        /// </summary>
         public List<FOPhoneCallLogViewModel> GetAllPhoneCallLogs(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<FOPhoneCallLogViewModel>();
@@ -613,6 +724,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific phone call record using its unique ID.
+        /// </summary>
         public FOPhoneCallLogViewModel? GetPhoneCallLogByID(int id)
         {
             var p = new[] { new SqlParameter("@PhoneCallLogID", id) };
@@ -620,6 +734,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapPhoneCallLog(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a phone call record in the database, including caller details, call duration, and follow-up dates.
+        /// </summary>
         public (bool, string) UpsertPhoneCallLog(FOPhoneCallLogUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -645,6 +762,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a phone call record from the database.
+        /// </summary>
         public (bool, string) DeletePhoneCallLog(int id, int userId)
         {
             try
@@ -656,6 +776,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a phone call record is currently active or archived.
+        /// </summary>
         public (bool, string) TogglePhoneCallLogStatus(int id, bool isActive, int userId)
         {
             try

@@ -53,6 +53,7 @@ namespace SchoolERP.Net.Services
         {
             try
             {
+                // Step 1: Collect all the new details for the currency (Name, Code, Symbol, etc.).
                 var parameters = new[]
                 {
                     new SqlParameter("@CurrencyId", request.CurrencyId),
@@ -64,7 +65,11 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@IsActive", request.IsActive),
                     new SqlParameter("@UserId", userId)
                 };
+                
+                // Step 2: Save or update this information in the database.
                 var dt = _sqlHelper.ExecuteQuery("sp_Currencies_Upsert", parameters);
+                
+                // Step 3: Let the user know if it was successful.
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString() ?? "");
             }
             catch (Exception ex) { return (false, ex.Message); }

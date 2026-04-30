@@ -7,20 +7,29 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of assigning vehicles to transport routes.
+    /// </summary>
     public class VehicleAssignService : IVehicleAssignService
     {
         private readonly SqlHelper _db;
         public VehicleAssignService(SqlHelper db) => _db = db;
 
+        /// <summary>
+        /// Retrieves a complete list of all vehicle-to-route assignments for the current school and session from the database.
+        /// </summary>
         public List<VehicleAssignViewModel> GetAllAssignments(int companyId, int sessionId)
         {
             var list = new List<VehicleAssignViewModel>();
             try
             {
+                // Step 1: Pack the search criteria (School and Session).
                 var p = new[] {
                     new SqlParameter("@CompanyID", companyId),
                     new SqlParameter("@SessionID", sessionId)
                 };
+                
+                // Step 2: Ask the database for all matching assignments.
                 foreach (DataRow row in _db.ExecuteQuery("sp_Mst_VehicleAssign_GetAll", p).Rows)
                     list.Add(MapAssignment(row));
             }

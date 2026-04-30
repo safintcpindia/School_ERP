@@ -22,13 +22,13 @@ namespace SchoolERP.Net.Controllers
         /// </summary>
         public async Task<IActionResult> Index()
         {
-            // Optional hook for extending dashboard statistics in later modules:
-            // e.g., var summary = await _utilityClient.GetDashboardSummaryAsync();
-            // return View(summary);
-
-            // For now, we simply load the static dashboard framework layout.
+            // Step 1: Ask the system for a list of all schools or companies registered.
             var companiesResponse = await _companyClient.GetAllAsync();
+            
+            // Step 2: Count how many companies were found and save that number to show on the dashboard screen.
             ViewBag.totalCompanies = companiesResponse.Data.Count();
+            
+            // Step 3: Open the dashboard page for the user to see.
             return View();
         }
     }

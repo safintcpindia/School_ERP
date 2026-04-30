@@ -4,12 +4,26 @@
     PURPOSE: User interface rendering for the Settings module.
     ======================================================================
 *@
+@using System.Security.Claims
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @using SchoolERP.Net.Services
 @inject ILocalizationService Localizer
 @{
     Layout = "_Layout";
     var availableLanguages = Localizer.GetAvailableLanguages().OrderBy(l => l).ToList();
     var currentLanguage = Localizer.GetCurrentLanguage();
+
+    int currentUserId = 0;
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
+    }
+    if (currentUserId > 0) PermHelper.LoadPermissions(currentUserId);
+
+    var canAdd = PermHelper.HasPermissionByUrl("/Settings", "Add");
+    var canEdit = PermHelper.HasPermissionByUrl("/Settings", "Edit");
 }
 
 <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
@@ -17,9 +31,12 @@
         <h4 class="fw-bold mb-0">@Localizer.GetString("languages")</h4>
     </div>
     <div class="d-flex align-items-center flex-wrap gap-2">
-        <button type="button" class="btn btn-primary d-inline-flex align-items-center" id="btnAddLanguage">
-            <i class="ti ti-plus me-1"></i>Add
-        </button>
+        @if (canAdd)
+        {
+            <button type="button" class="btn btn-primary d-inline-flex align-items-center" id="btnAddLanguage">
+                <i class="ti ti-plus me-1"></i>Add
+            </button>
+        }
     </div>
 </div>
 
@@ -58,17 +75,21 @@
                                             <div class="form-check">
                                                 <input type="radio" id="optLanguage_@lang" class="form-check-input" name="activeLanguage" 
                                                        @(currentLanguage == lang ? "checked" : "") 
-                                                       onchange="document.getElementById('form_@lang').submit();">
+                                                       onchange="document.getElementById('form_@lang').submit();"
+                                                       @(canEdit ? "" : "disabled")>
                                             </div>
                                         </form>
                                     </td>
                                     <td class="text-end">
                                         <div class="d-flex align-items-center justify-content-end gap-2">
-                                            <a href="/Settings/Translations/@lang" id="btnEditTranslations_@lang" class="btn btn-sm btn-outline-primary" title="Edit Translations">
-                                                <i class="ti ti-edit"></i>
-                                            </a>
+                                            @if (canEdit)
+                                            {
+                                                <a href="/Settings/Translations/@lang" id="btnEditTranslations_@lang" class="btn btn-sm btn-outline-primary" title="Edit Translations">
+                                                    <i class="ti ti-edit"></i>
+                                                </a>
+                                            }
                                             <div class="form-check form-switch mb-0">
-                                                <input class="form-check-input" id="chkLanguageActive_@lang" type="checkbox" role="switch" checked>
+                                                <input class="form-check-input" id="chkLanguageActive_@lang" type="checkbox" role="switch" checked @(canEdit ? "" : "disabled")>
                                             </div>
                                         </div>
                                     </td>

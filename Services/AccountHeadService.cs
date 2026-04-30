@@ -7,11 +7,17 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing account heads, such as saving, updating, or deleting head records in the database.
+    /// </summary>
     public class AccountHeadService : IAccountHeadService
     {
         private readonly SqlHelper _db;
         public AccountHeadService(SqlHelper db) => _db = db;
 
+        /// <summary>
+        /// Retrieves a complete list of all account heads for a specific category (Income/Expense) from the database.
+        /// </summary>
         public List<AccountHeadViewModel> GetAllAccountHeads(int companyId, int sessionId, string headType, bool includeDeleted = false)
         {
             var list = new List<AccountHeadViewModel>();
@@ -26,6 +32,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific account head using its unique ID.
+        /// </summary>
         public AccountHeadViewModel? GetAccountHeadByID(int id)
         {
             var p = new[] { new SqlParameter("@AccountHeadID", id) };
@@ -33,6 +42,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapAccountHead(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates an account head record in the database.
+        /// </summary>
         public (bool Success, string Message) UpsertAccountHead(AccountHeadUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -53,6 +65,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes an account head's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteAccountHead(int id, int userId)
         {
             try
@@ -64,6 +79,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether an account head is currently active or inactive.
+        /// </summary>
         public (bool Success, string Message) ToggleAccountHeadStatus(int id, bool isActive, int userId)
         {
             try
@@ -79,6 +97,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about an account head into a format the application can easily use.
+        /// </summary>
         private static AccountHeadViewModel MapAccountHead(DataRow r) => new()
         {
             AccountHeadID = Convert.ToInt32(r["AccountHeadID"]),

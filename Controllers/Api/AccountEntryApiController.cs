@@ -16,12 +16,14 @@ namespace SchoolERP.Net.Controllers.Api
         private readonly IAccountEntryService _accountEntryService;
         private readonly ICompanyService _companySvc;
         private readonly ISessionService _sessionSvc;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public AccountEntryApiController(IAccountEntryService accountEntryService, ICompanyService companySvc, ISessionService sessionSvc)
+        public AccountEntryApiController(IAccountEntryService accountEntryService, ICompanyService companySvc, ISessionService sessionSvc, IUserMenuPermissionService menuPerm)
         {
             _accountEntryService = accountEntryService;
             _companySvc = companySvc;
             _sessionSvc = sessionSvc;
+            _menuPerm = menuPerm;
         }
 
         private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "1");
@@ -77,6 +79,13 @@ namespace SchoolERP.Net.Controllers.Api
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
+                string menuPath = (req.EntryType == "Income") ? "/Income" : "/Expense";
+                var isCreate = req.AccountEntryID <= 0;
+                if (isCreate && !_menuPerm.Has(User, menuPath, "Add"))
+                    return Ok(new { success = false, message = $"You do not have permission to add {req.EntryType.ToLower()} entries." });
+                if (!isCreate && !_menuPerm.Has(User, menuPath, "Edit"))
+                    return Ok(new { success = false, message = $"You do not have permission to edit {req.EntryType.ToLower()} entries." });
+
                 var result = _accountEntryService.UpsertAccountEntry(req, CompanyId, SessionId, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -91,6 +100,13 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                var entry = _accountEntryService.GetAccountEntryByID(id);
+                if (entry == null) return Ok(new { success = false, message = "Entry not found." });
+                string menuPath = (entry.EntryType == "Income") ? "/Income" : "/Expense";
+
+                if (!_menuPerm.Has(User, menuPath, "Delete"))
+                    return Ok(new { success = false, message = $"You do not have permission to delete {entry.EntryType.ToLower()} entries." });
+
                 var result = _accountEntryService.DeleteAccountEntry(id, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }
@@ -105,6 +121,13 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                var entry = _accountEntryService.GetAccountEntryByID(id);
+                if (entry == null) return Ok(new { success = false, message = "Entry not found." });
+                string menuPath = (entry.EntryType == "Income") ? "/Income" : "/Expense";
+
+                if (!_menuPerm.Has(User, menuPath, "Edit"))
+                    return Ok(new { success = false, message = $"You do not have permission to change {entry.EntryType.ToLower()} entry status." });
+
                 var result = _accountEntryService.ToggleAccountEntryStatus(id, isActive, UserId);
                 return Ok(new { success = result.Success, message = result.Message });
             }

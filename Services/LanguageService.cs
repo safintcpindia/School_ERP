@@ -53,6 +53,7 @@ namespace SchoolERP.Net.Services
         {
             try
             {
+                // Step 1: Collect all the new details for the language (Name, Code, Icon, RTL status, etc.).
                 var parameters = new[]
                 {
                     new SqlParameter("@LanguageId", request.LanguageId),
@@ -64,7 +65,11 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@IsActive", request.IsActive),
                     new SqlParameter("@UserId", userId)
                 };
+                
+                // Step 2: Save or update this language configuration in the database.
                 var dt = _sqlHelper.ExecuteQuery("sp_Languages_Upsert", parameters);
+                
+                // Step 3: Inform the user if the language settings were saved correctly.
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString() ?? "");
             }
             catch (Exception ex) { return (false, ex.Message); }

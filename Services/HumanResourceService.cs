@@ -8,12 +8,23 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing human resources, such as saving designations, departments, leave types, and staff records in the database.
+    /// </summary>
     public class HumanResourceService : IHumanResourceService
     {
         private readonly SqlHelper _db;
-        public HumanResourceService(SqlHelper db) => _db = db;
+        private readonly IUserService _userService;
+        public HumanResourceService(SqlHelper db, IUserService userService)
+        {
+            _db = db;
+            _userService = userService;
+        }
 
         // --- Designation ---
+        /// <summary>
+        /// Retrieves a complete list of all job designations for the current school and session from the database.
+        /// </summary>
         public List<HRDesignationViewModel> GetAllDesignations(int companyId, int sessionId)
         {
             var list = new List<HRDesignationViewModel>();
@@ -30,6 +41,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific designation using its unique ID.
+        /// </summary>
         public HRDesignationViewModel? GetDesignationByID(int id)
         {
             var p = new[] { new SqlParameter("@HRDesignationID", id) };
@@ -37,6 +51,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapDesignation(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a designation record in the database.
+        /// </summary>
         public (bool Success, string Message) UpsertDesignation(HRDesignationUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -55,6 +72,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a designation's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteDesignation(int id, int userId)
         {
             try
@@ -69,6 +89,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a designation is currently active or inactive.
+        /// </summary>
         public (bool Success, string Message) ToggleDesignationStatus(int id, bool isActive, int userId)
         {
             try
@@ -85,6 +108,9 @@ namespace SchoolERP.Net.Services
         }
 
         // --- Department ---
+        /// <summary>
+        /// Retrieves a complete list of all departments for the current school and session from the database.
+        /// </summary>
         public List<HRDepartmentViewModel> GetAllDepartments(int companyId, int sessionId)
         {
             var list = new List<HRDepartmentViewModel>();
@@ -101,6 +127,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific department using its unique ID.
+        /// </summary>
         public HRDepartmentViewModel? GetDepartmentByID(int id)
         {
             var p = new[] { new SqlParameter("@DepartmentID", id) };
@@ -108,6 +137,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapDepartment(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a department record in the database.
+        /// </summary>
         public (bool Success, string Message) UpsertDepartment(HRDepartmentUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -126,6 +158,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a department's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteDepartment(int id, int userId)
         {
             try
@@ -140,6 +175,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a department is currently active or inactive.
+        /// </summary>
         public (bool Success, string Message) ToggleDepartmentStatus(int id, bool isActive, int userId)
         {
             try
@@ -156,6 +194,9 @@ namespace SchoolERP.Net.Services
         }
 
         // --- Leave Type ---
+        /// <summary>
+        /// Retrieves a complete list of all leave types for the current school and session from the database.
+        /// </summary>
         public List<HRLeaveTypeViewModel> GetAllLeaveTypes(int companyId, int sessionId)
         {
             var list = new List<HRLeaveTypeViewModel>();
@@ -172,6 +213,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific leave type using its unique ID.
+        /// </summary>
         public HRLeaveTypeViewModel? GetLeaveTypeByID(int id)
         {
             var p = new[] { new SqlParameter("@LeaveTypeID", id) };
@@ -179,6 +223,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapLeaveType(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a leave type record in the database.
+        /// </summary>
         public (bool Success, string Message) UpsertLeaveType(HRLeaveTypeUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -197,6 +244,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a leave type's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteLeaveType(int id, int userId)
         {
             try
@@ -211,6 +261,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a leave type is currently active or inactive.
+        /// </summary>
         public (bool Success, string Message) ToggleLeaveTypeStatus(int id, bool isActive, int userId)
         {
             try
@@ -227,6 +280,9 @@ namespace SchoolERP.Net.Services
         }
 
         // --- Staff ---
+        /// <summary>
+        /// Retrieves a complete list of all staff members for the current school and session from the database.
+        /// </summary>
         public List<HRStaffViewModel> GetAllStaff(int companyId, int sessionId)
         {
             var list = new List<HRStaffViewModel>();
@@ -247,14 +303,40 @@ namespace SchoolERP.Net.Services
                         return list; // Return empty list as per SP validation
                     }
 
+                    // Optimization: Fetch all roles once to map names efficiently
+                    var allRoles = _userService.GetRoles();
+                    var roleMap = allRoles.ToDictionary(r => r.RoleID, r => r.RoleName);
+
                     foreach (DataRow row in dt.Rows)
-                        list.Add(MapStaff(row));
+                    {
+                        var staff = MapStaff(row);
+                        
+                        // Populate DisplayRoles using UserService as requested
+                        if (staff.UserID.HasValue && staff.UserID > 0)
+                        {
+                            try
+                            {
+                                var userRoleIds = _userService.GetUserRoleIds(staff.UserID.Value);
+                                foreach (var rid in userRoleIds)
+                                {
+                                    if (roleMap.TryGetValue(rid, out var rName))
+                                        staff.DisplayRoles.Add(rName);
+                                }
+                            }
+                            catch { /* Skip roles if fetch fails */ }
+                        }
+                        
+                        list.Add(staff);
+                    }
                 }
             }
             catch (Exception) { }
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific staff member using its unique ID, including their roles and allowed school branches.
+        /// </summary>
         public HRStaffViewModel? GetStaffByID(int id)
         {
             var p = new[] { new SqlParameter("@StaffID", id) };
@@ -275,12 +357,61 @@ namespace SchoolERP.Net.Services
             if (ds.Tables.Count > 2)
             {
                 foreach (DataRow r in ds.Tables[2].Rows)
-                    staff.CompanyIDs.Add(Convert.ToInt32(r["CompanyID"]));
+                {
+                    int cId = r.Table.Columns.Contains("CompanyID") ? Convert.ToInt32(r["CompanyID"]) : 
+                              (r.Table.Columns.Contains("CompanyId") ? Convert.ToInt32(r["CompanyId"]) : 0);
+                    if (cId > 0 && !staff.CompanyIDs.Contains(cId))
+                        staff.CompanyIDs.Add(cId);
+                }
+            }
+
+            // Fallback: Ensure the primary CompanyID is also in the list
+            if (staff.CompanyID > 0 && !staff.CompanyIDs.Contains(staff.CompanyID))
+                staff.CompanyIDs.Add(staff.CompanyID);
+
+            // NEW: Fetch roles and companies assigned to the linked User account (Source of Truth)
+            if (staff.UserID.HasValue && staff.UserID > 0)
+            {
+                try
+                {
+                    var userParams = new[] { new SqlParameter("@UserID", staff.UserID.Value) };
+                    
+                    // Sync Roles
+                    var userRolesDt = _db.ExecuteQuery("sp_UserRoles_GetByUser", userParams);
+                    foreach (DataRow r in userRolesDt.Rows)
+                    {
+                        int rId = Convert.ToInt32(r["RoleID"]);
+                        if (rId > 0 && !staff.RoleIDs.Contains(rId))
+                            staff.RoleIDs.Add(rId);
+                    }
+
+                    // Sync Companies
+                    var userCompDt = _db.ExecuteQuery("sp_UserCompanies_GetByUser", userParams);
+                    foreach (DataRow r in userCompDt.Rows)
+                    {
+                        int cId = r.Table.Columns.Contains("CompanyID") ? Convert.ToInt32(r["CompanyID"]) : 
+                                  (r.Table.Columns.Contains("CompanyId") ? Convert.ToInt32(r["CompanyId"]) : 0);
+                        if (cId > 0 && !staff.CompanyIDs.Contains(cId))
+                            staff.CompanyIDs.Add(cId);
+                    }
+                    // Sync DisplayRoles (Names)
+                    var allRoles = _userService.GetRoles();
+                    var roleMap = allRoles.ToDictionary(r => r.RoleID, r => r.RoleName);
+                    foreach (var rid in staff.RoleIDs)
+                    {
+                        if (roleMap.TryGetValue(rid, out var rName) && !staff.DisplayRoles.Contains(rName))
+                            staff.DisplayRoles.Add(rName);
+                    }
+                }
+                catch (Exception) { /* Handle or log if needed */ }
             }
 
             return staff;
         }
 
+        /// <summary>
+        /// Saves or updates a staff member's record in the database, including personal info, documents, and system permissions.
+        /// </summary>
         public (bool Success, string Message) UpsertStaff(HRStaffUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -389,6 +520,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a staff member's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteStaff(int id, int userId)
         {
             try
@@ -410,6 +544,9 @@ namespace SchoolERP.Net.Services
             return "Staff@" + new string(Enumerable.Repeat(chars, 6).Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        /// <summary>
+        /// Generates a unique identification code for a new staff member based on school settings.
+        /// </summary>
         public string GetNewStaffCode(int companyId, int sessionId)
         {
             try
@@ -471,7 +608,8 @@ namespace SchoolERP.Net.Services
         private static HRStaffViewModel MapStaff(DataRow r) => new()
         {
             StaffID = Convert.ToInt32(r["StaffID"]),
-            UserID = r.Table.Columns.Contains("UserID") && r["UserID"] != DBNull.Value ? Convert.ToInt32(r["UserID"]) : null,
+            UserID = r.Table.Columns.Contains("UserID") && r["UserID"] != DBNull.Value ? Convert.ToInt32(r["UserID"]) : 
+                     (r.Table.Columns.Contains("UserId") && r["UserId"] != DBNull.Value ? Convert.ToInt32(r["UserId"]) : null),
             StaffCode = r.Table.Columns.Contains("StaffCode") ? r["StaffCode"].ToString()! : "",
             FirstName = r.Table.Columns.Contains("FirstName") ? r["FirstName"].ToString()! : "",
             LastName = r.Table.Columns.Contains("LastName") ? r["LastName"]?.ToString() ?? "" : "",
@@ -530,10 +668,15 @@ namespace SchoolERP.Net.Services
             
             Username = r.Table.Columns.Contains("Username") ? r["Username"]?.ToString() ?? "" : "",
             UserTypeID = r.Table.Columns.Contains("UserTypeID") ? Convert.ToInt32(r["UserTypeID"]) : 0,
-            RoleName = r.Table.Columns.Contains("RoleName") ? r["RoleName"]?.ToString() ?? "" : "",
+            RoleName = r.Table.Columns.Contains("RoleName") ? r["RoleName"]?.ToString() ?? "" : 
+                       (r.Table.Columns.Contains("RoleNames") ? r["RoleNames"]?.ToString() ?? "" : 
+                       (r.Table.Columns.Contains("UserRole") ? r["UserRole"]?.ToString() ?? "" : 
+                       (r.Table.Columns.Contains("Role") ? r["Role"]?.ToString() ?? "" : ""))),
             
-            CompanyID = r.Table.Columns.Contains("CompanyID") ? Convert.ToInt32(r["CompanyID"]) : 0,
-            SessionID = r.Table.Columns.Contains("SessionID") ? Convert.ToInt32(r["SessionID"]) : 0
+            CompanyID = r.Table.Columns.Contains("CompanyID") ? Convert.ToInt32(r["CompanyID"]) : 
+                        (r.Table.Columns.Contains("CompanyId") ? Convert.ToInt32(r["CompanyId"]) : 0),
+            SessionID = r.Table.Columns.Contains("SessionID") ? Convert.ToInt32(r["SessionID"]) : 
+                        (r.Table.Columns.Contains("SessionId") ? Convert.ToInt32(r["SessionId"]) : 0)
         };
     }
 }

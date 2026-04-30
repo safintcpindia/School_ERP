@@ -59,11 +59,11 @@ namespace SchoolERP.Net.Controllers
         /// </summary>
         public IActionResult Logout()
         {
-            // Clear cookies used by this app.
+            // Step 1: Tell the browser to throw away the 'token' and 'CurrentSessionId' which were like your temporary access badges.
             Response.Cookies.Delete("token");
             Response.Cookies.Delete("CurrentSessionId");
 
-            // Also clear client-side localStorage (token + cached user) via a tiny view.
+            // Step 2: Show a tiny logout screen that also cleans up any remaining traces from the browser's memory.
             return View();
         }
     }

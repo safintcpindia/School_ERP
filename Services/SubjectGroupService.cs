@@ -8,6 +8,9 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing subject groups, such as saving, updating, or deleting group records and their mappings to classes and sections.
+    /// </summary>
     public class SubjectGroupService : ISubjectGroupService
     {
         private readonly SqlHelper _sqlHelper;
@@ -17,6 +20,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a complete list of all subject groups for the current school and session from the database.
+        /// </summary>
         public List<MstSubjectGroupViewModel> GetAll(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<MstSubjectGroupViewModel>();
@@ -35,6 +41,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific subject group using its unique ID.
+        /// </summary>
         public MstSubjectGroupViewModel? GetByID(int id)
         {
             var parameters = new[] { new SqlParameter("@SubjectGroupID", id) };
@@ -43,6 +52,9 @@ namespace SchoolERP.Net.Services
             return MapRowToViewModel(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a subject group record in the database, including its links to classes, sections, and subjects.
+        /// </summary>
         public (bool success, string message) Upsert(MstSubjectGroupUpsertRequest request, int companyId, int sessionId, int userId)
         {
             try
@@ -69,6 +81,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a subject group's record from the database.
+        /// </summary>
         public (bool success, string message) Delete(int id, int userId)
         {
             try
@@ -80,6 +95,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a subject group is currently active or inactive.
+        /// </summary>
         public (bool success, string message) ToggleStatus(int id, bool isActive, int userId)
         {
             try
@@ -91,6 +109,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about a subject group into a format the application can easily use.
+        /// </summary>
         private MstSubjectGroupViewModel MapRowToViewModel(DataRow row)
         {
             var model = new MstSubjectGroupViewModel

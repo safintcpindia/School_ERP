@@ -314,19 +314,19 @@
                             @foreach (var user in Model.Users)
                             {
                                 string initials = "";
-                                if (!string.IsNullOrEmpty(user.FullName))
-                                {
-                                    var parts = user.FullName.Split(' ');
-                                    initials = parts.Length >= 2
-                                    ? $"{parts[0][0]}{parts[1][0]}".ToUpper()
-                                    : $"{parts[0][0]}".ToUpper();
-                                }
-                                else
-                                {
-                                    initials = user.Username.Length >= 2
-                                    ? user.Username.Substring(0, 2).ToUpper()
-                                    : user.Username.ToUpper();
-                                }
+                                // if (!string.IsNullOrEmpty(user.FullName))
+                                // {
+                                //     var parts = user.FullName.Split(' ');
+                                //     initials = parts.Length >= 2
+                                //     ? $"{parts[0][0]}{parts[1][0]}".ToUpper()
+                                //     : $"{parts[0][0]}".ToUpper();
+                                // }
+                                // else
+                                // {
+                                //     initials = user.Username.Length >= 2
+                                //     ? user.Username.Substring(0, 2).ToUpper()
+                                //     : user.Username.ToUpper();
+                                // }
 
                                 var avatarColors = new[] { "#4e73df", "#1cc88a", "#36b9cc", "#f6c23e", "#e74a3b", "#858796", "#5a5c69" };
                                 string avatarColor = avatarColors[Math.Abs(user.UserID.GetHashCode()) % avatarColors.Length];
@@ -2162,10 +2162,11 @@
                     setTimeSelects('End', u.endTime || '');
                     document.getElementById('txtBackDaysAllow').value = u.backDaysAllow || 0;
                     document.getElementById('chkIsOTPEnabled').checked = u.isOTPEnabled || false;
-                        wizardData = {
-                            selectedCompanyIDs: response.companyIDs || [],
-                            permissionOverrides: response.permissionOverrides || []
-                        };
+                    wizardData = {
+                        ...wizardData, // Preserve AllRoles and AllCompanies
+                        selectedCompanyIDs: u.companyIDs || [],
+                        permissionOverrides: u.permissionOverrides || []
+                    };
                         console.log(result.data);
                     updatePhoneNoIndicator();
                 }

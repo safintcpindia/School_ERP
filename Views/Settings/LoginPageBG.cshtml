@@ -4,8 +4,20 @@
     PURPOSE: User interface rendering for the Settings module.
     ======================================================================
 *@
+@using System.Security.Claims
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @{
     Layout = "_Layout";
+    int currentUserId = 0;
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
+    }
+    if (currentUserId > 0) PermHelper.LoadPermissions(currentUserId);
+
+    var canEdit = PermHelper.HasPermissionByUrl("/Settings", "Edit");
 }
 
 <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
@@ -39,13 +51,16 @@
                             </div>
                             
 
-                            <div class='file mt-2'>
-                                <label for='input-file'>
-                                    <i class="ti ti-cloud-upload">
-                                    </i>Update
-                                </label>
-                                <input id='input-file' type='file' />
-                            </div>
+                            @if (canEdit)
+                            {
+                                <div class='file mt-2'>
+                                    <label for='input-file'>
+                                        <i class="ti ti-cloud-upload">
+                                        </i>Update
+                                    </label>
+                                    <input id='input-file' type='file' />
+                                </div>
+                            }
                         </div>
                     </div>
 
@@ -60,13 +75,16 @@
                             </div>
                             
 
-                            <div class='file mt-2'>
-                                <label for='input-file'>
-                                    <i class="ti ti-cloud-upload">
-                                    </i>Update
-                                </label>
-                                <input id='input-file' type='file' />
-                            </div>
+                            @if (canEdit)
+                            {
+                                <div class='file mt-2'>
+                                    <label for='input-file'>
+                                        <i class="ti ti-cloud-upload">
+                                        </i>Update
+                                    </label>
+                                    <input id='input-file' type='file' />
+                                </div>
+                            }
                         </div>
                     </div>
 

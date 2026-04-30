@@ -17,10 +17,14 @@ namespace SchoolERP.Net.Controllers.Api
     public class UserTypeApiController : ControllerBase
     {
         private readonly IUserManagementService _userMgmtService;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public UserTypeApiController(IUserManagementService userMgmtService)
+        private const string MenuPath = "/Settings";
+
+        public UserTypeApiController(IUserManagementService userMgmtService, IUserMenuPermissionService menuPerm)
         {
             _userMgmtService = userMgmtService;
+            _menuPerm = menuPerm;
         }
 
         /// <summary>
@@ -55,6 +59,13 @@ namespace SchoolERP.Net.Controllers.Api
             int currentUserId = GetCurrentUserId();
             if (currentUserId <= 0)
                 return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            var isCreate = request.UserTypeID == 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add user types." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit user types." });
+
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
 
             var result = _userMgmtService.UpsertUserType(request, currentUserId, ipAddress);
@@ -73,6 +84,10 @@ namespace SchoolERP.Net.Controllers.Api
             int currentUserId = GetCurrentUserId();
             if (currentUserId <= 0)
                 return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change status." });
+
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
 
             var result = _userMgmtService.ToggleUserTypeStatus(typeId, isActive, currentUserId, ipAddress);

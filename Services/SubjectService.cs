@@ -7,6 +7,9 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing academic subjects, such as saving, updating, or deleting subject records in the database.
+    /// </summary>
     public class SubjectService : ISubjectService
     {
         private readonly SqlHelper _sqlHelper;
@@ -16,6 +19,9 @@ namespace SchoolERP.Net.Services
             _sqlHelper = sqlHelper;
         }
 
+        /// <summary>
+        /// Retrieves a complete list of all subjects for the current school and session from the database.
+        /// </summary>
         public List<MstSubjectViewModel> GetAllSubjects(int companyId, int sessionId, bool includeDeleted = false)
         {
             var list = new List<MstSubjectViewModel>();
@@ -34,6 +40,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific subject using its unique ID.
+        /// </summary>
         public MstSubjectViewModel? GetSubjectByID(int subjectId)
         {
             var parameters = new[] { new SqlParameter("@SubjectID", subjectId) };
@@ -42,6 +51,9 @@ namespace SchoolERP.Net.Services
             return MapRowToViewModel(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a subject record in the database.
+        /// </summary>
         public (bool success, string message) UpsertSubject(MstSubjectUpsertRequest request, int companyId, int sessionId, int userId)
         {
             try
@@ -63,6 +75,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a subject's record from the database.
+        /// </summary>
         public (bool success, string message) DeleteSubject(int subjectId, int userId)
         {
             try
@@ -78,6 +93,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a subject is currently active or inactive.
+        /// </summary>
         public (bool success, string message) ToggleSubjectStatus(int subjectId, bool isActive, int userId)
         {
             try
@@ -94,6 +112,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about a subject into a format the application can easily use.
+        /// </summary>
         private MstSubjectViewModel MapRowToViewModel(DataRow row)
         {
             return new MstSubjectViewModel

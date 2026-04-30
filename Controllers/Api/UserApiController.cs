@@ -18,10 +18,14 @@ namespace SchoolERP.Net.Controllers.Api
     public class UserApiController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public UserApiController(IUserService userService)
+        private const string MenuPath = "/Settings";
+
+        public UserApiController(IUserService userService, IUserMenuPermissionService menuPerm)
         {
             _userService = userService;
+            _menuPerm = menuPerm;
         }
 
         /// <summary>
@@ -99,6 +103,13 @@ namespace SchoolERP.Net.Controllers.Api
             int actingUser = GetCurrentUserId();
             if (actingUser <= 0)
                 return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            var isCreate = request.UserID == 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add users." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit users." });
+
             (int result, string message) response;
 
             // Route dynamically based on Primary Key state
@@ -122,6 +133,10 @@ namespace SchoolERP.Net.Controllers.Api
             int actingUser = GetCurrentUserId();
             if (actingUser <= 0)
                 return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change status." });
+
             var response = _userService.ToggleUserStatus(userId, isActive, actingUser);
             if (response.Result > 0)
                 return Ok(ApiResponse<bool>.SuccessResponse(true, response.Message));
@@ -138,6 +153,10 @@ namespace SchoolERP.Net.Controllers.Api
             int actingUser = GetCurrentUserId();
             if (actingUser <= 0)
                 return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete users." });
+
             var response = _userService.DeleteUser(id, actingUser);
             if (response.Result > 0)
                 return Ok(ApiResponse<bool>.SuccessResponse(true, response.Message));
@@ -177,6 +196,13 @@ namespace SchoolERP.Net.Controllers.Api
             int actingUser = GetCurrentUserId();
             if (actingUser <= 0)
                 return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            var isCreate = request.UserID == 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add users." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit users." });
+
             var response = _userService.SaveUserWizard(request, actingUser);
 
             if (response.Result > 0)

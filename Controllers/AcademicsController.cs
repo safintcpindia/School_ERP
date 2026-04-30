@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SchoolERP.Net.Controllers
 {
+    /// <summary>
+    /// This controller manages the school's academic structure, including Classes, Subjects, and how they are grouped together.
+    /// </summary>
     public class AcademicsController : Controller
     {
         private readonly IClassClientService _classClient;
@@ -33,17 +36,23 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the main 'Class' management page where you can see all classes and their assigned sections.
+        /// </summary>
         public async Task<IActionResult> Class()
         {
+            // Step 1: Ask the system for a list of all classes and all sections available.
             var classesResponse = await _classClient.GetAllAsync();
             var sectionsResponse = await _sectionClient.GetAllAsync();
             
+            // Step 2: Prepare this information to be shown on the screen.
             var model = new MstClassPageViewModel
             {
                 Classes = classesResponse.Success ? classesResponse.Data : new List<MstClassViewModel>(),
                 AvailableSections = sectionsResponse.Success ? sectionsResponse.Data : new List<MstSectionViewModel>()
             };
             
+            // Step 3: Open the 'Class' management page.
             return View(model);
         }
 
@@ -58,16 +67,23 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, data = response.Data });
         }
 
+        /// <summary>
+        /// Saves a new class or updates the details of an existing one.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> SaveClass([FromBody] MstClassUpsertRequest request)
         {
+            // Step 1: Check if the user is allowed to add or edit classes based on whether the class already exists.
             var isCreate = request.ClassID <= 0;
             if (isCreate && !_menuPerm.Has(User, ClassMenuPath, "Add"))
                 return Json(new { success = false, message = "You do not have permission to add classes." });
             if (!isCreate && !_menuPerm.Has(User, ClassMenuPath, "Edit"))
                 return Json(new { success = false, message = "You do not have permission to edit classes." });
             
+            // Step 2: Send the new class details to the backend system to be saved.
             var response = await _classClient.UpsertAsync(request);
+            
+            // Step 3: Inform the user if the class was saved successfully.
             return Json(new { success = response.Success, message = response.Message });
         }
 
@@ -153,13 +169,18 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = true, data = response.Data });
         }
 
+        /// <summary>
+        /// Shows the 'Subject Group' page where you can link subjects to specific classes and sections.
+        /// </summary>
         public async Task<IActionResult> SubjectGroup()
         {
+            // Step 1: Gather all the necessary lists (Groups, Classes, Sections, and Subjects) from the system.
             var groupsResponse = await _subjectGroupClient.GetAllAsync();
             var classesResponse = await _classClient.GetAllAsync();
             var sectionsResponse = await _sectionClient.GetAllAsync();
             var subjectsResponse = await _subjectClient.GetAllAsync();
-
+ 
+            // Step 2: Organize all this data to be used on the subject grouping screen.
             var model = new MstSubjectGroupPageViewModel
             {
                 SubjectGroups = groupsResponse.Success ? groupsResponse.Data : new List<MstSubjectGroupViewModel>(),
@@ -167,7 +188,8 @@ namespace SchoolERP.Net.Controllers
                 Sections = sectionsResponse.Success ? sectionsResponse.Data : new List<MstSectionViewModel>(),
                 Subjects = subjectsResponse.Success ? subjectsResponse.Data : new List<MstSubjectViewModel>()
             };
-
+ 
+            // Step 3: Open the 'Subject Group' management page.
             return View(model);
         }
 

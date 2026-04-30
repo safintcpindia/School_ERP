@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SchoolERP.Net.Controllers
 {
+    /// <summary>
+    /// This controller manages the school's expenses, including recording new costs and managing different types of expense categories.
+    /// </summary>
     public class ExpenseController : Controller
     {
         private readonly IAccountHeadClientService _headClient;
@@ -18,19 +21,26 @@ namespace SchoolERP.Net.Controllers
             _entryClient = entryClient;
         }
 
+        /// <summary>
+        /// Shows the main expense recording page, displaying recent expenses and allowing you to pick a category for new ones.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
+            // Step 1: Ask the system for all recorded expenses and all expense categories (heads).
             var resEntries = await _entryClient.GetAllAccountEntriesAsync("Expense");
             var resHeads = await _headClient.GetAllAccountHeadsAsync("Expense");
 
             if (!resEntries.Success) ViewBag.ErrorMessage = resEntries.Message;
 
+            // Step 2: Organize the data to be shown on the expense management page.
             var model = new AccountEntryPageViewModel
             {
                 Items = resEntries.Success ? resEntries.Data : new List<AccountEntryViewModel>(),
                 Heads = resHeads.Success ? resHeads.Data : new List<AccountHeadViewModel>(),
                 EntryType = "Expense"
             };
+            
+            // Step 3: Open the 'Expense' page.
             return View(model);
         }
 

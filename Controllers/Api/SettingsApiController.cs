@@ -20,19 +20,24 @@ namespace SchoolERP.Net.Controllers.Api
         private readonly IFieldService _fieldService;
         private readonly ICompanyService _companyService;
         private readonly ISessionService _sessionService;
+        private readonly IUserMenuPermissionService _menuPerm;
+
+        private const string MenuPath = "/Settings";
 
         public SettingsApiController(
             ILocalizationService localizationService, 
             IUserManagementService userMgmtService, 
             IFieldService fieldService,
             ICompanyService companyService,
-            ISessionService sessionService)
+            ISessionService sessionService,
+            IUserMenuPermissionService menuPerm)
         {
             _localizationService = localizationService;
             _userMgmtService = userMgmtService;
             _fieldService = fieldService;
             _companyService = companyService;
             _sessionService = sessionService;
+            _menuPerm = menuPerm;
         }
 
         private int UserId
@@ -62,6 +67,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("translations/update")]
         public IActionResult UpdateTranslation([FromBody] TranslationUpdateModel model)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to update translations." });
+
             try
             {
                 var translations = _localizationService.GetTranslations(model.Language);
@@ -101,6 +109,12 @@ namespace SchoolERP.Net.Controllers.Api
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<bool>.ErrorResponse("Invalid model state"));
 
+            var isCreate = model.FieldId <= 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add fields." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit fields." });
+
             model.CompanyID = CompanyId;
             model.SessionID = SessionId;
             var (success, message) = _fieldService.UpsertField(model, UserId);
@@ -110,6 +124,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpDelete("fields/delete/{id}")]
         public IActionResult DeleteField(int id)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete fields." });
+
             var (success, message) = _fieldService.DeleteField(id, UserId);
             return success ? Ok(ApiResponse<bool>.SuccessResponse(true, message)) : BadRequest(ApiResponse<bool>.ErrorResponse(message));
         }
@@ -117,6 +134,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("fields/toggle-status")]
         public IActionResult ToggleFieldStatus([FromBody] dynamic data)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change field status." });
+
             int id = (int)data.id;
             bool isActive = (bool)data.isActive;
             var (success, message) = _fieldService.ToggleFieldStatus(id, isActive, UserId);
@@ -133,6 +153,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("id-autogen/save")]
         public IActionResult SaveIDAutoGenSettings([FromBody] IDAutoGenRequest request)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change ID auto-generation settings." });
+
             request.CompanyID = CompanyId;
             request.SessionID = SessionId;
             var (success, message) = _fieldService.SaveIDAutoGenSettings(request, UserId);

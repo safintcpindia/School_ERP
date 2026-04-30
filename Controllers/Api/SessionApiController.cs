@@ -16,10 +16,14 @@ namespace SchoolERP.Net.Controllers.Api
     public class SessionApiController : ControllerBase
     {
         private readonly ISessionService _sessionService;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public SessionApiController(ISessionService sessionService)
+        private const string MenuPath = "/Settings";
+
+        public SessionApiController(ISessionService sessionService, IUserMenuPermissionService menuPerm)
         {
             _sessionService = sessionService;
+            _menuPerm = menuPerm;
         }
 
         /// <summary>
@@ -51,6 +55,13 @@ namespace SchoolERP.Net.Controllers.Api
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             int userId = GetCurrentUserId();
+
+            var isCreate = request.SessionId <= 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add sessions." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit sessions." });
+
             var (success, message) = _sessionService.UpsertSession(request, userId);
             return Ok(new { success, message });
         }
@@ -61,6 +72,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete sessions." });
+
             int userId = GetCurrentUserId();
             var (success, message) = _sessionService.DeleteSession(id, userId);
             return Ok(new { success, message });
@@ -72,6 +86,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change status." });
+
             int userId = GetCurrentUserId();
             var (success, message) = _sessionService.ToggleSessionStatus(id, isActive, userId);
             return Ok(new { success, message });

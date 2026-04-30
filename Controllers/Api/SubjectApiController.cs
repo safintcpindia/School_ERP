@@ -16,12 +16,16 @@ namespace SchoolERP.Net.Controllers.Api
         private readonly ISubjectService _subjectService;
         private readonly ICompanyService _companyService;
         private readonly ISessionService _sessionService;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public SubjectApiController(ISubjectService subjectService, ICompanyService companyService, ISessionService sessionService)
+        private const string MenuPath = "/Academics/Subject";
+
+        public SubjectApiController(ISubjectService subjectService, ICompanyService companyService, ISessionService sessionService, IUserMenuPermissionService menuPerm)
         {
             _subjectService = subjectService;
             _companyService = companyService;
             _sessionService = sessionService;
+            _menuPerm = menuPerm;
         }
 
         [HttpGet("GetAll")]
@@ -51,6 +55,13 @@ namespace SchoolERP.Net.Controllers.Api
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             int userId = GetCurrentUserId();
+
+            var isCreate = request.SubjectID <= 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add subjects." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit subjects." });
+
             int companyId = _companyService.GetUserCurrentCompany(userId) ?? 0;
             int sessionId = _sessionService.GetUserCurrentSession(userId) ?? 0;
 
@@ -64,6 +75,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete subjects." });
+
             int userId = GetCurrentUserId();
             var (success, message) = _subjectService.DeleteSubject(id, userId);
             return Ok(new { success, message });
@@ -72,6 +86,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change subject status." });
+
             int userId = GetCurrentUserId();
             var (success, message) = _subjectService.ToggleSubjectStatus(id, isActive, userId);
             return Ok(new { success, message });

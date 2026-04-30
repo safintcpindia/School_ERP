@@ -16,10 +16,13 @@ namespace SchoolERP.Net.Controllers.Api
     public class OrganisationApiController : ControllerBase
     {
         private readonly IOrganisationService _organisationService;
+        private readonly IUserMenuPermissionService _menuPerm;
+        private const string MenuPath = "/Organisation";
 
-        public OrganisationApiController(IOrganisationService organisationService)
+        public OrganisationApiController(IOrganisationService organisationService, IUserMenuPermissionService menuPerm)
         {
             _organisationService = organisationService;
+            _menuPerm = menuPerm;
         }
 
         /// <summary>
@@ -50,6 +53,12 @@ namespace SchoolERP.Net.Controllers.Api
         public IActionResult Upsert([FromBody] OrganisationUpsertRequest request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            var isCreate = request.OrganisationID <= 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add organizations." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit organizations." });
+
             int userId = GetCurrentUserId();
             var (success, message) = _organisationService.UpsertOrganisation(request, userId);
             return Ok(new { success, message });
@@ -61,6 +70,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("Delete/{id}")]
         public IActionResult Delete(int id)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete organizations." });
+
             int userId = GetCurrentUserId();
             var (success, message) = _organisationService.DeleteOrganisation(id, userId);
             return Ok(new { success, message });
@@ -72,6 +84,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("ToggleStatus")]
         public IActionResult ToggleStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change status." });
+
             int userId = GetCurrentUserId();
             var (success, message) = _organisationService.ToggleOrganisationStatus(id, isActive, userId);
             return Ok(new { success, message });

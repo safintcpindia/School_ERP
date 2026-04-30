@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SchoolERP.Net.Controllers
 {
+    /// <summary>
+    /// This controller manages the school's front office activities, such as visitor logs, complaints, phone calls, and mail (postal) services.
+    /// </summary>
     public class FrontOfficeController : Controller
     {
         private readonly IFrontOfficeClientService _client;
@@ -20,13 +23,18 @@ namespace SchoolERP.Net.Controllers
             _menuPerm = menuPerm;
         }
 
+        /// <summary>
+        /// Shows the 'Setup' page where you can manage categories for visitors and complaints (like Purposes, Sources, and References).
+        /// </summary>
         public async Task<IActionResult> Setup()
         {
+            // Step 1: Gather all categories like 'Visitor Purposes', 'Complaint Types', 'Sources', and 'References'.
             var purposes        = await _client.GetAllPurposesAsync();
             var complaintTypes  = await _client.GetAllComplaintTypesAsync();
             var sources         = await _client.GetAllSourcesAsync();
             var references      = await _client.GetAllReferencesAsync();
 
+            // Step 2: Organize these lists so they can be shown on the setup management page.
             var model = new FrontOfficeSetupPageViewModel
             {
                 Purposes       = purposes.Success       ? purposes.Data       : new List<MstFOPurposeViewModel>(),
@@ -35,6 +43,7 @@ namespace SchoolERP.Net.Controllers
                 References     = references.Success      ? references.Data      : new List<MstFOReferenceViewModel>()
             };
 
+            // Step 3: Open the 'Setup' page for the user.
             return View(model);
         }
 
@@ -202,12 +211,17 @@ namespace SchoolERP.Net.Controllers
             return Json(new { success = r.Success, message = r.Message });
         }
 
+        /// <summary>
+        /// Shows the main 'Complaint' management page where you can see all student or parent complaints and their status.
+        /// </summary>
         public async Task<IActionResult> Complaint()
         {
+            // Step 1: Fetch all recorded complaints, types of complaints, and where they came from (sources).
             var complaints      = await _client.GetAllComplaintsAsync();
             var complaintTypes  = await _client.GetAllComplaintTypesAsync();
             var sources         = await _client.GetAllSourcesAsync();
 
+            // Step 2: Combine this information to be shown on the complaint management screen.
             var model = new FOComplaintPageViewModel
             {
                 Complaints     = complaints.Success      ? complaints.Data      : new List<FOComplaintViewModel>(),
@@ -215,6 +229,7 @@ namespace SchoolERP.Net.Controllers
                 Sources        = sources.Success         ? sources.Data         : new List<MstFOSourceViewModel>()
             };
 
+            // Step 3: Open the 'Complaint' management page.
             return View(model);
         }
 

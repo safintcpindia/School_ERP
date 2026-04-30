@@ -149,6 +149,7 @@ namespace SchoolERP.Net.Models
         public int UserTypeID { get; set; }
         public List<int> RoleIDs { get; set; } = new();
         public List<int> CompanyIDs { get; set; } = new();
+        public List<string> DisplayRoles { get; set; } = new();
         public string RoleName { get; set; } = string.Empty;
         public int CompanyID { get; set; }
         public int SessionID { get; set; }

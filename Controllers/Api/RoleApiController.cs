@@ -17,10 +17,14 @@ namespace SchoolERP.Net.Controllers.Api
     public class RoleApiController : ControllerBase
     {
         private readonly IUserManagementService _userMgmtService;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public RoleApiController(IUserManagementService userMgmtService)
+        private const string MenuPath = "/Settings";
+
+        public RoleApiController(IUserManagementService userMgmtService, IUserMenuPermissionService menuPerm)
         {
             _userMgmtService = userMgmtService;
+            _menuPerm = menuPerm;
         }
 
         /// <summary>
@@ -53,6 +57,13 @@ namespace SchoolERP.Net.Controllers.Api
             int currentUserId = GetCurrentUserId();
             if (currentUserId <= 0)
                 return Unauthorized(ApiResponse<int>.ErrorResponse("User is not authenticated."));
+
+            var isCreate = request.RoleID == 0;
+            if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                return Ok(new { success = false, message = "You do not have permission to add roles." });
+            if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to edit roles." });
+
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
             var result = _userMgmtService.UpsertRole(request, currentUserId, ipAddress);
             
@@ -71,6 +82,10 @@ namespace SchoolERP.Net.Controllers.Api
             int currentUserId = GetCurrentUserId();
             if (currentUserId <= 0)
                 return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change status." });
+
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
             var result = _userMgmtService.ToggleRoleStatus(roleId, isActive, currentUserId, ipAddress);
             
@@ -99,6 +114,10 @@ namespace SchoolERP.Net.Controllers.Api
             int currentUserId = GetCurrentUserId();
             if (currentUserId <= 0)
                 return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to save permissions." });
+
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
             var result = _userMgmtService.SaveRolePermissions(request, currentUserId, ipAddress);
             
@@ -117,6 +136,9 @@ namespace SchoolERP.Net.Controllers.Api
             int currentUserId = GetCurrentUserId();
             if (currentUserId <= 0)
                 return Unauthorized(ApiResponse<bool>.ErrorResponse("User is not authenticated."));
+
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete roles." });
 
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
             var result = _userMgmtService.DeleteRole(id, currentUserId, ipAddress);

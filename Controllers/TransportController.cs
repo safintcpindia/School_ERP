@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SchoolERP.Net.Controllers
 {
+    /// <summary>
+    /// This controller manages the school's transport system, including bus routes, pickup points, and assigning vehicles to those routes.
+    /// </summary>
     public class TransportController : Controller
     {
         private readonly IPickupPointClientService _pickupPointClient;
@@ -28,14 +31,22 @@ namespace SchoolERP.Net.Controllers
             _rppClient = rppClient;
         }
 
+        /// <summary>
+        /// Shows the 'Pickup Point' page where you can manage all the different bus stops for the school.
+        /// </summary>
         public async Task<IActionResult> PickupPoint()
         {
+            // Step 1: Ask the system for a list of all current bus stops (pickup points).
             var res = await _pickupPointClient.GetAllPickupPointsAsync();
+            
+            // Step 2: Prepare the data to be shown on the stop management page.
             var model = new PickupPointPageViewModel
             {
                 Items = res.Success ? res.Data : new List<PickupPointViewModel>()
             };
             if (!res.Success) ViewBag.ErrorMessage = res.Message;
+            
+            // Step 3: Open the 'Pickup Point' page.
             return View(model);
         }
 
@@ -61,12 +72,17 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Shows the 'Vehicle Assignment' page where you can decide which buses or vans will drive on which school routes.
+        /// </summary>
         public async Task<IActionResult> VehicleAssign()
         {
+            // Step 1: Fetch the list of current vehicle assignments, all routes, and all vehicles from the system.
             var res = await _vehicleAssignClient.GetAllAssignmentsAsync();
             var routesRes = await _routeClient.GetAllRoutesAsync();
             var vehiclesRes = await _vehicleClient.GetAllVehiclesAsync();
-
+ 
+            // Step 2: Combine all this information so it can be managed on one screen.
             var model = new VehicleAssignPageViewModel
             {
                 Items = res.Success ? res.Data : new List<VehicleAssignViewModel>(),
@@ -75,6 +91,8 @@ namespace SchoolERP.Net.Controllers
             };
             
             if (!res.Success) ViewBag.ErrorMessage = res.Message;
+            
+            // Step 3: Open the 'Vehicle Assignment' management page.
             return View(model);
         }
 

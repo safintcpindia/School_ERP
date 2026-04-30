@@ -129,7 +129,11 @@ namespace SchoolERP.Net.Services
         /// </summary>
         public void SetLanguage(string languageCode)
         {
+            // Step 1: Create a 'Cookie' which is like a small sticky note for the user's browser.
+            // Step 2: Set the note to last for 1 year so the system remembers the language choice every time they visit.
             var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) };
+            
+            // Step 3: Stick the 'Language' choice onto the browser's cookie jar.
             _httpContextAccessor.HttpContext.Response.Cookies.Append("Language", languageCode, options);
         }
 

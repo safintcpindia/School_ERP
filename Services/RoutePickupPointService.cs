@@ -7,23 +7,33 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of linking transport routes to specific pickup points and managing trip details like distance and fees.
+    /// </summary>
     public class RoutePickupPointService : IRoutePickupPointService
     {
         private readonly SqlHelper _db;
         public RoutePickupPointService(SqlHelper db) => _db = db;
 
+        /// <summary>
+        /// Retrieves a complete list of all route-to-pickup point links for the current school and session from the database.
+        /// </summary>
         public List<RoutePickupPointViewModel> GetAllRoutePickupPoints(int companyId, int sessionId)
         {
             var list = new List<RoutePickupPointViewModel>();
             try
             {
+                // Step 1: Pack the search criteria (School and Session).
                 var p = new[] {
                     new SqlParameter("@CompanyID", companyId),
                     new SqlParameter("@SessionID", sessionId)
                 };
+                
+                // Step 2: Ask the database for all matching route-to-pickup point links.
                 var dt = _db.ExecuteQuery("sp_Mst_RoutePickupPoints_GetAll", p);
                 if (dt != null)
                 {
+                    // Step 3: For each link found, convert it into a format the application can use.
                     foreach (DataRow row in dt.Rows)
                     {
                         list.Add(MapRoutePickupPoint(row));
@@ -32,7 +42,6 @@ namespace SchoolERP.Net.Services
             }
             catch (Exception ex)
             {
-                // Throwing the exception so the API can catch it and display the message
                 throw new Exception($"Database Error: {ex.Message}");
             }
             return list;
@@ -45,10 +54,14 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapRoutePickupPoint(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a route-to-pickup point link in the database, including trip details like distance and monthly fees.
+        /// </summary>
         public (bool Success, string Message) UpsertRoutePickupPoint(RoutePickupPointUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
             {
+                // Step 1: Bundle all the details for the link (Route, Pickup Point, Distance, Time, and Fees).
                 var p = new[] {
                     new SqlParameter("@RoutePickupPointID", SqlDbType.Int) { Value = req.RoutePickupPointID },
                     new SqlParameter("@CompanyID", SqlDbType.Int) { Value = companyId },
@@ -61,7 +74,11 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@IsActive", SqlDbType.Bit) { Value = req.IsActive },
                     new SqlParameter("@UserID", SqlDbType.Int) { Value = userId }
                 };
+                
+                // Step 2: Send this bundle to the database to save or update the link record.
                 var dt = _db.ExecuteQuery("sp_Mst_RoutePickupPoints_Upsert", p);
+                
+                // Step 3: Inform the user if the record was saved successfully.
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);

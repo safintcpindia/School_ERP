@@ -19,12 +19,16 @@ namespace SchoolERP.Net.Controllers.Api
         private readonly IVehicleService _vehicleService;
         private readonly ICompanyService _companySvc;
         private readonly ISessionService _sessionSvc;
+        private readonly IUserMenuPermissionService _menuPerm;
 
-        public VehiclesApiController(IVehicleService vehicleService, ICompanyService companySvc, ISessionService sessionSvc)
+        private const string MenuPath = "/Transport/Vehicles";
+
+        public VehiclesApiController(IVehicleService vehicleService, ICompanyService companySvc, ISessionService sessionSvc, IUserMenuPermissionService menuPerm)
         {
             _vehicleService = vehicleService;
             _companySvc = companySvc;
             _sessionSvc = sessionSvc;
+            _menuPerm = menuPerm;
         }
 
         private int GetUserId() => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("UserId"), out var id) ? id : 0;
@@ -51,6 +55,12 @@ namespace SchoolERP.Net.Controllers.Api
         {
             try
             {
+                var isCreate = form.VehicleID <= 0;
+                if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
+                    return Ok(new { success = false, message = "You do not have permission to add vehicles." });
+                if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
+                    return Ok(new { success = false, message = "You do not have permission to edit vehicles." });
+
                 var req = new VehicleUpsertRequest
                 {
                     VehicleID = form.VehicleID,
@@ -90,6 +100,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("DeleteVehicle/{id}")]
         public IActionResult DeleteVehicle(int id)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete vehicles." });
+
             var res = _vehicleService.DeleteVehicle(id, GetUserId());
             return Ok(new { success = res.Success, message = res.Message });
         }
@@ -97,6 +110,9 @@ namespace SchoolERP.Net.Controllers.Api
         [HttpPost("ToggleVehicleStatus")]
         public IActionResult ToggleVehicleStatus(int id, bool isActive)
         {
+            if (!_menuPerm.Has(User, MenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to change vehicle status." });
+
             var res = _vehicleService.ToggleVehicleStatus(id, isActive, GetUserId());
             return Ok(new { success = res.Success, message = res.Message });
         }

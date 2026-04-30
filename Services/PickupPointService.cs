@@ -7,20 +7,29 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing transport pickup points, such as saving locations where the school bus stops.
+    /// </summary>
     public class PickupPointService : IPickupPointService
     {
         private readonly SqlHelper _db;
         public PickupPointService(SqlHelper db) => _db = db;
 
+        /// <summary>
+        /// Retrieves a complete list of all pickup points for the current school and session from the database.
+        /// </summary>
         public List<PickupPointViewModel> GetAllPickupPoints(int companyId, int sessionId)
         {
             var list = new List<PickupPointViewModel>();
             try
             {
+                // Step 1: Pack the search criteria (School and Session).
                 var p = new[] {
                     new SqlParameter("@CompanyID", companyId),
                     new SqlParameter("@SessionID", sessionId)
                 };
+                
+                // Step 2: Ask the database for all matching pickup points.
                 foreach (DataRow row in _db.ExecuteQuery("sp_Mst_PickupPoint_GetAll", p).Rows)
                     list.Add(MapPickupPoint(row));
             }
@@ -35,10 +44,14 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapPickupPoint(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a pickup point record in the database.
+        /// </summary>
         public (bool Success, string Message) UpsertPickupPoint(PickupPointUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
             {
+                // Step 1: Bundle all the details about the pickup point (Name, Latitude, Longitude, etc.).
                 var p = new[] {
                     new SqlParameter("@PickupPointID", req.PickupPointID),
                     new SqlParameter("@CompanyID", companyId),
@@ -49,7 +62,11 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@IsActive", req.IsActive),
                     new SqlParameter("@UserID", userId)
                 };
+                
+                // Step 2: Send this bundle to the database to save or update the record.
                 var dt = _db.ExecuteQuery("sp_Mst_PickupPoint_Upsert", p);
+                
+                // Step 3: Inform the user if the record was saved successfully.
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
             }
             catch (Exception ex) { return (false, ex.Message); }

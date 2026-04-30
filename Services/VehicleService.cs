@@ -7,11 +7,17 @@ using SchoolERP.Net.Models;
 
 namespace SchoolERP.Net.Services
 {
+    /// <summary>
+    /// This service handles the actual work of managing school vehicles, such as saving, updating, or deleting vehicle records in the database.
+    /// </summary>
     public class VehicleService : IVehicleService
     {
         private readonly SqlHelper _db;
         public VehicleService(SqlHelper db) => _db = db;
 
+        /// <summary>
+        /// Retrieves a complete list of all vehicles for the current school and session from the database.
+        /// </summary>
         public List<VehicleViewModel> GetAllVehicles(int companyId, int sessionId)
         {
             var list = new List<VehicleViewModel>();
@@ -28,6 +34,9 @@ namespace SchoolERP.Net.Services
             return list;
         }
 
+        /// <summary>
+        /// Looks up the details of a specific vehicle using its unique ID.
+        /// </summary>
         public VehicleViewModel? GetVehicleByID(int id)
         {
             var p = new[] { new SqlParameter("@VehicleID", id) };
@@ -35,6 +44,9 @@ namespace SchoolERP.Net.Services
             return dt.Rows.Count == 0 ? null : MapVehicle(dt.Rows[0]);
         }
 
+        /// <summary>
+        /// Saves or updates a vehicle record in the database, including driver and capacity details.
+        /// </summary>
         public (bool Success, string Message) UpsertVehicle(VehicleUpsertRequest req, int companyId, int sessionId, int userId)
         {
             try
@@ -65,6 +77,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Deletes a vehicle's record from the database.
+        /// </summary>
         public (bool Success, string Message) DeleteVehicle(int id, int userId)
         {
             try
@@ -79,6 +94,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// Updates whether a vehicle is currently active or inactive.
+        /// </summary>
         public (bool Success, string Message) ToggleVehicleStatus(int id, bool isActive, int userId)
         {
             try
@@ -94,6 +112,9 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        /// <summary>
+        /// A helper tool that converts raw database data about a vehicle into a format the application can easily use.
+        /// </summary>
         private static VehicleViewModel MapVehicle(DataRow r) => new()
         {
             VehicleID = Convert.ToInt32(r["VehicleID"]),

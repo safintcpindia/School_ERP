@@ -27,11 +27,16 @@ namespace SchoolERP.Net.Controllers
         /// </summary>
         public async Task<IActionResult> Index()
         {
+            // Step 1: Ask the system for a list of all supported languages.
             var response = await _languageClient.GetAllAsync();
+            
+            // Step 2: Prepare the data to be shown on the language management page.
             var model = new MstLanguagePageViewModel
             {
                 Languages = response.Success ? response.Data : new List<MstLanguageViewModel>()
             };
+            
+            // Step 3: Open the 'Language' settings page.
             return View(model);
         }
 
@@ -55,13 +60,17 @@ namespace SchoolERP.Net.Controllers
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] MstLanguageUpsertRequest request)
         {
+            // Step 1: Check if the user is allowed to add or edit languages based on whether it already exists.
             var isCreate = request.LanguageId <= 0;
             if (isCreate && !_menuPerm.Has(User, MenuPath, "Add"))
                 return Json(new { success = false, message = "You do not have permission to add languages." });
             if (!isCreate && !_menuPerm.Has(User, MenuPath, "Edit"))
                 return Json(new { success = false, message = "You do not have permission to edit languages." });
-
+ 
+            // Step 2: Send the new language details to the backend system to be saved.
             var response = await _languageClient.UpsertAsync(request);
+            
+            // Step 3: Inform the user if the record was saved successfully.
             return Json(new { success = response.Success, message = response.Message });
         }
 

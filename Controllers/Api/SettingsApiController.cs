@@ -132,14 +132,12 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         [HttpPost("fields/toggle-status")]
-        public IActionResult ToggleFieldStatus([FromBody] dynamic data)
+        public IActionResult ToggleFieldStatus([FromBody] FieldToggleStatusRequest request)
         {
             if (!_menuPerm.Has(User, MenuPath, "Edit"))
                 return Ok(new { success = false, message = "You do not have permission to change field status." });
 
-            int id = (int)data.id;
-            bool isActive = (bool)data.isActive;
-            var (success, message) = _fieldService.ToggleFieldStatus(id, isActive, UserId);
+            var (success, message) = _fieldService.ToggleFieldStatus(request.Id, request.IsActive, UserId);
             return success ? Ok(ApiResponse<bool>.SuccessResponse(true, message)) : BadRequest(ApiResponse<bool>.ErrorResponse(message));
         }
 

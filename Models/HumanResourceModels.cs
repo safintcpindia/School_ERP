@@ -158,6 +158,7 @@ namespace SchoolERP.Net.Models
         public DateTime CreatedOn { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
+        public List<FieldModel> SystemFields { get; set; } = new(); // NEW: For dynamic visibility
     }
 
     public class HRStaffUpsertRequest
@@ -251,6 +252,73 @@ namespace SchoolERP.Net.Models
         public List<MstRoleViewModel> Roles { get; set; } = new();
         public List<MstUserTypeViewModel> UserTypes { get; set; } = new();
         public List<MstCompanyViewModel> Companies { get; set; } = new();
+        public List<FieldModel> SystemFields { get; set; } = new(); // NEW: For dynamic visibility
         public HRStaffViewModel? EditStaff { get; set; }
+    }
+
+    public class HRStaffAttendanceViewModel
+    {
+        public int StaffID { get; set; }
+        public string StaffCode { get; set; } = string.Empty;
+        public string StaffName { get; set; } = string.Empty;
+        public string RoleName { get; set; } = string.Empty;
+        public int StaffAttendanceID { get; set; }
+        public string StaffAttendance { get; set; } = string.Empty;
+        public string StaffAttendanceSource { get; set; } = "Manual";
+        public string StaffAttendanceNote { get; set; } = string.Empty;
+        public DateTime? LastUpdated { get; set; }
+    }
+
+    public class HRStaffAttendanceUpsertRequest
+    {
+        public int StaffID { get; set; }
+        public DateTime AttendanceDate { get; set; }
+        public string Attendance { get; set; } = string.Empty;
+        public string Source { get; set; } = "Manual";
+        public string Note { get; set; } = string.Empty;
+    }
+    public class HRApplyLeaveViewModel
+    {
+        public int ApplyLeaveID { get; set; }
+        public int CompanyID { get; set; }
+        public int SessionID { get; set; }
+        public int StaffID { get; set; }
+        public string StaffName { get; set; } = string.Empty;
+        public string StaffCode { get; set; } = string.Empty;
+        public int LeaveTypeID { get; set; }
+        public string LeaveTypeName { get; set; } = string.Empty;
+        public DateTime ApplyDate { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+        public string? Reason { get; set; }
+        public string Status { get; set; } = "Pending";
+        public int? ApprovedBy { get; set; }
+        public string ApprovedByName { get; set; } = string.Empty;
+        public byte[]? AttachmentDoc { get; set; }
+        public string? AttachmentDocType { get; set; }
+        public string? AttachmentDocName { get; set; }
+        public string? Note { get; set; }
+    }
+
+    public class HRApplyLeaveUpsertRequest
+    {
+        public int ApplyLeaveID { get; set; }
+        public int StaffID { get; set; }
+        public int LeaveTypeID { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+        public string? Reason { get; set; }
+        public string Status { get; set; } = "Pending";
+        public string? Note { get; set; }
+        public string? AttachmentBase64 { get; set; }
+        public string? AttachmentDocType { get; set; }
+        public string? AttachmentDocName { get; set; }
+    }
+
+    public class HRApplyLeavePageViewModel
+    {
+        public List<HRApplyLeaveViewModel> Leaves { get; set; } = new();
+        public List<HRStaffViewModel> StaffList { get; set; } = new();
+        public List<HRLeaveTypeViewModel> LeaveTypes { get; set; } = new();
     }
 }

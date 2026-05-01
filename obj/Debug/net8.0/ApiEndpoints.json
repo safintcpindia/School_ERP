@@ -54,6 +54,22 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.AccountEntryApiController",
+    "Method": "SearchAccountEntries",
+    "RelativePath": "api/AccountEntryApi/SearchAccountEntries",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.AccountEntrySearchRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.AccountEntryApiController",
     "Method": "ToggleAccountEntryStatus",
     "RelativePath": "api/AccountEntryApi/ToggleAccountEntryStatus",
     "HttpMethod": "POST",
@@ -1448,6 +1464,311 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "DeleteDepartment",
+    "RelativePath": "api/HumanResourceApi/DeleteDepartment/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "DeleteDesignation",
+    "RelativePath": "api/HumanResourceApi/DeleteDesignation/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "DeleteLeaveType",
+    "RelativePath": "api/HumanResourceApi/DeleteLeaveType/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "DeleteStaff",
+    "RelativePath": "api/HumanResourceApi/DeleteStaff/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetAllDepartments",
+    "RelativePath": "api/HumanResourceApi/GetAllDepartments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetAllDesignations",
+    "RelativePath": "api/HumanResourceApi/GetAllDesignations",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetAllLeaveTypes",
+    "RelativePath": "api/HumanResourceApi/GetAllLeaveTypes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetAllStaff",
+    "RelativePath": "api/HumanResourceApi/GetAllStaff",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetDepartmentByID",
+    "RelativePath": "api/HumanResourceApi/GetDepartmentByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetDesignationByID",
+    "RelativePath": "api/HumanResourceApi/GetDesignationByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetLeaveTypeByID",
+    "RelativePath": "api/HumanResourceApi/GetLeaveTypeByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetNewStaffCode",
+    "RelativePath": "api/HumanResourceApi/GetNewStaffCode",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetStaffByID",
+    "RelativePath": "api/HumanResourceApi/GetStaffByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "ToggleDepartmentStatus",
+    "RelativePath": "api/HumanResourceApi/ToggleDepartmentStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "ToggleDesignationStatus",
+    "RelativePath": "api/HumanResourceApi/ToggleDesignationStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "ToggleLeaveTypeStatus",
+    "RelativePath": "api/HumanResourceApi/ToggleLeaveTypeStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "UpsertDepartment",
+    "RelativePath": "api/HumanResourceApi/UpsertDepartment",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRDepartmentUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "UpsertDesignation",
+    "RelativePath": "api/HumanResourceApi/UpsertDesignation",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRDesignationUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "UpsertLeaveType",
+    "RelativePath": "api/HumanResourceApi/UpsertLeaveType",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRLeaveTypeUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "UpsertStaff",
+    "RelativePath": "api/HumanResourceApi/UpsertStaff",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRStaffUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SchoolERP.Net.Controllers.Api.LanguageApiController",
     "Method": "Delete",
     "RelativePath": "api/LanguageApi/Delete/{id}",
@@ -1782,6 +2103,85 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PickupPointApiController",
+    "Method": "DeletePickupPoint",
+    "RelativePath": "api/PickupPointApi/DeletePickupPoint/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PickupPointApiController",
+    "Method": "GetAllPickupPoints",
+    "RelativePath": "api/PickupPointApi/GetAllPickupPoints",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PickupPointApiController",
+    "Method": "GetPickupPointByID",
+    "RelativePath": "api/PickupPointApi/GetPickupPointByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PickupPointApiController",
+    "Method": "TogglePickupPointStatus",
+    "RelativePath": "api/PickupPointApi/TogglePickupPointStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.PickupPointApiController",
+    "Method": "UpsertPickupPoint",
+    "RelativePath": "api/PickupPointApi/UpsertPickupPoint",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.PickupPointUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SchoolERP.Net.Controllers.Api.RoleApiController",
     "Method": "GetAllRoles",
     "RelativePath": "api/RoleApi",
@@ -1888,6 +2288,164 @@
         "Name": "isActive",
         "Type": "System.Boolean",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutePickupPointsApiController",
+    "Method": "DeleteRoutePickupPoint",
+    "RelativePath": "api/RoutePickupPointsApi/DeleteRoutePickupPoint/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutePickupPointsApiController",
+    "Method": "GetAllRoutePickupPoints",
+    "RelativePath": "api/RoutePickupPointsApi/GetAllRoutePickupPoints",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutePickupPointsApiController",
+    "Method": "GetRoutePickupPointByID",
+    "RelativePath": "api/RoutePickupPointsApi/GetRoutePickupPointByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutePickupPointsApiController",
+    "Method": "ToggleRoutePickupPointStatus",
+    "RelativePath": "api/RoutePickupPointsApi/ToggleRoutePickupPointStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutePickupPointsApiController",
+    "Method": "UpsertRoutePickupPoint",
+    "RelativePath": "api/RoutePickupPointsApi/UpsertRoutePickupPoint",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.RoutePickupPointUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutesApiController",
+    "Method": "DeleteRoute",
+    "RelativePath": "api/RoutesApi/DeleteRoute/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutesApiController",
+    "Method": "GetAllRoutes",
+    "RelativePath": "api/RoutesApi/GetAllRoutes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutesApiController",
+    "Method": "GetRouteByID",
+    "RelativePath": "api/RoutesApi/GetRouteByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutesApiController",
+    "Method": "ToggleRouteStatus",
+    "RelativePath": "api/RoutesApi/ToggleRouteStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.RoutesApiController",
+    "Method": "UpsertRoute",
+    "RelativePath": "api/RoutesApi/UpsertRoute",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.RouteUpsertRequest",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -2748,6 +3306,224 @@
       {
         "Name": "language",
         "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehicleAssignApiController",
+    "Method": "DeleteAssignment",
+    "RelativePath": "api/VehicleAssignApi/DeleteAssignment/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehicleAssignApiController",
+    "Method": "GetAllAssignments",
+    "RelativePath": "api/VehicleAssignApi/GetAllAssignments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehicleAssignApiController",
+    "Method": "GetAssignmentByID",
+    "RelativePath": "api/VehicleAssignApi/GetAssignmentByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehicleAssignApiController",
+    "Method": "ToggleAssignmentStatus",
+    "RelativePath": "api/VehicleAssignApi/ToggleAssignmentStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehicleAssignApiController",
+    "Method": "UpsertAssignments",
+    "RelativePath": "api/VehicleAssignApi/UpsertAssignments",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.VehicleAssignUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehiclesApiController",
+    "Method": "DeleteVehicle",
+    "RelativePath": "api/VehiclesApi/DeleteVehicle/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehiclesApiController",
+    "Method": "GetAllVehicles",
+    "RelativePath": "api/VehiclesApi/GetAllVehicles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehiclesApiController",
+    "Method": "GetVehicleByID",
+    "RelativePath": "api/VehiclesApi/GetVehicleByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehiclesApiController",
+    "Method": "ToggleVehicleStatus",
+    "RelativePath": "api/VehiclesApi/ToggleVehicleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.VehiclesApiController",
+    "Method": "UpsertVehicle",
+    "RelativePath": "api/VehiclesApi/UpsertVehicle",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "VehicleID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleModel",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleYearMade",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleRegNo",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleChasisNo",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleMaxCapicity",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleDriverName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleDriverLicense",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleDriverContact",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VehicleNote",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "IsActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "DriverPhoto",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
       }
     ],

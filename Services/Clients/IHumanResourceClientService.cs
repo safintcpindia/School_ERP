@@ -30,5 +30,14 @@ namespace SchoolERP.Net.Services.Clients
         Task<ApiResponse<dynamic>> UpsertStaffAsync(HRStaffUpsertRequest req);
         Task<ApiResponse<dynamic>> DeleteStaffAsync(int id);
         Task<ApiResponse<string>> GetNewStaffCodeAsync();
+        
+        Task<ApiResponse<List<HRStaffAttendanceViewModel>>> GetStaffAttendanceAsync(DateTime date, int? roleId);
+        Task<ApiResponse<dynamic>> SaveStaffAttendanceAsync(List<HRStaffAttendanceUpsertRequest> reqs);
+
+        // --- Apply Leave ---
+        Task<ApiResponse<List<HRApplyLeaveViewModel>>> GetAllApplyLeaveAsync();
+        Task<ApiResponse<HRApplyLeaveViewModel>> GetApplyLeaveByIDAsync(int id);
+        Task<ApiResponse<dynamic>> UpsertApplyLeaveAsync(HRApplyLeaveUpsertRequest req);
+        Task<ApiResponse<dynamic>> DeleteApplyLeaveAsync(int id);
     }
 }

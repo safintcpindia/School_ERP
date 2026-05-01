@@ -562,6 +562,184 @@ namespace SchoolERP.Net.Services
             catch { return "STF" + DateTime.Now.Ticks.ToString().Substring(10); }
         }
 
+        public (byte[] Bytes, string FileName, string ContentType) GetStaffDocument(int staffId, string docType)
+        {
+            try
+            {
+                var p = new[] { new SqlParameter("@StaffID", staffId) };
+                var dt = _db.ExecuteQuery("sp_HR_Staff_GetByID", p);
+                if (dt.Rows.Count == 0) return (null!, null!, null!);
+
+                var row = dt.Rows[0];
+                byte[] bytes = null!;
+                string fileName = "";
+                string contentType = "application/octet-stream";
+
+                switch (docType.ToLower())
+                {
+                    case "resume":
+                        bytes = row["ResumeDoc"] != DBNull.Value ? (byte[])row["ResumeDoc"] : null!;
+                        fileName = row["ResumeDocName"]?.ToString() ?? "Resume.pdf";
+                        contentType = row["ResumeDocType"]?.ToString() ?? "application/pdf";
+                        break;
+                    case "joiningletter":
+                        bytes = row["JoiningLetterDoc"] != DBNull.Value ? (byte[])row["JoiningLetterDoc"] : null!;
+                        fileName = row["JoiningLetterDocName"]?.ToString() ?? "JoiningLetter.pdf";
+                        contentType = row["JoiningLetterDocType"]?.ToString() ?? "application/pdf";
+                        break;
+                    case "resignationletter":
+                        bytes = row["ResignationLetterDoc"] != DBNull.Value ? (byte[])row["ResignationLetterDoc"] : null!;
+                        fileName = row["ResignationLetterDocName"]?.ToString() ?? "ResignationLetter.pdf";
+                        contentType = row["ResignationLetterDocType"]?.ToString() ?? "application/pdf";
+                        break;
+                    case "other":
+                        bytes = row["OtherDoc"] != DBNull.Value ? (byte[])row["OtherDoc"] : null!;
+                        fileName = row["OtherDocName"]?.ToString() ?? "Document.pdf";
+                        contentType = row["OtherDocType"]?.ToString() ?? "application/pdf";
+                        break;
+                }
+
+                return (bytes, fileName, contentType);
+            }
+            catch { return (null!, null!, null!); }
+        }
+
+        // --- Attendance ---
+
+        public List<HRStaffAttendanceViewModel> GetStaffAttendance(int companyId, int sessionId, DateTime date, int? roleId)
+        {
+            var list = new List<HRStaffAttendanceViewModel>();
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@AttendanceDate", date),
+                    new SqlParameter("@RoleID", (object?)roleId ?? DBNull.Value)
+                };
+                foreach (DataRow r in _db.ExecuteQuery("sp_HR_StaffAttendance_GetByDate", p).Rows)
+                {
+                    list.Add(new HRStaffAttendanceViewModel
+                    {
+                        StaffID = Convert.ToInt32(r["StaffID"]),
+                        StaffCode = r["StaffCode"].ToString()!,
+                        StaffName = r["StaffName"].ToString()!,
+                        RoleName = r["RoleName"].ToString()!,
+                        StaffAttendanceID = r["StaffAttendanceID"] == DBNull.Value ? 0 : Convert.ToInt32(r["StaffAttendanceID"]),
+                        StaffAttendance = r["StaffAttendance"].ToString()!,
+                        StaffAttendanceSource = r["StaffAttendanceSource"].ToString()!,
+                        StaffAttendanceNote = r["StaffAttendanceNote"].ToString()!,
+                        LastUpdated = r["LastUpdated"] == DBNull.Value ? null : Convert.ToDateTime(r["LastUpdated"])
+                    });
+                }
+            }
+            catch { }
+            return list;
+        }
+
+        public (bool Success, string Message) SaveStaffAttendance(HRStaffAttendanceUpsertRequest req, int companyId, int sessionId, int userId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@StaffID", req.StaffID),
+                    new SqlParameter("@AttendanceDate", req.AttendanceDate),
+                    new SqlParameter("@Attendance", req.Attendance),
+                    new SqlParameter("@Source", req.Source),
+                    new SqlParameter("@Note", req.Note),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_HR_StaffAttendance_Upsert", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        // --- Apply Leave ---
+
+        public List<HRApplyLeaveViewModel> GetAllApplyLeave(int companyId, int sessionId)
+        {
+            var list = new List<HRApplyLeaveViewModel>();
+            try
+            {
+                var p = new[] { new SqlParameter("@CompanyID", companyId), new SqlParameter("@SessionID", sessionId) };
+                foreach (DataRow row in _db.ExecuteQuery("sp_HR_ApplyLeave_GetAll", p).Rows)
+                    list.Add(MapApplyLeave(row));
+            }
+            catch { }
+            return list;
+        }
+
+        public HRApplyLeaveViewModel? GetApplyLeaveByID(int id)
+        {
+            var p = new[] { new SqlParameter("@ApplyLeaveID", id) };
+            var dt = _db.ExecuteQuery("sp_HR_ApplyLeave_GetByID", p);
+            return dt.Rows.Count == 0 ? null : MapApplyLeave(dt.Rows[0]);
+        }
+
+        public (bool Success, string Message) UpsertApplyLeave(HRApplyLeaveUpsertRequest req, int companyId, int sessionId, int userId)
+        {
+            try
+            {
+                byte[]? attachment = string.IsNullOrEmpty(req.AttachmentBase64) ? null : Convert.FromBase64String(req.AttachmentBase64.Split(',').Last());
+
+                var p = new[] {
+                    new SqlParameter("@ApplyLeaveID", req.ApplyLeaveID),
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@StaffID", req.StaffID),
+                    new SqlParameter("@LeaveTypeID", req.LeaveTypeID),
+                    new SqlParameter("@FromDate", req.FromDate),
+                    new SqlParameter("@ToDate", req.ToDate),
+                    new SqlParameter("@Reason", (object?)req.Reason ?? DBNull.Value),
+                    new SqlParameter("@Status", req.Status),
+                    new SqlParameter("@Note", (object?)req.Note ?? DBNull.Value),
+                    new SqlParameter("@AttachmentDoc", (object?)attachment ?? DBNull.Value),
+                    new SqlParameter("@AttachmentDocType", (object?)req.AttachmentDocType ?? DBNull.Value),
+                    new SqlParameter("@AttachmentDocName", (object?)req.AttachmentDocName ?? DBNull.Value),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_HR_ApplyLeave_Upsert", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public (bool Success, string Message) DeleteApplyLeave(int id, int userId)
+        {
+            try
+            {
+                var p = new[] { new SqlParameter("@ApplyLeaveID", id), new SqlParameter("@UserID", userId) };
+                var dt = _db.ExecuteQuery("sp_HR_ApplyLeave_Delete", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        private static HRApplyLeaveViewModel MapApplyLeave(DataRow r) => new()
+        {
+            ApplyLeaveID = Convert.ToInt32(r["ApplyLeaveID"]),
+            CompanyID = Convert.ToInt32(r["CompanyID"]),
+            SessionID = Convert.ToInt32(r["SessionID"]),
+            StaffID = Convert.ToInt32(r["StaffID"]),
+            StaffName = r["StaffName"].ToString()!,
+            StaffCode = r["StaffCode"].ToString()!,
+            LeaveTypeID = Convert.ToInt32(r["LeaveTypeID"]),
+            LeaveTypeName = r["LeaveTypeName"].ToString()!,
+            ApplyDate = Convert.ToDateTime(r["ApplyDate"]),
+            FromDate = Convert.ToDateTime(r["FromDate"]),
+            ToDate = Convert.ToDateTime(r["ToDate"]),
+            Reason = r["Reason"] == DBNull.Value ? null : r["Reason"].ToString(),
+            Status = r["Status"].ToString()!,
+            ApprovedBy = r["ApprovedBy"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["ApprovedBy"]),
+            ApprovedByName = r["ApprovedByName"]?.ToString() ?? "-",
+            AttachmentDocType = r["AttachmentDocType"] == DBNull.Value ? null : r["AttachmentDocType"].ToString(),
+            AttachmentDocName = r["AttachmentDocName"] == DBNull.Value ? null : r["AttachmentDocName"].ToString(),
+            Note = r["Note"] == DBNull.Value ? null : r["Note"].ToString()
+        };
+
         // --- Mapping Helpers ---
         private static HRDesignationViewModel MapDesignation(DataRow r) => new()
         {

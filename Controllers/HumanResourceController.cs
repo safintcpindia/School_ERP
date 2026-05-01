@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Net.Services.Clients;
+using SchoolERP.Net.Services;
 using SchoolERP.Net.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,17 +16,23 @@ namespace SchoolERP.Net.Controllers
         private readonly IRoleClientService _roleClient;
         private readonly IUserTypeClientService _userTypeClient;
         private readonly ICompanyClientService _companyClient;
+        private readonly IHumanResourceService _hrService;
+        private readonly ISettingsClientService _settingsClient;
 
         public HumanResourceController(
             IHumanResourceClientService hrClient,
             IRoleClientService roleClient,
             IUserTypeClientService userTypeClient,
-            ICompanyClientService companyClient)
+            ICompanyClientService companyClient,
+            IHumanResourceService hrService,
+            ISettingsClientService settingsClient)
         {
             _hrClient = hrClient;
             _roleClient = roleClient;
             _userTypeClient = userTypeClient;
             _companyClient = companyClient;
+            _hrService = hrService;
+            _settingsClient = settingsClient;
         }
 
         /// <summary>
@@ -92,8 +99,12 @@ namespace SchoolERP.Net.Controllers
  
             var compRes = await _companyClient.GetAllAsync();
             model.Companies = compRes.Success ? compRes.Data : new List<MstCompanyViewModel>();
+
+            var fieldRes = await _settingsClient.GetAllFieldsAsync(isSystemField: true, belongsTo: "Staff");
+            model.SystemFields = fieldRes.Success ? fieldRes.Data : new List<FieldModel>();
  
             // Step 3: If we are editing an existing person (ID is provided), fetch their details.
+
             if (id.HasValue && id.Value > 0)
             {
                 var staffRes = await _hrClient.GetStaffByIDAsync(id.Value);
@@ -138,5 +149,55 @@ namespace SchoolERP.Net.Controllers
             // Step 4: Open the 'Staff Directory' page.
             return View(model);
         }
+
+        public async Task<IActionResult> StaffDetails(int id)
+        {
+            var res = await _hrClient.GetStaffByIDAsync(id);
+            if (!res.Success || res.Data == null)
+            {
+                return RedirectToAction("Staffs");
+            }
+
+            var fieldRes = await _settingsClient.GetAllFieldsAsync(isSystemField: true, belongsTo: "Staff");
+            res.Data.SystemFields = fieldRes.Success ? fieldRes.Data : new List<FieldModel>();
+
+            return View(res.Data);
+        }
+
+        public async Task<IActionResult> StaffAttendance()
+        {
+            var res = await _roleClient.GetAllRolesAsync();
+            var model = new HRStaffPageViewModel
+            {
+                Roles = res.Data ?? new List<MstRoleViewModel>()
+            };
+            return View(model);
+        }
+
+        public async Task<IActionResult> ApplyLeave()
+        {
+            var model = new HRApplyLeavePageViewModel();
+            
+            var leavesRes = await _hrClient.GetAllApplyLeaveAsync();
+            model.Leaves = leavesRes.Success ? leavesRes.Data : new List<HRApplyLeaveViewModel>();
+
+            var staffRes = await _hrClient.GetAllStaffAsync();
+            model.StaffList = staffRes.Success ? staffRes.Data : new List<HRStaffViewModel>();
+
+            var leaveTypesRes = await _hrClient.GetAllLeaveTypesAsync();
+            model.LeaveTypes = leaveTypesRes.Success ? leaveTypesRes.Data : new List<HRLeaveTypeViewModel>();
+
+            return View(model);
+        }
+
+
+        public IActionResult DownloadStaffDocument(int id, string type)
+        {
+            var (bytes, fileName, contentType) = _hrService.GetStaffDocument(id, type);
+            if (bytes == null || bytes.Length == 0) return NotFound();
+            return File(bytes, contentType, fileName);
+        }
+
+        
     }
 }

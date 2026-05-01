@@ -69,5 +69,24 @@ namespace SchoolERP.Net.Services.Clients
 
         public Task<ApiResponse<string>> GetNewStaffCodeAsync()
             => GetAsync<string>("api/HumanResourceApi/GetNewStaffCode");
+
+        public Task<ApiResponse<List<HRStaffAttendanceViewModel>>> GetStaffAttendanceAsync(DateTime date, int? roleId)
+            => GetAsync<List<HRStaffAttendanceViewModel>>($"api/HumanResourceApi/GetStaffAttendance?date={date:yyyy-MM-dd}&roleId={roleId}");
+
+        public Task<ApiResponse<dynamic>> SaveStaffAttendanceAsync(List<HRStaffAttendanceUpsertRequest> reqs)
+            => PostAsync<dynamic>("api/HumanResourceApi/SaveStaffAttendance", reqs);
+
+        // --- Apply Leave ---
+        public Task<ApiResponse<List<HRApplyLeaveViewModel>>> GetAllApplyLeaveAsync()
+            => GetAsync<List<HRApplyLeaveViewModel>>("api/HumanResourceApi/GetAllApplyLeave");
+
+        public Task<ApiResponse<HRApplyLeaveViewModel>> GetApplyLeaveByIDAsync(int id)
+            => GetAsync<HRApplyLeaveViewModel>($"api/HumanResourceApi/GetApplyLeaveByID/{id}");
+
+        public Task<ApiResponse<dynamic>> UpsertApplyLeaveAsync(HRApplyLeaveUpsertRequest req)
+            => PostAsync<dynamic>("api/HumanResourceApi/UpsertApplyLeave", req);
+
+        public Task<ApiResponse<dynamic>> DeleteApplyLeaveAsync(int id)
+            => PostAsync<dynamic>($"api/HumanResourceApi/DeleteApplyLeave/{id}", null!);
     }
 }

@@ -1,22 +1,38 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\svmim\\Downloads\\schoolerp_29042026\\",
+  "WorkspaceRootPath": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp_29042026\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp01052026\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp_29042026\\views\\user\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\user\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp01052026\\controllers\\humanresourcecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:controllers\\humanresourcecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp_29042026\\services\\humanresourceservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp01052026\\controllers\\api\\humanresourceapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:controllers\\api\\humanresourceapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp01052026\\views\\humanresource\\applyleave.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\humanresource\\applyleave.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp01052026\\services\\humanresourceservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:services\\humanresourceservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp_29042026\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp01052026\\views\\humanresource\\staffattendance.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\humanresource\\staffattendance.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp01052026\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\schoolerp01052026\\views\\humanresource\\staffdetails.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\humanresource\\staffdetails.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,53 +47,105 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "UserService.cs",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp_29042026\\Services\\UserService.cs",
-              "RelativeDocumentMoniker": "Services\\UserService.cs",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp_29042026\\Services\\UserService.cs",
-              "RelativeToolTip": "Services\\UserService.cs",
-              "ViewState": "AQIAADgAAAAAAAAAAAAowEMAAABLAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-30T08:45:38.449Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "HumanResourceService.cs",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp_29042026\\Services\\HumanResourceService.cs",
-              "RelativeDocumentMoniker": "Services\\HumanResourceService.cs",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp_29042026\\Services\\HumanResourceService.cs",
-              "RelativeToolTip": "Services\\HumanResourceService.cs",
-              "ViewState": "AQIAAPEBAAAAAAAAAAAwwPwBAAAQAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-30T08:45:38.463Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp_29042026\\Views\\User\\Index.cshtml",
-              "RelativeDocumentMoniker": "Views\\User\\Index.cshtml",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp_29042026\\Views\\User\\Index.cshtml",
-              "RelativeToolTip": "Views\\User\\Index.cshtml",
-              "ViewState": "AQIAACsBAAAAAAAAAAAwwDUBAAAgAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-30T08:48:25.889Z",
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAABQAAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-01T10:55:07.853Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp_29042026\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp_29042026\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AQIAALIDAAAAAAAAAAAAAOIDAAANAAAA",
+              "Title": "ApplyLeave.cshtml",
+              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Views\\HumanResource\\ApplyLeave.cshtml",
+              "RelativeDocumentMoniker": "Views\\HumanResource\\ApplyLeave.cshtml",
+              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Views\\HumanResource\\ApplyLeave.cshtml",
+              "RelativeToolTip": "Views\\HumanResource\\ApplyLeave.cshtml",
+              "ViewState": "AQIAAIkAAAAAAAAAAAAAABwBAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-30T08:44:24.314Z",
+              "WhenOpened": "2026-05-01T10:00:07.701Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "StaffAttendance.cshtml",
+              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Views\\HumanResource\\StaffAttendance.cshtml",
+              "RelativeDocumentMoniker": "Views\\HumanResource\\StaffAttendance.cshtml",
+              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Views\\HumanResource\\StaffAttendance.cshtml",
+              "RelativeToolTip": "Views\\HumanResource\\StaffAttendance.cshtml",
+              "ViewState": "AQIAAIYAAAAAAAAAAAAAAJYAAABSAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-01T09:12:55.92Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "HumanResourceService.cs",
+              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Services\\HumanResourceService.cs",
+              "RelativeDocumentMoniker": "Services\\HumanResourceService.cs",
+              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Services\\HumanResourceService.cs",
+              "RelativeToolTip": "Services\\HumanResourceService.cs",
+              "ViewState": "AQIAAFgCAAAAAAAAAAAWwGECAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-01T05:55:03.136Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "HumanResourceApiController.cs",
+              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Controllers\\Api\\HumanResourceApiController.cs",
+              "RelativeDocumentMoniker": "Controllers\\Api\\HumanResourceApiController.cs",
+              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Controllers\\Api\\HumanResourceApiController.cs",
+              "RelativeToolTip": "Controllers\\Api\\HumanResourceApiController.cs",
+              "ViewState": "AQIAANcAAAAAAAAAAAAWwOMAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-01T05:55:03.156Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "Services\\AuthService.cs",
+              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Services\\AuthService.cs",
+              "RelativeToolTip": "Services\\AuthService.cs",
+              "ViewState": "AQIAADwAAAAAAAAAAAAewEIAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-01T05:55:03.193Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "StaffDetails.cshtml",
+              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Views\\HumanResource\\StaffDetails.cshtml",
+              "RelativeDocumentMoniker": "Views\\HumanResource\\StaffDetails.cshtml",
+              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Views\\HumanResource\\StaffDetails.cshtml",
+              "RelativeToolTip": "Views\\HumanResource\\StaffDetails.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-30T16:22:50.271Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HumanResourceController.cs",
+              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Controllers\\HumanResourceController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HumanResourceController.cs",
+              "ToolTip": "C:\\Users\\svmim\\Downloads\\schoolerp01052026\\Controllers\\HumanResourceController.cs",
+              "RelativeToolTip": "Controllers\\HumanResourceController.cs",
+              "ViewState": "AQIAAK0AAAAAAAAAAAAAALAAAAAzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-30T15:32:56.133Z",
               "EditorCaption": ""
             }
           ]

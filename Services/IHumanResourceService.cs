@@ -115,5 +115,44 @@ namespace SchoolERP.Net.Services
         /// Generates a unique code for a new staff member.
         /// </summary>
         string GetNewStaffCode(int companyId, int sessionId);
+
+        /// <summary>
+        /// Retrieves the binary content and metadata of a specific staff document.
+        /// </summary>
+        (byte[] Bytes, string FileName, string ContentType) GetStaffDocument(int staffId, string docType);
+
+        // --- Attendance ---
+
+        /// <summary>
+        /// Retrieves staff members and their attendance status for a specific date and optional role.
+        /// </summary>
+        List<HRStaffAttendanceViewModel> GetStaffAttendance(int companyId, int sessionId, DateTime date, int? roleId);
+
+        /// <summary>
+        /// Saves or updates an attendance record for a staff member.
+        /// </summary>
+        (bool Success, string Message) SaveStaffAttendance(HRStaffAttendanceUpsertRequest req, int companyId, int sessionId, int userId);
+
+        // --- Apply Leave ---
+
+        /// <summary>
+        /// Retrieves all leave applications for the current school and session.
+        /// </summary>
+        List<HRApplyLeaveViewModel> GetAllApplyLeave(int companyId, int sessionId);
+
+        /// <summary>
+        /// Finds and returns the details of a specific leave application using its unique ID.
+        /// </summary>
+        HRApplyLeaveViewModel? GetApplyLeaveByID(int id);
+
+        /// <summary>
+        /// Submits a new leave application or updates an existing one.
+        /// </summary>
+        (bool Success, string Message) UpsertApplyLeave(HRApplyLeaveUpsertRequest req, int companyId, int sessionId, int userId);
+
+        /// <summary>
+        /// Removes a leave application from the system.
+        /// </summary>
+        (bool Success, string Message) DeleteApplyLeave(int id, int userId);
     }
 }

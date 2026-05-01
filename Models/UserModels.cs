@@ -18,6 +18,7 @@ namespace SchoolERP.Net.Models
         public int UserID { get; set; }
         public string Username { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
+        public string UserTypeName { get; set; } = string.Empty;
         public int DefaultRoleID { get; set; }
         public string DefaultRoleName { get; set; } = string.Empty;
         public int UserTypeID { get; set; }

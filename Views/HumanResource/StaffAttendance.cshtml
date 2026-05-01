@@ -1,0 +1,282 @@
+@model SchoolERP.Net.Models.HRStaffPageViewModel
+@{
+    ViewData["Title"] = "Staff Attendance";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+        <h6 class="fw-bold mb-0">Staff Attendance</h6>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-1">
+        <a href="javascript:void(0);" class="btn btn-success d-inline-flex align-items-center" onclick="saveAttendance()">
+            <i class="ti ti-cloud me-1"></i>Save Attendance
+        </a>
+    </div>
+</div>
+<!-- End Page Header -->
+
+<!-- start row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-tbl-outer mb-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <input type="text" class="form-control w-25 me-3" id="txtSearch" placeholder="Search..." onkeyup="filterTable()" />
+                    <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
+                        <div class="dropdown">
+                            <a href="#" class="btn btn-white border btn-lg" data-bs-toggle="dropdown">
+                                <i class="ti ti-filter text-gray-5 me-1"></i>Filters
+                            </a>
+                            <div class="dropdown-menu dropdown-lg dropdown-menu-end filter-dropdown p-0" id="filter-dropdown">
+                                <div class="d-flex align-items-center justify-content-between border-bottom filter-header py-2">
+                                    <h6 class="mb-0 fw-bold">Select Criteria</h6>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <button type="button" class="btn text-primary fs-6" onclick="loadStaff()">Filter</button>
+                                    </div>
+                                </div>
+                                <form onsubmit="return false;">
+                                    <div class="filter-body pb-0">
+                                        <div class="mb-3">
+                                            <label class="form-label mb-1">Role<span class="text-danger">*</span></label>
+                                            <select class="form-select form-control select2" id="ddlRole">
+                                                <option value="">Select Role</option>
+                                                @foreach (var role in Model.Roles)
+                                                {
+                                                    <option value="@role.RoleID">@role.RoleName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                       
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card shadow-tbl">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center gap-3">
+                    <div>
+                        <label for="" class="form-label">Attendance Date</label>
+                        <input type="date" class="form-control" id="mainDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" onchange="syncDate(this, 'filterDate')">
+                    </div>
+                    <div>
+                        <label for="" class="form-label">Set attendance for all Staff as</label>
+                        <div>
+                            <input type="radio" class="btn-check" name="options-base" id="option5" onchange="setAllAttendance('P')">
+                            <label class="btn" for="option5">Present</label>
+
+                            <input type="radio" class="btn-check" name="options-base" id="option6" onchange="setAllAttendance('L')">
+                            <label class="btn" for="option6">Late</label>
+
+                            <input type="radio" class="btn-check" name="options-base" id="option7" onchange="setAllAttendance('A')">
+                            <label class="btn" for="option7">Absent</label>
+
+                            <input type="radio" class="btn-check" name="options-base" id="option8" onchange="setAllAttendance('HD')">
+                            <label class="btn" for="option8">Half Day</label>
+
+                            <input type="radio" class="btn-check" name="options-base" id="option9" onchange="setAllAttendance('H')">
+                            <label class="btn" for="option9">Holiday</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table mb-0" id="tblAttendance">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>
+                                    <div style="white-space: nowrap;">Staff ID</div>
+                                </th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Attendance</th>
+                                <th>Date</th>
+                                <th>Source</th>
+                                <th class="text-end">Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceBody">
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">Select criteria and click Filter to load staff.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- end card-body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+<!-- end row -->
+
+@section Scripts {
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({ width: '100%' });
+
+        // Prevent dropdown from closing when clicking inside the filter body
+        $('#filter-dropdown').on('click', function (e) {
+            e.stopPropagation();
+        });
+    });
+
+    function syncDate(src, targetId) {
+        $(`#${targetId}`).val($(src).val());
+    }
+
+    async function loadStaff() {
+        const date = $('#mainDate').val();
+        const roleId = $('#ddlRole').val();
+
+        if (!date) {
+            showToast("Please select a date", "danger");
+            return;
+        }
+
+        $('#mainDate').val(date);
+        $('#attendanceBody').html(`<tr><td colspan="8" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary"></div> Loading...</td></tr>`);
+
+        try {
+            const response = await fetch(`/api/HumanResourceApi/GetStaffAttendance?date=${date}&roleId=${roleId || ''}`);
+            const res = await response.json();
+
+            if (res.success) {
+                renderTable(res.data);
+            } else {
+                showToast(res.message || "Failed to load staff", "danger");
+            }
+        } catch (error) {
+            console.error(error);
+            showToast("An error occurred", "danger");
+        }
+    }
+
+    function renderTable(data) {
+        if (!data || data.length === 0) {
+            $('#attendanceBody').html(`<tr><td colspan="8" class="text-center py-4">No staff members found.</td></tr>`);
+            return;
+        }
+
+        let html = '';
+        data.forEach((item, index) => {
+            const val = item.staffAttendance;
+            html += `
+                <tr data-staff-id="${item.staffID}">
+                    <td>${index + 1}</td>
+                    <td>${item.staffCode}</td>
+                    <td><div style="white-space: nowrap;">${item.staffName}</div></td>
+                    <td>${item.roleName}</td>
+                    <td>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="pst_${item.staffID}" class="form-check-input check-p" name="atd_${item.staffID}" value="P" ${val === 'P' || !val ? 'checked' : ''}>
+                                <label for="pst_${item.staffID}" class="form-check-label">Present</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="late_${item.staffID}" class="form-check-input check-l" name="atd_${item.staffID}" value="L" ${val === 'L' ? 'checked' : ''}>
+                                <label for="late_${item.staffID}" class="form-check-label">Late</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="abs_${item.staffID}" class="form-check-input check-a" name="atd_${item.staffID}" value="A" ${val === 'A' ? 'checked' : ''}>
+                                <label for="abs_${item.staffID}" class="form-check-label">Absent</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="hday_${item.staffID}" class="form-check-input check-hd" name="atd_${item.staffID}" value="HD" ${val === 'HD' ? 'checked' : ''}>
+                                <label for="hday_${item.staffID}" class="form-check-label">Half Day</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="holiday_${item.staffID}" class="form-check-input check-h" name="atd_${item.staffID}" value="H" ${val === 'H' ? 'checked' : ''}>
+                                <label for="holiday_${item.staffID}" class="form-check-label">Holiday</label>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString() : '-'}</td>
+                    <td>${item.staffAttendanceSource || 'N/A'}</td>
+                    <td class="text-end">
+                        <input type="text" class="form-control txt-note" value="${item.staffAttendanceNote || ''}">
+                    </td>
+                </tr>
+            `;
+        });
+        $('#attendanceBody').html(html);
+    }
+
+    function setAllAttendance(status) {
+        $(`.check-${status.toLowerCase()}`).prop('checked', true);
+    }
+
+    function filterTable() {
+        const val = $('#txtSearch').val().toLowerCase();
+        $('#attendanceBody tr').filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1);
+        });
+    }
+
+    async function saveAttendance() {
+        const date = $('#mainDate').val();
+        if (!date) {
+            showToast("Please select a date", "danger");
+            return;
+        }
+
+        const data = [];
+        $('#attendanceBody tr[data-staff-id]').each(function() {
+            const staffId = $(this).data('staff-id');
+            const status = $(this).find(`input[name="atd_${staffId}"]:checked`).val();
+            const note = $(this).find('.txt-note').val();
+
+            data.push({
+                staffID: staffId,
+                attendanceDate: date,
+                attendance: status,
+                source: 'Manual',
+                note: note
+            });
+        });
+
+        if (data.length === 0) {
+            showToast("No staff members to save", "warning");
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/HumanResourceApi/SaveStaffAttendance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const res = await response.json();
+
+            if (res.success) {
+                showToast(res.message, "success");
+            } else {
+                showToast(res.message, "danger");
+            }
+        } catch (error) {
+            console.error(error);
+            showToast("An error occurred", "danger");
+        }
+    }
+
+    function showToast(msg, type = 'success') {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = `<div class="toast align-items-center text-bg-${type} border-0 show position-fixed bottom-0 end-0 m-3" role="alert" style="z-index:9999">
+            <div class="d-flex"><div class="toast-body">${msg}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div></div>`;
+        document.body.appendChild(wrapper);
+        setTimeout(() => wrapper.remove(), 4000);
+    }
+</script>
+}

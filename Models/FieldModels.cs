@@ -72,4 +72,10 @@ namespace SchoolERP.Net.Models
         public int CompanyID { get; set; }
         public int SessionID { get; set; }
     }
+
+    public class FieldToggleStatusRequest
+    {
+        public int Id { get; set; }
+        public bool IsActive { get; set; }
+    }
 }

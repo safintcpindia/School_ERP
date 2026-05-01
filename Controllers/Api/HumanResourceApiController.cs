@@ -222,5 +222,71 @@ namespace SchoolERP.Net.Controllers.Api
             var data = _hrService.GetNewStaffCode(GetCompanyId(), GetSessionId());
             return Ok(new { success = true, data });
         }
+        
+        [HttpGet("GetStaffAttendance")]
+        public IActionResult GetStaffAttendance(DateTime date, int? roleId)
+        {
+            var data = _hrService.GetStaffAttendance(GetCompanyId(), GetSessionId(), date, roleId);
+            return Ok(new { success = true, data });
+        }
+
+        [HttpPost("SaveStaffAttendance")]
+        public IActionResult SaveStaffAttendance([FromBody] List<HRStaffAttendanceUpsertRequest> reqs)
+        {
+            if (!_menuPerm.Has(User, StaffMenuPath, "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to mark attendance." });
+
+            var successCount = 0;
+            var companyId = GetCompanyId();
+            var sessionId = GetSessionId();
+            var userId = GetUserId();
+
+            foreach (var req in reqs)
+            {
+                var res = _hrService.SaveStaffAttendance(req, companyId, sessionId, userId);
+                if (res.Success) successCount++;
+            }
+
+            return Ok(new { success = true, message = $"Successfully saved attendance for {successCount} staff members." });
+        }
+
+        // --- Apply Leave ---
+
+        [HttpGet("GetAllApplyLeave")]
+        public IActionResult GetAllApplyLeave()
+        {
+            var data = _hrService.GetAllApplyLeave(GetCompanyId(), GetSessionId());
+            return Ok(new { success = true, data });
+        }
+
+        [HttpGet("GetApplyLeaveByID/{id}")]
+        public IActionResult GetApplyLeaveByID(int id)
+        {
+            var data = _hrService.GetApplyLeaveByID(id);
+            if (data == null) return Ok(new { success = false, message = "Record not found" });
+            return Ok(new { success = true, data });
+        }
+
+        [HttpPost("UpsertApplyLeave")]
+        public IActionResult UpsertApplyLeave([FromBody] HRApplyLeaveUpsertRequest req)
+        {
+            // Note: In a real app, you might want to check if the staff member is applying for themselves
+            // or if an admin is applying for someone. For now, we'll just check a general permission.
+            if (!_menuPerm.Has(User, "/HumanResource/ApplyLeave", "Add") && !_menuPerm.Has(User, "/HumanResource/ApplyLeave", "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to manage leave applications." });
+
+            var res = _hrService.UpsertApplyLeave(req, GetCompanyId(), GetSessionId(), GetUserId());
+            return Ok(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpPost("DeleteApplyLeave/{id}")]
+        public IActionResult DeleteApplyLeave(int id)
+        {
+            if (!_menuPerm.Has(User, "/HumanResource/ApplyLeave", "Delete"))
+                return Ok(new { success = false, message = "You do not have permission to delete leave applications." });
+
+            var res = _hrService.DeleteApplyLeave(id, GetUserId());
+            return Ok(new { success = res.Success, message = res.Message });
+        }
     }
 }

@@ -199,8 +199,7 @@
                         <td><span class="fw-bold">${s.staffCode}</span></td>
                         <td>
                             <div class="d-flex align-items-center">
-
-                                <span class="text-dark fw-semibold">${s.firstName} ${s.lastName || ''}</span>
+                                <a href="/HumanResource/StaffDetails/${s.staffID}" class="text-dark fw-semibold">${s.firstName} ${s.lastName || ''}</a>
                             </div>
                         </td>
                         <td><span class="">${roleBadges}</span></td>
@@ -218,7 +217,9 @@
                                      <input type="radio" name="staffSelectCard" id="radCard_${s.staffID}" onclick="event.stopPropagation(); selectStaff(${s.staffID})">
                                 </div>
 
-                                        <h6 class="mb-0 text-truncate">${s.firstName} ${s.lastName || ''}</h6>
+                                <a href="/HumanResource/StaffDetails/${s.staffID}" class="text-dark fw-semibold">
+                                    <h6 class="mb-0 text-truncate">${s.firstName} ${s.lastName || ''}</h6>
+                                </a>
                                 <small class="text-muted d-block mb-2 text-truncate">${s.designationName || 'No Designation'}</small>
                                 <div class="d-flex flex-column gap-1 text-start fs-13 mt-2 border-top pt-2">
                                     <span class="text-truncate"><i class="ti ti-id me-1 text-primary"></i>${s.staffCode}</span>

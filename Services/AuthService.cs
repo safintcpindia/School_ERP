@@ -73,7 +73,8 @@ namespace SchoolERP.Net.Services
                     DefaultRoleName = reader["DefaultRoleName"]?.ToString() ?? "",
                     UserTypeID    = reader["UserTypeID"] != DBNull.Value ? Convert.ToInt32(reader["UserTypeID"]) : 0,
                     DashboardID   = reader["DashboardID"] != DBNull.Value ? Convert.ToInt32(reader["DashboardID"]) : null,
-                    
+                    UserTypeName = reader["UserTypeName"]?.ToString() ?? "",
+
 
                 };
 

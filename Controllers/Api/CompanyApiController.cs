@@ -159,7 +159,7 @@ namespace SchoolERP.Net.Controllers.Api
                 .Replace("-", string.Empty)
                 .Replace("_", string.Empty)
                 .Trim();
-            return string.Equals(normalized, "SuperAdmin", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(normalized, "superadmin", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

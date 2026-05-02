@@ -307,36 +307,35 @@
                                 </div>
                             }
                             
-                            @if (IsFieldActive("Leaves"))
-                            {
-                                <div class="card mb-3 border">
-                                    <div class="card-header bg-light">
-                                        <h5 class="card-title mb-0">Leaves</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Casual Leave</label>
-                                                    <input type="number" class="form-control" id="txtCasualLeave" value="@(Model.EditStaff?.CasualLeave ?? 0)" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Sick Leave</label>
-                                                    <input type="number" class="form-control" id="txtSickLeave" value="@(Model.EditStaff?.SickLeave ?? 0)" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Imp work</label>
-                                                    <input type="number" class="form-control" id="txtImpLeave" value="@(Model.EditStaff?.ImpWorkLeave ?? 0)" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
+                             @if (IsFieldActive("Leaves"))
+                             {
+                                 <div class="card mb-3 border">
+                                     <div class="card-header bg-light">
+                                         <h5 class="card-title mb-0">Leaves Quota</h5>
+                                     </div>
+                                     <div class="card-body">
+                                         <div class="row">
+                                             @foreach (var lt in Model.LeaveTypes)
+                                             {
+                                                 var currentQuota = Model.EditStaff?.LeaveQuotas?.FirstOrDefault(q => q.LeaveTypeID == lt.LeaveTypeID)?.MaxDays ?? 0;
+                                                 <div class="col-md-3">
+                                                     <div class="mb-3">
+                                                         <label class="form-label">@lt.LeaveTypeName</label>
+                                                         <input type="number" class="form-control leave-quota-input" 
+                                                                data-typeid="@lt.LeaveTypeID" 
+                                                                value="@currentQuota" 
+                                                                step="0.5" min="0" />
+                                                     </div>
+                                                 </div>
+                                             }
+                                             @if (!Model.LeaveTypes.Any())
+                                             {
+                                                 <div class="col-12 text-muted small italic">No leave types defined in system.</div>
+                                             }
+                                         </div>
+                                     </div>
+                                 </div>
+                             }
 
                             @if (IsFieldActive("BankDetails"))
                             {
@@ -586,9 +585,12 @@
             workLocation: getVal('txtWorkLocation'),
             
             // Leaves
-            casualLeave: getInt('txtCasualLeave'),
-            sickLeave: getInt('txtSickLeave'),
-            impWorkLeave: getInt('txtImpLeave'),
+            leaveQuotas: $('.leave-quota-input').map(function() {
+                return {
+                    leaveTypeID: parseInt($(this).data('typeid')),
+                    maxDays: parseFloat($(this).val()) || 0
+                };
+            }).get(),
             
             // Bank
             accountTitle: getVal('txtAccTitle'),

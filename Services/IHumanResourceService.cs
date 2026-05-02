@@ -154,5 +154,47 @@ namespace SchoolERP.Net.Services
         /// Removes a leave application from the system.
         /// </summary>
         (bool Success, string Message) DeleteApplyLeave(int id, int userId);
+
+        /// <summary>
+        /// Updates the status of a leave application (Approve/Disapprove) and records admin remarks.
+        /// </summary>
+        (bool Success, string Message) UpdateApplyLeaveStatus(HRApplyLeaveStatusUpdateRequest req, int userId);
+
+        /// <summary>
+        /// Retrieves the leave quota balance for a specific staff member and leave type.
+        /// </summary>
+        dynamic GetLeaveBalance(int staffId, int leaveTypeId, int companyId, int sessionId);
+
+        /// <summary>
+        /// Retrieves all leave type balances for a specific staff member.
+        /// </summary>
+        List<dynamic> GetStaffAllLeaveBalances(int staffId, int companyId, int sessionId);
+        /// <summary>
+        /// Retrieves the binary content and metadata of a specific leave application document.
+        /// </summary>
+        (byte[] Bytes, string FileName, string ContentType) GetApplyLeaveDocument(int id);
+        
+        // --- Payroll ---
+
+        /// <summary>
+        /// Retrieves payroll records for a specific month and year, optionally filtered by role.
+        /// </summary>
+        List<HRPayrollViewModel> GetAllPayroll(int companyId, int sessionId, int month, int year, int? roleId);
+
+        /// <summary>
+        /// Generates a payroll record for a staff member for a specific month/year.
+        /// </summary>
+        (bool Success, string Message) GeneratePayroll(HRPayrollGenerateRequest req, int companyId, int sessionId, int userId);
+
+        /// <summary>
+        /// Fetches staff details and attendance summary for payroll generation.
+        /// </summary>
+        HRPayrollGenerationViewModel GetPayrollGenerationData(int staffId, int month, int year, int companyId, int sessionId);
+
+        /// <summary>
+        /// Saves a detailed payroll record with individual earnings and deductions.
+        /// </summary>
+        (bool Success, string Message) SaveDetailedPayroll(HRPayrollSaveRequest req, int companyId, int sessionId, int userId);
+        (bool Success, string Message) MarkAsPaid(HRPayrollPaymentRequest req, int userId);
     }
 }

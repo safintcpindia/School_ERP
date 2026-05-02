@@ -158,7 +158,21 @@ namespace SchoolERP.Net.Models
         public DateTime CreatedOn { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
+        public List<HRStaffLeaveQuotaViewModel> LeaveQuotas { get; set; } = new();
         public List<FieldModel> SystemFields { get; set; } = new(); // NEW: For dynamic visibility
+    }
+
+    public class HRStaffLeaveQuotaRequest
+    {
+        public int LeaveTypeID { get; set; }
+        public decimal MaxDays { get; set; }
+    }
+
+    public class HRStaffLeaveQuotaViewModel
+    {
+        public int LeaveTypeID { get; set; }
+        public string LeaveTypeName { get; set; } = string.Empty;
+        public decimal MaxDays { get; set; }
     }
 
     public class HRStaffUpsertRequest
@@ -199,9 +213,7 @@ namespace SchoolERP.Net.Models
         public string WorkLocation { get; set; } = string.Empty;
 
         // Leaves
-        public int CasualLeave { get; set; }
-        public int SickLeave { get; set; }
-        public int ImpWorkLeave { get; set; }
+        public List<HRStaffLeaveQuotaRequest> LeaveQuotas { get; set; } = new();
 
         // Bank
         public string AccountTitle { get; set; } = string.Empty;
@@ -252,6 +264,7 @@ namespace SchoolERP.Net.Models
         public List<MstRoleViewModel> Roles { get; set; } = new();
         public List<MstUserTypeViewModel> UserTypes { get; set; } = new();
         public List<MstCompanyViewModel> Companies { get; set; } = new();
+        public List<HRLeaveTypeViewModel> LeaveTypes { get; set; } = new();
         public List<FieldModel> SystemFields { get; set; } = new(); // NEW: For dynamic visibility
         public HRStaffViewModel? EditStaff { get; set; }
     }
@@ -315,10 +328,115 @@ namespace SchoolERP.Net.Models
         public string? AttachmentDocName { get; set; }
     }
 
+    public class HRApplyLeaveStatusUpdateRequest
+    {
+        public int ApplyLeaveID { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public string? Note { get; set; }
+    }
+
     public class HRApplyLeavePageViewModel
     {
         public List<HRApplyLeaveViewModel> Leaves { get; set; } = new();
         public List<HRStaffViewModel> StaffList { get; set; } = new();
         public List<HRLeaveTypeViewModel> LeaveTypes { get; set; } = new();
+    }
+
+    // --- Payroll Models ---
+
+    public class HRPayrollViewModel
+    {
+        public int PayrollID { get; set; }
+        public int StaffID { get; set; }
+        public string StaffName { get; set; } = string.Empty;
+        public string StaffCode { get; set; } = string.Empty;
+        public string RoleName { get; set; } = string.Empty;
+        public string DepartmentName { get; set; } = string.Empty;
+        public string DesignationName { get; set; } = string.Empty;
+        public string MobileNo { get; set; } = string.Empty;
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public decimal BasicSalary { get; set; }
+        public decimal TotalEarnings { get; set; }
+        public decimal TotalDeductions { get; set; }
+        public decimal NetSalary { get; set; }
+        public decimal AttendanceDays { get; set; }
+        public string Status { get; set; } = "Generated";
+        public string? PaymentMode { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public string? Note { get; set; }
+    }
+
+    public class HRPayrollGenerateRequest
+    {
+        public int StaffID { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+    }
+
+    public class HRPayrollSearchRequest
+    {
+        public int? RoleID { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+    }
+
+    public class HRPayrollPageViewModel
+    {
+        public List<HRPayrollViewModel> PayrollList { get; set; } = new();
+        public List<HRStaffViewModel> StaffList { get; set; } = new();
+        public List<MstRoleViewModel> Roles { get; set; } = new();
+        public int SelectedMonth { get; set; }
+        public int SelectedYear { get; set; }
+    }
+
+    public class HRPayrollGenerationViewModel
+    {
+        public HRStaffViewModel Staff { get; set; } = new();
+        public List<HRAttendanceSummary> AttendanceHistory { get; set; } = new();
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public decimal BasicSalary { get; set; }
+    }
+
+    public class HRAttendanceSummary
+    {
+        public int Month { get; set; }
+        public string MonthName { get; set; } = string.Empty;
+        public int Year { get; set; }
+        public int Present { get; set; }
+        public int Late { get; set; }
+        public int Absent { get; set; }
+        public int HalfDay { get; set; }
+        public int Holiday { get; set; }
+        public int Leave { get; set; }
+    }
+
+    public class HRPayrollDetailViewModel
+    {
+        public int ComponentID { get; set; }
+        public string ComponentName { get; set; } = string.Empty;
+        public string ComponentType { get; set; } = "Earning"; // Earning or Deduction
+        public decimal Amount { get; set; }
+    }
+
+    public class HRPayrollSaveRequest
+    {
+        public int StaffID { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public decimal BasicSalary { get; set; }
+        public decimal TotalEarnings { get; set; }
+        public decimal TotalDeductions { get; set; }
+        public decimal NetSalary { get; set; }
+        public List<HRPayrollDetailViewModel> Details { get; set; } = new List<HRPayrollDetailViewModel>();
+    }
+
+    public class HRPayrollPaymentRequest
+    {
+        public int PayrollID { get; set; }
+        public string PaymentMode { get; set; } = "Cash";
+        public DateTime PaymentDate { get; set; } = DateTime.Now;
+        public string? Note { get; set; }
     }
 }

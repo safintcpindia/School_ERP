@@ -252,14 +252,119 @@ namespace SchoolERP.Net.Services
             try
             {
                 var p = new[] { 
-                    new SqlParameter("@LeaveTypeID", id), 
-                    new SqlParameter("@UserID", userId) 
+                    new SqlParameter("@LeaveTypeID", id),
+                    new SqlParameter("@UserID", userId)
                 };
                 var dt = _db.ExecuteQuery("sp_Mst_LeaveType_Delete", p);
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
             }
             catch (Exception ex) { return (false, ex.Message); }
         }
+
+        public dynamic GetLeaveBalance(int staffId, int leaveTypeId, int companyId, int sessionId)
+        {
+            try
+            {
+                // Fallback: If companyId/sessionId is 0, try to get them from the staff record
+                if (companyId <= 0 || sessionId <= 0)
+                {
+                    var staff = GetStaffByID(staffId);
+                    if (staff != null)
+                    {
+                        if (companyId <= 0) companyId = staff.CompanyID;
+                        if (sessionId <= 0) sessionId = staff.SessionID;
+                    }
+                }
+
+                var p = new[] {
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@StaffID", staffId),
+                    new SqlParameter("@LeaveTypeID", leaveTypeId)
+                };
+                var dt = _db.ExecuteQuery("sp_HR_Leave_GetBalance", p);
+                if (dt.Rows.Count > 0)
+                {
+                    return new
+                    {
+                        TotalQuota = Convert.ToDecimal(dt.Rows[0]["TotalQuota"]),
+                        TotalUsed = Convert.ToDecimal(dt.Rows[0]["TotalUsed"]),
+                        Balance = Convert.ToDecimal(dt.Rows[0]["Balance"]),
+                        Message = dt.Rows[0]["Message"].ToString()
+                    };
+                }
+            }
+            catch { }
+            return new { TotalQuota = 0, TotalUsed = 0, Balance = 0, Message = "Unable to fetch balance" };
+        }
+
+        public List<dynamic> GetStaffAllLeaveBalances(int staffId, int companyId, int sessionId)
+        {
+            var result = new List<dynamic>();
+            try
+            {
+                var p = new[] { new SqlParameter("@StaffID", staffId) };
+                var dt = _db.ExecuteQuery("sp_HR_Leave_GetStaffBalances", p);
+                if (dt.Rows.Count > 0)
+                {
+                    foreach (DataRow r in dt.Rows)
+                    {
+                        result.Add(new
+                        {
+                            leaveTypeID = Convert.ToInt32(r["LeaveTypeID"]),
+                            leaveTypeName = r["LeaveTypeName"].ToString(),
+                            totalQuota = Convert.ToDecimal(r["TotalQuota"]),
+                            totalUsed = Convert.ToDecimal(r["TotalUsed"]),
+                            balance = Convert.ToDecimal(r["Balance"])
+                        });
+                    }
+                }
+                else
+                {
+                    // Fallback logic
+                    if (companyId <= 0 || sessionId <= 0)
+                    {
+                        var staff = GetStaffByID(staffId);
+                        if (staff != null)
+                        {
+                            companyId = staff.CompanyID;
+                            sessionId = staff.SessionID;
+                        }
+                    }
+
+                    var leaveTypes = GetAllLeaveTypes(companyId, sessionId);
+                    foreach (var lt in leaveTypes)
+                    {
+                        var bal = GetLeaveBalance(staffId, lt.LeaveTypeID, companyId, sessionId);
+                        
+                        // If bal is 0, try to get just the quota as a last resort
+                        decimal q = (decimal)bal.TotalQuota;
+                        if (q == 0) q = GetStaffLeaveQuota(companyId, sessionId, staffId, lt.LeaveTypeID);
+
+                        result.Add(new
+                        {
+                            leaveTypeID = lt.LeaveTypeID,
+                            leaveTypeName = lt.LeaveTypeName,
+                            totalQuota = q,
+                            totalUsed = (decimal)bal.TotalUsed,
+                            balance = q - (decimal)bal.TotalUsed
+                        });
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    var leaveTypes = GetAllLeaveTypes(companyId, sessionId);
+                    foreach (var lt in leaveTypes)
+                        result.Add(new { leaveTypeID = lt.LeaveTypeID, leaveTypeName = lt.LeaveTypeName, totalQuota = 0m, totalUsed = 0m, balance = 0m });
+                }
+                catch { }
+            }
+            return result;
+        }
+
 
         /// <summary>
         /// Updates whether a leave type is currently active or inactive.
@@ -365,6 +470,20 @@ namespace SchoolERP.Net.Services
                 }
             }
 
+            // Leave Quotas (Fourth Table)
+            if (ds.Tables.Count > 3)
+            {
+                foreach (DataRow r in ds.Tables[3].Rows)
+                {
+                    staff.LeaveQuotas.Add(new HRStaffLeaveQuotaViewModel
+                    {
+                        LeaveTypeID = Convert.ToInt32(r["LeaveTypeID"]),
+                        LeaveTypeName = r["LeaveTypeName"].ToString()!,
+                        MaxDays = Convert.ToDecimal(r["MaxDays"])
+                    });
+                }
+            }
+
             // Fallback: Ensure the primary CompanyID is also in the list
             if (staff.CompanyID > 0 && !staff.CompanyIDs.Contains(staff.CompanyID))
                 staff.CompanyIDs.Add(staff.CompanyID);
@@ -374,10 +493,8 @@ namespace SchoolERP.Net.Services
             {
                 try
                 {
-                    var userParams = new[] { new SqlParameter("@UserID", staff.UserID.Value) };
-                    
                     // Sync Roles
-                    var userRolesDt = _db.ExecuteQuery("sp_UserRoles_GetByUser", userParams);
+                    var userRolesDt = _db.ExecuteQuery("sp_UserRoles_GetByUser", new[] { new SqlParameter("@UserID", staff.UserID.Value) });
                     foreach (DataRow r in userRolesDt.Rows)
                     {
                         int rId = Convert.ToInt32(r["RoleID"]);
@@ -386,7 +503,7 @@ namespace SchoolERP.Net.Services
                     }
 
                     // Sync Companies
-                    var userCompDt = _db.ExecuteQuery("sp_UserCompanies_GetByUser", userParams);
+                    var userCompDt = _db.ExecuteQuery("sp_UserCompanies_GetByUser", new[] { new SqlParameter("@UserID", staff.UserID.Value) });
                     foreach (DataRow r in userCompDt.Rows)
                     {
                         int cId = r.Table.Columns.Contains("CompanyID") ? Convert.ToInt32(r["CompanyID"]) : 
@@ -402,11 +519,29 @@ namespace SchoolERP.Net.Services
                         if (roleMap.TryGetValue(rid, out var rName) && !staff.DisplayRoles.Contains(rName))
                             staff.DisplayRoles.Add(rName);
                     }
+
+                    // Dynamic Leave Quotas are already populated from Table 3 in the DataSet above
                 }
                 catch (Exception) { /* Handle or log if needed */ }
             }
 
             return staff;
+        }
+
+        private decimal GetStaffLeaveQuota(int companyId, int sessionId, int staffId, int leaveTypeId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@StaffID", staffId),
+                    new SqlParameter("@LeaveTypeID", leaveTypeId)
+                };
+                var dt = _db.ExecuteQuery("sp_HR_StaffLeaveQuota_Get", p);
+                if (dt.Rows.Count > 0)
+                    return Convert.ToDecimal(dt.Rows[0]["MaxDays"]);
+            }
+            catch { }
+            return 0;
         }
 
         /// <summary>
@@ -416,6 +551,17 @@ namespace SchoolERP.Net.Services
         {
             try
             {
+                // If companyId/sessionId is 0 (e.g. from global context), try to resolve from staff record for updates
+                if (req.StaffID > 0 && (companyId <= 0 || sessionId <= 0))
+                {
+                    var staff = GetStaffByID(req.StaffID);
+                    if (staff != null)
+                    {
+                        if (companyId <= 0) companyId = staff.CompanyID;
+                        if (sessionId <= 0) sessionId = staff.SessionID;
+                    }
+                }
+
                 // Auto-generate Password for new staff if not provided
                 if (req.StaffID == 0 && string.IsNullOrEmpty(req.PasswordPlain))
                 {
@@ -468,9 +614,9 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@ContractType", (object?)req.ContractType ?? DBNull.Value),
                     new SqlParameter("@WorkShift", (object?)req.WorkShift ?? DBNull.Value),
                     new SqlParameter("@WorkLocation", (object?)req.WorkLocation ?? DBNull.Value),
-                    new SqlParameter("@CasualLeave", req.CasualLeave),
-                    new SqlParameter("@SickLeave", req.SickLeave),
-                    new SqlParameter("@ImpWorkLeave", req.ImpWorkLeave),
+                    new SqlParameter("@CasualLeave", 0),
+                    new SqlParameter("@SickLeave", 0),
+                    new SqlParameter("@ImpWorkLeave", 0),
                     new SqlParameter("@AccountTitle", (object?)req.AccountTitle ?? DBNull.Value),
                     new SqlParameter("@BankAccountNo", (object?)req.BankAccountNo ?? DBNull.Value),
                     new SqlParameter("@BankName", (object?)req.BankName ?? DBNull.Value),
@@ -509,13 +655,46 @@ namespace SchoolERP.Net.Services
                 var dt = _db.ExecuteQuery("sp_HR_Staff_Upsert", p);
                 var success = Convert.ToInt32(dt.Rows[0]["Result"]) == 1;
                 var msg = dt.Rows[0]["Message"].ToString()!;
+                var staffId = Convert.ToInt32(dt.Rows[0]["StaffID"]);
                 
-                if (success && req.StaffID == 0)
+                if (success)
                 {
-                    msg += $" | Generated Password: {req.PasswordPlain}";
+                    if (req.StaffID == 0)
+                        msg += $" | Generated Password: {req.PasswordPlain}";
+
+                    // Sync Dynamic Leave Quotas to HR_StaffLeaveQuota table
+                    int updatedCount = 0;
+                    string quotaErrors = "";
+                    foreach (var q in req.LeaveQuotas)
+                    {
+                        var quotaRes = UpsertStaffLeaveQuota(companyId, sessionId, staffId, q.LeaveTypeID, q.MaxDays, userId);
+                        if (quotaRes.Success) updatedCount++;
+                        else quotaErrors += $"[ID {q.LeaveTypeID}: {quotaRes.Message}] ";
+                    }
+
+                    if (updatedCount > 0) msg += $" | {updatedCount} Quotas updated.";
+                    if (!string.IsNullOrEmpty(quotaErrors)) msg += $" | Quota Errors: {quotaErrors}";
                 }
 
                 return (success, msg);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        private (bool Success, string Message) UpsertStaffLeaveQuota(int companyId, int sessionId, int staffId, int leaveTypeId, decimal maxDays, int userId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@StaffID", staffId),
+                    new SqlParameter("@LeaveTypeID", leaveTypeId),
+                    new SqlParameter("@MaxDays", maxDays),
+                    new SqlParameter("@DoneBy", userId)
+                };
+                _db.ExecuteNonQuery("sp_HR_StaffLeaveQuota_Upsert", p);
+                return (true, "Success");
             }
             catch (Exception ex) { return (false, ex.Message); }
         }
@@ -625,7 +804,7 @@ namespace SchoolERP.Net.Services
                         StaffCode = r["StaffCode"].ToString()!,
                         StaffName = r["StaffName"].ToString()!,
                         RoleName = r["RoleName"].ToString()!,
-                        StaffAttendanceID = r["StaffAttendanceID"] == DBNull.Value ? 0 : Convert.ToInt32(r["StaffAttendanceID"]),
+                        StaffAttendanceID = Convert.ToInt32(r["StaffAttendanceID"]),
                         StaffAttendance = r["StaffAttendance"].ToString()!,
                         StaffAttendanceSource = r["StaffAttendanceSource"].ToString()!,
                         StaffAttendanceNote = r["StaffAttendanceNote"].ToString()!,
@@ -633,7 +812,7 @@ namespace SchoolERP.Net.Services
                     });
                 }
             }
-            catch { }
+            catch (Exception) { }
             return list;
         }
 
@@ -642,19 +821,197 @@ namespace SchoolERP.Net.Services
             try
             {
                 var p = new[] {
-                    new SqlParameter("@CompanyID", companyId),
-                    new SqlParameter("@SessionID", sessionId),
                     new SqlParameter("@StaffID", req.StaffID),
                     new SqlParameter("@AttendanceDate", req.AttendanceDate),
                     new SqlParameter("@Attendance", req.Attendance),
                     new SqlParameter("@Source", req.Source),
                     new SqlParameter("@Note", req.Note),
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
                     new SqlParameter("@UserID", userId)
                 };
                 var dt = _db.ExecuteQuery("sp_HR_StaffAttendance_Upsert", p);
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
             }
             catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        // --- Payroll ---
+
+        public List<HRPayrollViewModel> GetAllPayroll(int companyId, int sessionId, int month, int year, int? roleId)
+        {
+            var list = new List<HRPayrollViewModel>();
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@Month", month),
+                    new SqlParameter("@Year", year),
+                    new SqlParameter("@RoleID", (object?)roleId ?? DBNull.Value)
+                };
+                foreach (DataRow row in _db.ExecuteQuery("sp_HR_Payroll_GetAll", p).Rows)
+                    list.Add(MapPayroll(row));
+            }
+            catch (Exception) { }
+            return list;
+        }
+
+        public (bool Success, string Message) GeneratePayroll(HRPayrollGenerateRequest req, int companyId, int sessionId, int userId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@StaffID", req.StaffID),
+                    new SqlParameter("@Month", req.Month),
+                    new SqlParameter("@Year", req.Year),
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_HR_Payroll_Generate", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public HRPayrollGenerationViewModel GetPayrollGenerationData(int staffId, int month, int year, int companyId, int sessionId)
+        {
+            var model = new HRPayrollGenerationViewModel
+            {
+                Staff = GetStaffByID(staffId) ?? new HRStaffViewModel(),
+                Month = month,
+                Year = year,
+                AttendanceHistory = new List<HRAttendanceSummary>()
+            };
+
+            model.BasicSalary = model.Staff.BasicSalary;
+
+            // Fetch attendance for the requested month and the previous month (to match UI)
+            int prevMonth = month == 1 ? 12 : month - 1;
+            int prevYear = month == 1 ? year - 1 : year;
+
+            model.AttendanceHistory.Add(FetchAttendanceSummary(staffId, prevMonth, prevYear, companyId));
+            model.AttendanceHistory.Add(FetchAttendanceSummary(staffId, month, year, companyId));
+
+            return model;
+        }
+
+        private HRAttendanceSummary FetchAttendanceSummary(int staffId, int month, int year, int companyId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@StaffID", staffId),
+                    new SqlParameter("@Month", month),
+                    new SqlParameter("@Year", year),
+                    new SqlParameter("@CompanyID", companyId)
+                };
+                var dt = _db.ExecuteQuery("sp_HR_Attendance_GetSummary", p);
+                if (dt.Rows.Count > 0)
+                {
+                    var r = dt.Rows[0];
+                    return new HRAttendanceSummary
+                    {
+                        Month = month,
+                        MonthName = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(month),
+                        Year = year,
+                        Present = Convert.ToInt32(r["Present"]),
+                        Late = Convert.ToInt32(r["Late"]),
+                        Absent = Convert.ToInt32(r["Absent"]),
+                        HalfDay = Convert.ToInt32(r["HalfDay"]),
+                        Holiday = Convert.ToInt32(r["Holiday"]),
+                        Leave = Convert.ToInt32(r["Leave"])
+                    };
+                }
+            }
+            catch { }
+            return new HRAttendanceSummary { Month = month, MonthName = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(month), Year = year };
+        }
+
+        public (bool Success, string Message) SaveDetailedPayroll(HRPayrollSaveRequest req, int companyId, int sessionId, int userId)
+        {
+            try
+            {
+                SqlParameter payrollIdParam = new SqlParameter("@PayrollID", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                var p = new SqlParameter[] {
+                    payrollIdParam,
+                    new SqlParameter("@StaffID", req.StaffID),
+                    new SqlParameter("@Month", req.Month),
+                    new SqlParameter("@Year", req.Year),
+                    new SqlParameter("@BasicSalary", req.BasicSalary),
+                    new SqlParameter("@TotalEarnings", req.TotalEarnings),
+                    new SqlParameter("@TotalDeductions", req.TotalDeductions),
+                    new SqlParameter("@NetSalary", req.NetSalary),
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@UserID", userId)
+                };
+                
+                _db.ExecuteNonQuery("sp_HR_Payroll_SaveDetailed", p);
+                int payrollId = (payrollIdParam.Value == DBNull.Value) ? 0 : Convert.ToInt32(payrollIdParam.Value);
+
+                if (payrollId > 0)
+                {
+                    foreach (var detail in req.Details)
+                    {
+                        var pd = new SqlParameter[] {
+                            new SqlParameter("@PayrollID", payrollId),
+                            new SqlParameter("@ComponentName", detail.ComponentName),
+                            new SqlParameter("@ComponentType", detail.ComponentType),
+                            new SqlParameter("@Amount", detail.Amount),
+                            new SqlParameter("@UserID", userId)
+                        };
+                        _db.ExecuteNonQuery("sp_HR_PayrollDetail_Insert", pd);
+                    }
+                    return (true, "Payroll saved successfully.");
+                }
+                return (false, "Failed to save payroll.");
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public (bool Success, string Message) MarkAsPaid(HRPayrollPaymentRequest req, int userId)
+        {
+            try
+            {
+                var p = new SqlParameter[] {
+                    new SqlParameter("@PayrollID", req.PayrollID),
+                    new SqlParameter("@PaymentMode", req.PaymentMode),
+                    new SqlParameter("@PaymentDate", req.PaymentDate),
+                    new SqlParameter("@Note", (object?)req.Note ?? DBNull.Value),
+                    new SqlParameter("@UserID", userId)
+                };
+                _db.ExecuteNonQuery("sp_HR_Payroll_MarkAsPaid", p);
+                return (true, "Payment recorded successfully.");
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        private static HRPayrollViewModel MapPayroll(DataRow r)
+        {
+            return new HRPayrollViewModel
+            {
+                PayrollID = Convert.ToInt32(r["PayrollID"]),
+                StaffID = Convert.ToInt32(r["StaffID"]),
+                StaffName = r["StaffName"].ToString()!,
+                StaffCode = r["StaffCode"].ToString()!,
+                RoleName = r.Table.Columns.Contains("RoleName") ? r["RoleName"].ToString()! : "",
+                DepartmentName = r.Table.Columns.Contains("DepartmentName") ? r["DepartmentName"].ToString()! : "",
+                DesignationName = r.Table.Columns.Contains("DesignationName") ? r["DesignationName"].ToString()! : "",
+                MobileNo = r.Table.Columns.Contains("MobileNo") ? r["MobileNo"].ToString()! : "",
+                Month = Convert.ToInt32(r["Month"]),
+                Year = Convert.ToInt32(r["Year"]),
+                BasicSalary = Convert.ToDecimal(r["BasicSalary"]),
+                TotalEarnings = Convert.ToDecimal(r["TotalEarnings"]),
+                TotalDeductions = Convert.ToDecimal(r["TotalDeductions"]),
+                NetSalary = Convert.ToDecimal(r["NetSalary"]),
+                AttendanceDays = Convert.ToDecimal(r["AttendanceDays"]),
+                Status = r["Status"].ToString()!,
+                PaymentMode = r["PaymentMode"]?.ToString(),
+                PaymentDate = r["PaymentDate"] == DBNull.Value ? null : Convert.ToDateTime(r["PaymentDate"]),
+                Note = r["Note"]?.ToString()
+            };
         }
 
         // --- Apply Leave ---
@@ -683,7 +1040,23 @@ namespace SchoolERP.Net.Services
         {
             try
             {
-                byte[]? attachment = string.IsNullOrEmpty(req.AttachmentBase64) ? null : Convert.FromBase64String(req.AttachmentBase64.Split(',').Last());
+                // Fallback: If companyId/sessionId is 0, try to get them from the staff record
+                if (companyId <= 0 || sessionId <= 0)
+                {
+                    var staff = GetStaffByID(req.StaffID);
+                    if (staff != null)
+                    {
+                        if (companyId <= 0) companyId = staff.CompanyID;
+                        if (sessionId <= 0) sessionId = staff.SessionID;
+                    }
+                }
+
+                byte[]? attachmentBytes = null;
+                if (!string.IsNullOrEmpty(req.AttachmentBase64))
+                {
+                    var base64Data = req.AttachmentBase64.Contains(",") ? req.AttachmentBase64.Split(',')[1] : req.AttachmentBase64;
+                    attachmentBytes = Convert.FromBase64String(base64Data);
+                }
 
                 var p = new[] {
                     new SqlParameter("@ApplyLeaveID", req.ApplyLeaveID),
@@ -694,17 +1067,38 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@FromDate", req.FromDate),
                     new SqlParameter("@ToDate", req.ToDate),
                     new SqlParameter("@Reason", (object?)req.Reason ?? DBNull.Value),
-                    new SqlParameter("@Status", req.Status),
+                    new SqlParameter("@Status", req.Status ?? "Pending"),
                     new SqlParameter("@Note", (object?)req.Note ?? DBNull.Value),
-                    new SqlParameter("@AttachmentDoc", (object?)attachment ?? DBNull.Value),
+                    new SqlParameter("@AttachmentDoc", SqlDbType.VarBinary) { Value = (object?)attachmentBytes ?? DBNull.Value },
                     new SqlParameter("@AttachmentDocType", (object?)req.AttachmentDocType ?? DBNull.Value),
                     new SqlParameter("@AttachmentDocName", (object?)req.AttachmentDocName ?? DBNull.Value),
-                    new SqlParameter("@UserID", userId)
+                    new SqlParameter("@UserID", userId),
+                    new SqlParameter("@IPAddress", DBNull.Value) // Optional: pass real IP if available
                 };
                 var dt = _db.ExecuteQuery("sp_HR_ApplyLeave_Upsert", p);
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
             }
             catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public (byte[] Bytes, string FileName, string ContentType) GetApplyLeaveDocument(int id)
+        {
+            try
+            {
+                var p = new[] { new SqlParameter("@ApplyLeaveID", id) };
+                var dt = _db.ExecuteQuery("sp_HR_ApplyLeave_GetByID", p);
+                if (dt.Rows.Count == 0) return (null!, null!, null!);
+
+                var row = dt.Rows[0];
+                if (row["AttachmentFile"] == DBNull.Value) return (null!, null!, null!);
+
+                byte[] bytes = (byte[])row["AttachmentFile"];
+                string fileName = row["AttachmentDocName"]?.ToString() ?? "Attachment.pdf";
+                string contentType = row["AttachmentDocType"]?.ToString() ?? "application/pdf";
+
+                return (bytes, fileName, contentType);
+            }
+            catch { return (null!, null!, null!); }
         }
 
         public (bool Success, string Message) DeleteApplyLeave(int id, int userId)
@@ -718,26 +1112,42 @@ namespace SchoolERP.Net.Services
             catch (Exception ex) { return (false, ex.Message); }
         }
 
+        public (bool Success, string Message) UpdateApplyLeaveStatus(HRApplyLeaveStatusUpdateRequest req, int userId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@ApplyLeaveID", req.ApplyLeaveID),
+                    new SqlParameter("@Status", req.Status),
+                    new SqlParameter("@Note", (object?)req.Note ?? DBNull.Value),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_HR_ApplyLeave_StatusUpdate", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
         private static HRApplyLeaveViewModel MapApplyLeave(DataRow r) => new()
         {
             ApplyLeaveID = Convert.ToInt32(r["ApplyLeaveID"]),
             CompanyID = Convert.ToInt32(r["CompanyID"]),
             SessionID = Convert.ToInt32(r["SessionID"]),
             StaffID = Convert.ToInt32(r["StaffID"]),
-            StaffName = r["StaffName"].ToString()!,
-            StaffCode = r["StaffCode"].ToString()!,
+            StaffName = r.Table.Columns.Contains("StaffName") ? r["StaffName"].ToString()! : "Unknown",
+            StaffCode = r.Table.Columns.Contains("StaffCode") ? r["StaffCode"].ToString()! : "-",
             LeaveTypeID = Convert.ToInt32(r["LeaveTypeID"]),
-            LeaveTypeName = r["LeaveTypeName"].ToString()!,
+            LeaveTypeName = r.Table.Columns.Contains("LeaveTypeName") ? r["LeaveTypeName"].ToString()! : "Unknown",
             ApplyDate = Convert.ToDateTime(r["ApplyDate"]),
             FromDate = Convert.ToDateTime(r["FromDate"]),
             ToDate = Convert.ToDateTime(r["ToDate"]),
-            Reason = r["Reason"] == DBNull.Value ? null : r["Reason"].ToString(),
+            Reason = r.Table.Columns.Contains("Reason") && r["Reason"] != DBNull.Value ? r["Reason"].ToString() : null,
             Status = r["Status"].ToString()!,
-            ApprovedBy = r["ApprovedBy"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["ApprovedBy"]),
-            ApprovedByName = r["ApprovedByName"]?.ToString() ?? "-",
-            AttachmentDocType = r["AttachmentDocType"] == DBNull.Value ? null : r["AttachmentDocType"].ToString(),
-            AttachmentDocName = r["AttachmentDocName"] == DBNull.Value ? null : r["AttachmentDocName"].ToString(),
-            Note = r["Note"] == DBNull.Value ? null : r["Note"].ToString()
+            ApprovedBy = r.Table.Columns.Contains("ApprovedBy") && r["ApprovedBy"] != DBNull.Value ? Convert.ToInt32(r["ApprovedBy"]) : (int?)null,
+            ApprovedByName = r.Table.Columns.Contains("ApprovedByName") ? (r["ApprovedByName"]?.ToString() ?? "-") : "-",
+            AttachmentDocType = r.Table.Columns.Contains("AttachmentDocType") && r["AttachmentDocType"] != DBNull.Value ? r["AttachmentDocType"].ToString() : null,
+            AttachmentDocName = r.Table.Columns.Contains("AttachmentDocName") && r["AttachmentDocName"] != DBNull.Value ? r["AttachmentDocName"].ToString() : null,
+            Note = r.Table.Columns.Contains("Note") && r["Note"] != DBNull.Value ? r["Note"].ToString() : null
         };
 
         // --- Mapping Helpers ---
@@ -819,9 +1229,13 @@ namespace SchoolERP.Net.Services
             ContractType = r.Table.Columns.Contains("ContractType") ? r["ContractType"]?.ToString() ?? "" : "",
             WorkShift = r.Table.Columns.Contains("WorkShift") ? r["WorkShift"]?.ToString() ?? "" : "",
             WorkLocation = r.Table.Columns.Contains("WorkLocation") ? r["WorkLocation"]?.ToString() ?? "" : "",
-            CasualLeave = r.Table.Columns.Contains("CasualLeave") ? Convert.ToInt32(r["CasualLeave"]) : 0,
-            SickLeave = r.Table.Columns.Contains("SickLeave") ? Convert.ToInt32(r["SickLeave"]) : 0,
-            ImpWorkLeave = r.Table.Columns.Contains("ImpWorkLeave") ? Convert.ToInt32(r["ImpWorkLeave"]) : 0,
+            CasualLeave = r.Table.Columns.Contains("CasualLeave") && r["CasualLeave"] != DBNull.Value ? Convert.ToInt32(r["CasualLeave"]) : 
+                          (r.Table.Columns.Contains("Casual_Leave") && r["Casual_Leave"] != DBNull.Value ? Convert.ToInt32(r["Casual_Leave"]) : 0),
+            SickLeave = r.Table.Columns.Contains("SickLeave") && r["SickLeave"] != DBNull.Value ? Convert.ToInt32(r["SickLeave"]) : 
+                        (r.Table.Columns.Contains("Sick_Leave") && r["Sick_Leave"] != DBNull.Value ? Convert.ToInt32(r["Sick_Leave"]) : 0),
+            ImpWorkLeave = r.Table.Columns.Contains("ImpWorkLeave") && r["ImpWorkLeave"] != DBNull.Value ? Convert.ToInt32(r["ImpWorkLeave"]) : 
+                           (r.Table.Columns.Contains("Imp_Work_Leave") && r["Imp_Work_Leave"] != DBNull.Value ? Convert.ToInt32(r["Imp_Work_Leave"]) : 
+                           (r.Table.Columns.Contains("ImpWork") && r["ImpWork"] != DBNull.Value ? Convert.ToInt32(r["ImpWork"]) : 0)),
             AccountTitle = r.Table.Columns.Contains("AccountTitle") ? r["AccountTitle"]?.ToString() ?? "" : "",
             BankAccountNo = r.Table.Columns.Contains("BankAccountNo") ? r["BankAccountNo"]?.ToString() ?? "" : "",
             BankName = r.Table.Columns.Contains("BankName") ? r["BankName"]?.ToString() ?? "" : "",

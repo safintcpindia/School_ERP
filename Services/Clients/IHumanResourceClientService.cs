@@ -39,5 +39,9 @@ namespace SchoolERP.Net.Services.Clients
         Task<ApiResponse<HRApplyLeaveViewModel>> GetApplyLeaveByIDAsync(int id);
         Task<ApiResponse<dynamic>> UpsertApplyLeaveAsync(HRApplyLeaveUpsertRequest req);
         Task<ApiResponse<dynamic>> DeleteApplyLeaveAsync(int id);
+        
+        // --- Payroll ---
+        Task<ApiResponse<List<HRPayrollViewModel>>> GetAllPayrollAsync(int month, int year, int? roleId);
+        Task<ApiResponse<dynamic>> GeneratePayrollAsync(HRPayrollGenerateRequest req);
     }
 }

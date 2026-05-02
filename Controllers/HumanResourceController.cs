@@ -4,6 +4,7 @@ using SchoolERP.Net.Services;
 using SchoolERP.Net.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace SchoolERP.Net.Controllers
 {
@@ -18,6 +19,8 @@ namespace SchoolERP.Net.Controllers
         private readonly ICompanyClientService _companyClient;
         private readonly IHumanResourceService _hrService;
         private readonly ISettingsClientService _settingsClient;
+        private readonly ICompanyService _companySvc;
+        private readonly ISessionService _sessionSvc;
 
         public HumanResourceController(
             IHumanResourceClientService hrClient,
@@ -25,7 +28,9 @@ namespace SchoolERP.Net.Controllers
             IUserTypeClientService userTypeClient,
             ICompanyClientService companyClient,
             IHumanResourceService hrService,
-            ISettingsClientService settingsClient)
+            ISettingsClientService settingsClient,
+            ICompanyService companySvc,
+            ISessionService sessionSvc)
         {
             _hrClient = hrClient;
             _roleClient = roleClient;
@@ -33,7 +38,13 @@ namespace SchoolERP.Net.Controllers
             _companyClient = companyClient;
             _hrService = hrService;
             _settingsClient = settingsClient;
+            _companySvc = companySvc;
+            _sessionSvc = sessionSvc;
         }
+
+        private int GetUserId() => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("UserId"), out var id) ? id : 0;
+        private int GetCompanyId() => _companySvc.GetUserCurrentCompany(GetUserId()) ?? 0;
+        private int GetSessionId() => _sessionSvc.GetUserCurrentSession(GetUserId()) ?? 0;
 
         /// <summary>
         /// Shows the 'Designation' page where you can manage different job titles (like Teacher, Admin, or Accountant).
@@ -90,6 +101,9 @@ namespace SchoolERP.Net.Controllers
  
             var deptRes = await _hrClient.GetAllDepartmentsAsync();
             model.Departments = deptRes.Success ? deptRes.Data : new List<HRDepartmentViewModel>();
+
+            var leaveRes = await _hrClient.GetAllLeaveTypesAsync();
+            model.LeaveTypes = leaveRes.Success ? leaveRes.Data : new List<HRLeaveTypeViewModel>();
  
             var rolesRes = await _roleClient.GetAllRolesAsync();
             model.Roles = rolesRes.Success ? rolesRes.Data : new List<MstRoleViewModel>();
@@ -174,19 +188,60 @@ namespace SchoolERP.Net.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> ApplyLeave()
+        public IActionResult ApplyLeave()
         {
+            int userId = GetUserId();
+            int companyId = GetCompanyId();
+            int sessionId = GetSessionId();
+
+            var allStaff = _hrService.GetAllStaff(companyId, sessionId);
+            var currentStaff = allStaff.FirstOrDefault(s => s.UserID == userId);
+
+            // Fallback: If not found in current company (often 0 on fresh login), search globally
+            if (currentStaff == null)
+            {
+                var globalStaff = _hrService.GetAllStaff(0, 0);
+                currentStaff = globalStaff.FirstOrDefault(s => s.UserID == userId);
+            }
+
             var model = new HRApplyLeavePageViewModel();
             
-            var leavesRes = await _hrClient.GetAllApplyLeaveAsync();
-            model.Leaves = leavesRes.Success ? leavesRes.Data : new List<HRApplyLeaveViewModel>();
+            if (currentStaff != null)
+            {
+                // Use staff's own company/session if current ones are invalid
+                if (companyId <= 0) companyId = currentStaff.CompanyID;
+                if (sessionId <= 0) sessionId = currentStaff.SessionID;
 
-            var staffRes = await _hrClient.GetAllStaffAsync();
-            model.StaffList = staffRes.Success ? staffRes.Data : new List<HRStaffViewModel>();
+                // Only show leaves for this staff member
+                model.Leaves = _hrService.GetAllApplyLeave(companyId, sessionId)
+                    .Where(l => l.StaffID == currentStaff.StaffID).ToList();
+                
+                // Set the current staff as the only option
+                model.StaffList = new List<HRStaffViewModel> { currentStaff };
+            }
+            else
+            {
+                model.Leaves = new List<HRApplyLeaveViewModel>();
+                model.StaffList = new List<HRStaffViewModel>();
+            }
 
-            var leaveTypesRes = await _hrClient.GetAllLeaveTypesAsync();
-            model.LeaveTypes = leaveTypesRes.Success ? leaveTypesRes.Data : new List<HRLeaveTypeViewModel>();
+            // Ensure we fetch leave types for the correct company
+            model.LeaveTypes = _hrService.GetAllLeaveTypes(companyId, sessionId);
+            
+            return View(model);
+        }
 
+        public IActionResult ApproveLeave()
+        {
+            int companyId = GetCompanyId();
+            int sessionId = GetSessionId();
+
+            var model = new HRApplyLeavePageViewModel
+            {
+                Leaves = _hrService.GetAllApplyLeave(companyId, sessionId),
+                StaffList = _hrService.GetAllStaff(companyId, sessionId),
+                LeaveTypes = _hrService.GetAllLeaveTypes(companyId, sessionId)
+            };
             return View(model);
         }
 
@@ -196,6 +251,31 @@ namespace SchoolERP.Net.Controllers
             var (bytes, fileName, contentType) = _hrService.GetStaffDocument(id, type);
             if (bytes == null || bytes.Length == 0) return NotFound();
             return File(bytes, contentType, fileName);
+        }
+
+        public IActionResult DownloadApplyLeaveDocument(int id)
+        {
+            var (bytes, fileName, contentType) = _hrService.GetApplyLeaveDocument(id);
+            if (bytes == null || bytes.Length == 0) return NotFound();
+            return File(bytes, contentType, fileName);
+        }
+
+        public async Task<IActionResult> Payroll()
+        {
+            var rolesRes = await _roleClient.GetAllRolesAsync();
+            var model = new HRPayrollPageViewModel
+            {
+                Roles = rolesRes.Success ? rolesRes.Data : new List<MstRoleViewModel>(),
+                SelectedMonth = DateTime.Now.Month,
+                SelectedYear = DateTime.Now.Year
+            };
+            return View(model);
+        }
+
+        public IActionResult GeneratePayroll(int id, int month, int year)
+        {
+            var model = _hrService.GetPayrollGenerationData(id, month, year, GetCompanyId(), GetSessionId());
+            return View(model);
         }
 
         

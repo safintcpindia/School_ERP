@@ -267,13 +267,30 @@ namespace SchoolERP.Net.Controllers.Api
             return Ok(new { success = true, data });
         }
 
+        [HttpGet("GetLeaveBalance")]
+        public IActionResult GetLeaveBalance(int staffId, int leaveTypeId)
+        {
+            var data = _hrService.GetLeaveBalance(staffId, leaveTypeId, GetCompanyId(), GetSessionId());
+            return Ok(new { success = true, data });
+        }
+
+        [HttpGet("GetStaffAllLeaveBalances")]
+        public IActionResult GetStaffAllLeaveBalances(int staffId)
+        {
+            var data = _hrService.GetStaffAllLeaveBalances(staffId, GetCompanyId(), GetSessionId());
+            return Ok(new { success = true, data });
+        }
+
         [HttpPost("UpsertApplyLeave")]
         public IActionResult UpsertApplyLeave([FromBody] HRApplyLeaveUpsertRequest req)
         {
-            // Note: In a real app, you might want to check if the staff member is applying for themselves
-            // or if an admin is applying for someone. For now, we'll just check a general permission.
-            if (!_menuPerm.Has(User, "/HumanResource/ApplyLeave", "Add") && !_menuPerm.Has(User, "/HumanResource/ApplyLeave", "Edit"))
+            // Allow management if user has permission for either ApplyLeave or ApproveLeave
+            if (!_menuPerm.Has(User, "/HumanResource/ApplyLeave", "Add") && 
+                !_menuPerm.Has(User, "/HumanResource/ApplyLeave", "Edit") &&
+                !_menuPerm.Has(User, "/HumanResource/ApproveLeave", "Edit"))
+            {
                 return Ok(new { success = false, message = "You do not have permission to manage leave applications." });
+            }
 
             var res = _hrService.UpsertApplyLeave(req, GetCompanyId(), GetSessionId(), GetUserId());
             return Ok(new { success = res.Success, message = res.Message });
@@ -286,6 +303,60 @@ namespace SchoolERP.Net.Controllers.Api
                 return Ok(new { success = false, message = "You do not have permission to delete leave applications." });
 
             var res = _hrService.DeleteApplyLeave(id, GetUserId());
+            return Ok(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpPost("UpdateApplyLeaveStatus")]
+        public IActionResult UpdateApplyLeaveStatus([FromBody] HRApplyLeaveStatusUpdateRequest req)
+        {
+            if (!_menuPerm.Has(User, "/HumanResource/ApproveLeave", "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to approve/disapprove leaves." });
+
+            var res = _hrService.UpdateApplyLeaveStatus(req, GetUserId());
+            return Ok(new { success = res.Success, message = res.Message });
+        }
+
+        // --- Payroll ---
+
+        [HttpGet("GetAllPayroll")]
+        public IActionResult GetAllPayroll(int month, int year, int? roleId)
+        {
+            if (!_menuPerm.Has(User, "/HumanResource/Payroll", "View"))
+                return Ok(new { success = false, message = "You do not have permission to view payroll." });
+
+            int companyId = GetCompanyId();
+            int sessionId = GetSessionId();
+            var list = _hrService.GetAllPayroll(companyId, sessionId, month, year, roleId);
+            return Ok(new { success = true, data = list, debug_companyId = companyId, debug_sessionId = sessionId });
+        }
+
+        [HttpPost("GeneratePayroll")]
+        public IActionResult GeneratePayroll([FromBody] HRPayrollGenerateRequest req)
+        {
+            if (!_menuPerm.Has(User, "/HumanResource/Payroll", "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to generate payroll." });
+
+            var res = _hrService.GeneratePayroll(req, GetCompanyId(), GetSessionId(), GetUserId());
+            return Ok(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpPost("SaveDetailedPayroll")]
+        public IActionResult SaveDetailedPayroll([FromBody] HRPayrollSaveRequest req)
+        {
+            if (!_menuPerm.Has(User, "/HumanResource/Payroll", "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to save payroll." });
+
+            var res = _hrService.SaveDetailedPayroll(req, GetCompanyId(), GetSessionId(), GetUserId());
+            return Ok(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpPost("PayPayroll")]
+        public IActionResult PayPayroll([FromBody] HRPayrollPaymentRequest req)
+        {
+            if (!_menuPerm.Has(User, "/HumanResource/Payroll", "Edit"))
+                return Ok(new { success = false, message = "You do not have permission to record payment." });
+
+            var res = _hrService.MarkAsPaid(req, GetUserId());
             return Ok(new { success = res.Success, message = res.Message });
         }
     }

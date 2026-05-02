@@ -88,5 +88,12 @@ namespace SchoolERP.Net.Services.Clients
 
         public Task<ApiResponse<dynamic>> DeleteApplyLeaveAsync(int id)
             => PostAsync<dynamic>($"api/HumanResourceApi/DeleteApplyLeave/{id}", null!);
+
+        // --- Payroll ---
+        public Task<ApiResponse<List<HRPayrollViewModel>>> GetAllPayrollAsync(int month, int year, int? roleId)
+            => GetAsync<List<HRPayrollViewModel>>($"api/HumanResourceApi/GetAllPayroll?month={month}&year={year}&roleId={roleId}");
+
+        public Task<ApiResponse<dynamic>> GeneratePayrollAsync(HRPayrollGenerateRequest req)
+            => PostAsync<dynamic>("api/HumanResourceApi/GeneratePayroll", req);
     }
 }

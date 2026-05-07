@@ -10,14 +10,34 @@
     }
 }
 
-   <!-- Page Header -->
+   <style>
+    /* Remove validation icons */
+    .was-validated .form-control:valid, .was-validated .form-control:invalid,
+    .was-validated .form-select:valid, .was-validated .form-select:invalid {
+        background-image: none !important;
+        padding-right: 0.75rem !important;
+    }
+</style>
+
+<!-- Page Header -->
                 <div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
                     <div>
                         <h6 class="fw-bold mb-0">Staff Profile</h6>
                     </div>
                     <div class="d-flex align-items-center flex-wrap gap-1">
-                        <a asp-action="AddStaff" asp-route-id="@Model.StaffID" class="btn btn-primary d-inline-flex align-items-center"><i class="ti ti-pencil me-1"></i>Edit</a>
-                        <a href="#" class="btn btn-info d-inline-flex align-items-center"><i class="ti ti-key me-1"></i>Change Password</a>
+                        <a asp-action="AddStaff" asp-route-id="@Model.StaffID" class="btn btn-warning d-inline-flex align-items-center me-1"><i class="ti ti-edit me-1"></i> Edit</a>
+                        @if (Model.IsActive)
+                        {
+                            <button type="button" class="btn btn-danger d-inline-flex align-items-center me-1" onclick="toggleStaffStatus(false)">
+                                <i class="ti ti-user-x me-1"></i> Disable
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success d-inline-flex align-items-center me-1" onclick="toggleStaffStatus(true)">
+                                <i class="ti ti-user-check me-1"></i> Enable
+                            </button>
+                        }
                         <button type="button" class="btn btn-secondary d-inline-flex align-items-center" data-bs-toggle="offcanvas" data-bs-target="#offcanvasStaff"><i class="ti ti-list me-1"></i> Staff</button>
                     </div>
                 </div>
@@ -44,6 +64,14 @@
                                     <div class="d-flex align-items-center justify-content-between mb-1">
                                         <h6 class="mb-2 fw-semibold">
                                             <a href="#">@Model.FirstName @Model.LastName</a>
+                                            @if (Model.IsActive)
+                                            {
+                                                <span class="badge bg-success-subtle text-success ms-1">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger-subtle text-danger ms-1">Inactive</span>
+                                            }
                                         </h6>
                                     </div>
                                     <p class="mb-2 fs-13">
@@ -157,8 +185,8 @@
                                                             <div>
                                                                 <p class="mb-2">Total Net Salary Paid</p>
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <h5 class="fw-bold mb-0">658</h5>
-                                                                    <span class="badge fw-medium bg-success flex-shrink-0">+95%</span>
+                                                                    <h5 class="fw-bold mb-0" id="pay_totalNet">0</h5>
+                                                                    <span class="badge fw-medium bg-success flex-shrink-0" id="pay_totalNetBadge">+0%</span>
                                                                 </div>
                                                             </div>
                                                             <span class="avatar border border-primary text-primary rounded-2 flex-shrink-0"><i class="ti ti-coin-rupee fs-20"></i></span>
@@ -174,8 +202,8 @@
                                                             <div>
                                                                 <p class="mb-2">Total Gross Salary</p>
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <h5 class="fw-bold mb-0">658</h5>
-                                                                    <span class="badge fw-medium bg-success flex-shrink-0">+95%</span>
+                                                                    <h5 class="fw-bold mb-0" id="pay_totalGross">0</h5>
+                                                                    <span class="badge fw-medium bg-success flex-shrink-0" id="pay_totalGrossBadge">+0%</span>
                                                                 </div>
                                                             </div>
                                                             <span class="avatar border border-primary text-primary rounded-2 flex-shrink-0"><i class="ti ti-coin-rupee-filled fs-20"></i></span>
@@ -191,8 +219,8 @@
                                                             <div>
                                                                 <p class="mb-2">Total Earning</p>
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <h5 class="fw-bold mb-0">658</h5>
-                                                                    <span class="badge fw-medium bg-success flex-shrink-0">+95%</span>
+                                                                    <h5 class="fw-bold mb-0" id="pay_totalEarning">0</h5>
+                                                                    <span class="badge fw-medium bg-success flex-shrink-0" id="pay_totalEarningBadge">+0%</span>
                                                                 </div>
                                                             </div>
                                                             <span class="avatar border border-primary text-primary rounded-2 flex-shrink-0"><i class="ti ti-users fs-20"></i></span>
@@ -208,8 +236,8 @@
                                                             <div>
                                                                 <p class="mb-2">Total Deduction</p>
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <h5 class="fw-bold mb-0">658</h5>
-                                                                    <span class="badge fw-medium bg-success flex-shrink-0">+95%</span>
+                                                                    <h5 class="fw-bold mb-0" id="pay_totalDeduction">0</h5>
+                                                                    <span class="badge fw-medium bg-success flex-shrink-0" id="pay_totalDeductionBadge">+0%</span>
                                                                 </div>
                                                             </div>
                                                             <span class="avatar border border-primary text-primary rounded-2 flex-shrink-0"><i class="ti ti-coin-rupee fs-20"></i></span>
@@ -257,7 +285,7 @@
                                                                         <th class="text-end">Action</th>
                                                                     </tr>
                                                                 </thead>
-                                                                <tbody>
+                                                                <tbody id="payrollTableBody">
                                                                     <tr>
                                                                         <td colspan="7" class="text-center text-danger">No Data Found</td>
                                                                     </tr>
@@ -314,7 +342,7 @@
 
                                                                     </tr>
                                                                 </thead>
-                                                                <tbody>
+                                                                <tbody id="leaveTableBody">
                                                                     <tr>
                                                                         <td colspan="7" class="text-center text-danger">No Data Found</td>
                                                                     </tr>
@@ -338,7 +366,7 @@
                                                             <div>
                                                                 <p class="mb-2">Total Present</p>
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <h5 class="fw-bold mb-0">0</h5>
+                                                                    <h5 class="fw-bold mb-0" id="att_present">0</h5>
                                                                 </div>
                                                             </div>
                                                             <span class="avatar border border-primary text-primary rounded-2 flex-shrink-0"><i class="ti ti-user fs-20"></i></span>
@@ -354,7 +382,7 @@
                                                             <div>
                                                                 <p class="mb-2">Total Late</p>
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <h5 class="fw-bold mb-0">0</h5>
+                                                                    <h5 class="fw-bold mb-0" id="att_late">0</h5>
                                                                 </div>
                                                             </div>
                                                             <span class="avatar border border-primary text-primary rounded-2 flex-shrink-0"><i class="ti ti-user fs-20"></i></span>
@@ -369,7 +397,7 @@
                                                             <div>
                                                                 <p class="mb-2">Total Absent</p>
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <h5 class="fw-bold mb-0">0</h5>
+                                                                    <h5 class="fw-bold mb-0" id="att_absent">0</h5>
                                                                 </div>
                                                             </div>
                                                             <span class="avatar border border-primary text-primary rounded-2 flex-shrink-0"><i class="ti ti-user fs-20"></i></span>
@@ -384,7 +412,7 @@
                                                             <div>
                                                                 <p class="mb-2">Total Half Day</p>
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <h5 class="fw-bold mb-0">0</h5>
+                                                                    <h5 class="fw-bold mb-0" id="att_halfDay">0</h5>
                                                                 </div>
                                                             </div>
                                                             <span class="avatar border border-primary text-primary rounded-2 flex-shrink-0"><i class="ti ti-user fs-20"></i></span>
@@ -399,7 +427,7 @@
                                                             <div>
                                                                 <p class="mb-2">Total Holiday</p>
                                                                 <div class="d-flex align-items-center gap-1">
-                                                                    <h5 class="fw-bold mb-0">0</h5>
+                                                                    <h5 class="fw-bold mb-0" id="att_holiday">0</h5>
                                                                 </div>
                                                             </div>
                                                             <span class="avatar border border-primary text-primary rounded-2 flex-shrink-0"><i class="ti ti-user fs-20"></i></span>
@@ -413,11 +441,11 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <div class="d-flex align-items-center">
-                                                            <select name="" id="" class="form-select form-control flex-fill me-3">
+                                                            <select name="" id="att_yearSelect" class="form-select form-control flex-fill me-3" onchange="fetchStaffAttendance()">
                                                                 <option value="">Select Year</option>
-                                                                <option value="">2024</option>
-                                                                <option value="">2025</option>
-                                                                <option value="">2026</option>
+                                                                <option value="2024">2024</option>
+                                                                <option value="2025">2025</option>
+                                                                <option value="2026">2026</option>
                                                             </select>
                                                             <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
                                                                 <button class="btn btn-icon btn-outline-primary" title="Present">
@@ -439,7 +467,6 @@
                                                         </div>
                                                     </div>
                                                     <div class="card-body">
-
                                                         <div class="table-responsive">
                                                             <table class="table mb-0">
                                                                 <thead>
@@ -448,7 +475,8 @@
                                                                         <th>Jan</th>
                                                                         <th>Feb</th>
                                                                         <th>March</th>
-                                                                        <th>Aprl</th>
+                                                                        <th>April</th>
+                                                                        <th>May</th>
                                                                         <th>June</th>
                                                                         <th>July</th>
                                                                         <th>Aug</th>
@@ -458,7 +486,7 @@
                                                                         <th>Dec</th>
                                                                     </tr>
                                                                 </thead>
-                                                                <tbody>
+                                                                <tbody id="attendanceTableBody">
                                                                     <tr>
                                                                         <td colspan="13" class="text-center text-danger">No Data Found</td>
                                                                     </tr>
@@ -524,7 +552,7 @@
                                     <div class="tab-pane" id="timeline">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <h5 class="text-danger text-center py-3">No Data Found</h5>
+                                                <div class="d-flex align-items-center justify-content-between mb-3"><h5 class="fw-bold mb-0">Staff Timeline</h5><div class="d-flex align-items-center gap-1"><button class="btn btn-primary btn-sm d-inline-flex align-items-center" onclick="showAddTimelineModal()"><i class="ti ti-plus me-1"></i> Add</button><button id="btnEditTimeline" class="btn btn-warning btn-sm d-inline-flex align-items-center" onclick="handleEditTimeline()" disabled><i class="ti ti-edit me-1"></i> Edit</button><button id="btnDeleteTimeline" class="btn btn-danger btn-sm d-inline-flex align-items-center" onclick="handleDeleteTimeline()" disabled><i class="ti ti-trash me-1"></i> Delete</button></div></div><div id="timelineContainer"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -535,6 +563,89 @@
                     <!-- end col -->
                 </div>
                 <!-- end row -->
+
+<!-- Timeline Modal -->
+<div class="modal fade" id="timelineModal" tabindex="-1" aria-labelledby="timelineModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h5 class="modal-title fw-bold" id="timelineModalTitle">Add Timeline</h5>
+                <div>
+                    <button type="button" class="btn btn-success btn-sm" onclick="saveTimeline()">
+                        <i class="ti ti-device-floppy me-1"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                        <i class="ti ti-x me-1"></i> Close
+                    </button>
+                </div>
+            </div>
+            <form id="timelineForm" class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <input type="hidden" id="hdnTimelineID" value="0" />
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
+                            <input type="text" id="txtTimelineTitle" class="form-control" placeholder="Enter title" required />
+                            <div class="invalid-feedback">Please enter a title.</div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
+                            <input type="date" id="txtTimelineDate" class="form-control" required />
+                            <div class="invalid-feedback">Please select a date.</div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Description</label>
+                            <textarea id="txtTimelineDescription" class="form-control" rows="3" placeholder="Enter description"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Attach Document</label>
+                            <input type="file" id="fileTimelineDoc" class="form-control" />
+                            <small class="text-muted">Max size 2MB (PDF, JPG, PNG)</small>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="chkTimelineVisible" checked />
+                                <label class="form-check-label fw-semibold" for="chkTimelineVisible">
+                                    Visible to this person
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Status Toggle Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h5 class="modal-title fw-bold" id="statusModalTitle">Disable Staff</h5>
+                <div>
+                    <button type="button" class="btn btn-success btn-sm" onclick="confirmStatusToggle()">
+                        <i class="ti ti-device-floppy me-1"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                        <i class="ti ti-x me-1"></i> Close
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="statusForm" class="needs-validation" novalidate>
+                    <input type="hidden" id="hdnStatusIsActive" value="false" />
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Date of Leaving <span class="text-danger">*</span></label>
+                        <input type="date" id="txtStatusDate" class="form-control" required />
+                        <div class="invalid-feedback">Please select a date.</div>
+                    </div>
+                    <p class="text-muted small mb-0">Please select the date to record this action.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Staff Sidebar Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasStaff" aria-labelledby="offcanvasStaffLabel">
@@ -566,7 +677,500 @@
         $(document).ready(function () {
             // Fetch staff list when page loads
             fetchSidebarStaff();
+
+            // Fetch payroll data when tab is clicked
+            $(document).on('shown.bs.tab', 'a[href="#payroll"]', function (e) {
+                console.log("Payroll tab shown");
+                fetchStaffPayroll();
+            });
+
+            // Fetch leave data when tab is clicked
+            $(document).on('shown.bs.tab', 'a[href="#leave"]', function (e) {
+                console.log("Leave tab shown");
+                fetchStaffLeaves();
+            });
+
+            // Fetch attendance data when tab is clicked
+            $(document).on('shown.bs.tab', 'a[href="#attendance"]', function (e) {
+                console.log("Attendance tab shown");
+                // Set current year if not selected
+                if (!$('#att_yearSelect').val()) {
+                    $('#att_yearSelect').val(new Date().getFullYear());
+                }
+                fetchStaffAttendance();
+            });
+
+            // Fetch timeline data when tab is clicked
+            $(document).on('shown.bs.tab', 'a[href="#timeline"]', function (e) {
+                console.log("Timeline tab shown");
+                fetchStaffTimeline();
+            });
+
+            // Initial check if tab is active on load
+            if (window.location.hash === '#payroll') {
+                fetchStaffPayroll();
+            } else if (window.location.hash === '#leave') {
+                fetchStaffLeaves();
+            } else if (window.location.hash === '#attendance') {
+                fetchStaffAttendance();
+            } else if (window.location.hash === '#timeline') {
+                fetchStaffTimeline();
+            }
         });
+
+        function fetchStaffAttendance() {
+            const staffId = @Model.StaffID;
+            const year = $('#att_yearSelect').val() || new Date().getFullYear();
+            console.log("Fetching attendance for staff:", staffId, "year:", year);
+            fetch(`/api/HumanResourceApi/GetStaffAttendanceHistory/${staffId}/${year}`)
+                .then(r => r.json())
+                .then(res => {
+                    console.log("Attendance API Response:", res);
+                    if (res.success) {
+                        renderStaffAttendance(res.data);
+                    } else {
+                        $('#attendanceTableBody').html(`<tr><td colspan="13" class="text-center text-danger">${res.message || 'Failed to load attendance'}</td></tr>`);
+                    }
+                })
+                .catch(err => {
+                    console.error("Attendance Fetch Error:", err);
+                    $('#attendanceTableBody').html('<tr><td colspan="13" class="text-center text-danger">An error occurred while fetching data.</td></tr>');
+                });
+        }
+
+        function renderStaffAttendance(data) {
+            const tbody = $('#attendanceTableBody');
+            tbody.empty();
+
+            // Update Summary
+            let totalPresent = 0, totalLate = 0, totalAbsent = 0, totalHalfDay = 0, totalHoliday = 0;
+            const summaries = data.summaries || data.Summaries;
+            if (summaries) {
+                summaries.forEach(s => {
+                    totalPresent += (s.present || s.Present || 0);
+                    totalLate += (s.late || s.Late || 0);
+                    totalAbsent += (s.absent || s.Absent || 0);
+                    totalHalfDay += (s.halfDay || s.HalfDay || 0);
+                    totalHoliday += (s.holiday || s.Holiday || 0);
+                });
+            }
+            $('#att_present').text(totalPresent);
+            $('#att_late').text(totalLate);
+            $('#att_absent').text(totalAbsent);
+            $('#att_halfDay').text(totalHalfDay);
+            $('#att_holiday').text(totalHoliday);
+
+            // Populate Grid
+            const statusMap = {};
+            const days = data.days || data.Days;
+            if (days) {
+                days.forEach(d => {
+                    const m = d.month || d.Month;
+                    const day = d.day || d.Day;
+                    const status = d.status || d.Status || '';
+                    statusMap[`${m}_${day}`] = status;
+                });
+            }
+
+            for (let dayNum = 1; dayNum <= 31; dayNum++) {
+                let row = `<tr><td>${dayNum}</td>`;
+                for (let month = 1; month <= 12; month++) {
+                    const status = statusMap[`${month}_${dayNum}`] || '-';
+                    let badgeClass = 'text-muted';
+                    
+                    // Handle both full names and codes
+                    let code = '-';
+                    if (status && status !== '-') {
+                        code = status.trim().substring(0, 1).toUpperCase();
+                        if (code === 'P') badgeClass = 'text-success fw-bold';
+                        else if (code === 'L') badgeClass = 'text-warning fw-bold';
+                        else if (code === 'A') badgeClass = 'text-danger fw-bold';
+                        else if (code === 'F') badgeClass = 'text-info fw-bold';
+                        else if (code === 'H') badgeClass = 'text-primary fw-bold';
+                    }
+                    
+                    row += `<td class="text-center ${badgeClass}">${code}</td>`;
+                }
+                row += `</tr>`;
+                tbody.append(row);
+            }
+        }
+
+        // --- Timeline ---
+        let selectedTimelineID = null;
+
+        function toggleTimelineButtons() {
+            const disabled = selectedTimelineID === null;
+            $('#btnEditTimeline').prop('disabled', disabled);
+            $('#btnDeleteTimeline').prop('disabled', disabled);
+        }
+
+        function handleEditTimeline() {
+            if (selectedTimelineID) editTimeline(selectedTimelineID);
+        }
+
+        function handleDeleteTimeline() {
+            if (selectedTimelineID) deleteTimeline(selectedTimelineID);
+        }
+
+        function selectTimelineItem(id, el) {
+            selectedTimelineID = id;
+            $('.timeline-card').removeClass('border-primary bg-light-subtle');
+            $(el).addClass('border-primary bg-light-subtle');
+            $(`#radTimeline_${id}`).prop('checked', true);
+            toggleTimelineButtons();
+        }
+
+        function fetchStaffTimeline() {
+            const staffId = @Model.StaffID;
+            console.log("Fetching timeline for staff:", staffId);
+            fetch(`/api/HumanResourceApi/GetStaffTimeline/${staffId}`)
+                .then(r => r.json())
+                .then(res => {
+                    console.log("Timeline API Response:", res);
+                    if (res.success) {
+                        renderStaffTimeline(res.data);
+                    } else {
+                        $('#timelineContainer').html(`<div class="alert alert-danger">${res.message || 'Failed to load timeline'}</div>`);
+                    }
+                })
+                .catch(err => {
+                    console.error("Timeline Fetch Error:", err);
+                    $('#timelineContainer').html('<div class="alert alert-danger">An error occurred while fetching timeline data.</div>');
+                });
+        }
+
+        function renderStaffTimeline(data) {
+            const container = $('#timelineContainer');
+            container.empty();
+            selectedTimelineID = null;
+            toggleTimelineButtons();
+
+            if (!data || data.length === 0) {
+                container.html('<div class="text-center py-5 text-muted">No timeline records found.</div>');
+                return;
+            }
+
+            let html = '<div class="timeline">';
+            data.forEach(item => {
+                const date = new Date(item.timelineDate || item.TimelineDate).toLocaleDateString();
+                const docName = item.timelineAttachDocName || item.TimelineAttachDocName;
+                const id = item.timelineID || item.TimelineID;
+
+                html += `
+                <div class="card mb-2 shadow-none border timeline-card" onclick="selectTimelineItem(${id}, this)" style="cursor: pointer;">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <input type="radio" name="timelineSelect" id="radTimeline_${id}" class="form-check-input me-3" onclick="event.stopPropagation(); selectTimelineItem(${id}, this.closest('.timeline-card'))">
+                                <div>
+                                    <h6 class="fw-bold mb-0">${item.timelineTitle || item.TimelineTitle}</h6>
+                                    <p class="mb-0 text-muted small text-truncate" style="max-width: 400px;">${item.timelineDescription || item.TimelineDescription || 'No description'}</p>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-light text-dark d-block mb-1">${date}</span>
+                                ${docName ? `
+                                <a href="/api/HumanResourceApi/DownloadTimelineDoc/${id}" class="text-primary small" onclick="event.stopPropagation()">
+                                    <i class="ti ti-download"></i> Doc
+                                </a>` : '<span class="text-muted small italic">No Doc</span>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            html += '</div>';
+            container.html(html);
+        }
+
+        function showAddTimelineModal() {
+            $('#timelineForm')[0].reset();
+            $('#timelineForm').removeClass('was-validated');
+            $('#hdnTimelineID').val(0);
+            $('#txtTimelineDate').val(new Date().toISOString().split('T')[0]);
+            $('#timelineModalTitle').text('Add Timeline');
+            $('#timelineModal').modal('show');
+        }
+
+        function editTimeline(id) {
+            console.log("Editing timeline:", id);
+            $('#timelineForm').removeClass('was-validated');
+            // In a real app, you'd fetch by ID or get from cached list
+            // For now, let's fetch to be safe
+            fetch(`/api/HumanResourceApi/GetStaffTimeline/${@Model.StaffID}`)
+                .then(r => r.json())
+                .then(res => {
+                    const item = res.data.find(x => (x.timelineID || x.TimelineID) == id);
+                    if (item) {
+                        $('#hdnTimelineID').val(id);
+                        $('#txtTimelineTitle').val(item.timelineTitle || item.TimelineTitle);
+                        $('#txtTimelineDate').val((item.timelineDate || item.TimelineDate).split('T')[0]);
+                        $('#txtTimelineDescription').val(item.timelineDescription || item.TimelineDescription);
+                        $('#chkTimelineVisible').prop('checked', item.timelineVisible || item.TimelineVisible);
+                        $('#timelineModalTitle').text('Edit Timeline');
+                        $('#timelineModal').modal('show');
+                    }
+                });
+        }
+
+        function saveTimeline() {
+            const form = document.getElementById('timelineForm');
+            form.classList.add('was-validated');
+
+            if (!form.checkValidity()) {
+                return;
+            }
+
+            const fileInput = document.getElementById('fileTimelineDoc');
+            const file = fileInput.files[0];
+            
+            const processSave = (base64 = null, fileName = null, fileType = null) => {
+                const data = {
+                    TimelineID: parseInt($('#hdnTimelineID').val()),
+                    StaffID: @Model.StaffID,
+                    TimelineTitle: $('#txtTimelineTitle').val(),
+                    TimelineDate: $('#txtTimelineDate').val(),
+                    TimelineDescription: $('#txtTimelineDescription').val(),
+                    TimelineVisible: $('#chkTimelineVisible').is(':checked'),
+                    AttachDocBase64: base64,
+                    AttachDocName: fileName,
+                    AttachDocType: fileType
+                };
+
+                fetch('/api/HumanResourceApi/UpsertTimeline', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) {
+                        $('#timelineModal').modal('hide');
+                        fetchStaffTimeline();
+                    } else {
+                        alert(res.message);
+                    }
+                });
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result.split(',')[1];
+                    processSave(base64, file.name, file.type);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                processSave();
+            }
+        }
+
+        function deleteTimeline(id) {
+            if (!confirm('Are you sure you want to delete this timeline?')) return;
+
+            fetch(`/api/HumanResourceApi/DeleteTimeline/${id}`, { method: 'DELETE' })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) fetchStaffTimeline();
+                    else alert(res.message);
+                });
+        }
+
+        function toggleStaffStatus(isActive) {
+            if (isActive) {
+                // Enable: No date required, call API directly
+                if (!confirm('Are you sure you want to Enable this staff member?')) return;
+                executeStatusToggle(true, null);
+            } else {
+                // Disable: Show modal for date selection
+                $('#statusForm').removeClass('was-validated');
+                $('#statusModalTitle').text('Disable Staff');
+                $('#hdnStatusIsActive').val(false);
+                $('#txtStatusDate').val(new Date().toISOString().split('T')[0]);
+                $('#statusModal').modal('show');
+            }
+        }
+
+        function confirmStatusToggle() {
+            const form = document.getElementById('statusForm');
+            form.classList.add('was-validated');
+            if (!form.checkValidity()) return;
+
+            const isActive = $('#hdnStatusIsActive').val() === 'true';
+            const statusDate = $('#txtStatusDate').val();
+            executeStatusToggle(isActive, statusDate);
+        }
+
+        function executeStatusToggle(isActive, statusDate) {
+            const data = {
+                staffId: @Model.StaffID,
+                isActive: isActive,
+                statusDate: statusDate
+            };
+
+            fetch('/api/HumanResourceApi/ToggleStaffStatus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    location.reload();
+                } else {
+                    alert(res.message);
+                }
+            })
+            .catch(err => {
+                console.error("Toggle Status Error:", err);
+                alert('An error occurred while updating status.');
+            });
+        }
+
+        function fetchStaffPayroll() {
+            const staffId = @Model.StaffID;
+            console.log("Fetching payroll for staff:", staffId);
+            fetch(`/api/HumanResourceApi/GetStaffPayroll/${staffId}`)
+                .then(r => r.json())
+                .then(res => {
+                    console.log("Payroll API Response:", res);
+                    if (res.success) {
+                        renderStaffPayroll(res.data);
+                    } else {
+                        $('#payrollTableBody').html(`<tr><td colspan="7" class="text-center text-danger">${res.message || 'Failed to load payroll'}</td></tr>`);
+                    }
+                })
+                .catch(err => {
+                    console.error("Payroll Fetch Error:", err);
+                    $('#payrollTableBody').html('<tr><td colspan="7" class="text-center text-danger">An error occurred while fetching data.</td></tr>');
+                });
+        }
+
+        function fetchStaffLeaves() {
+            const staffId = @Model.StaffID;
+            console.log("Fetching leaves for staff:", staffId);
+            fetch(`/api/HumanResourceApi/GetStaffLeaves/${staffId}`)
+                .then(r => r.json())
+                .then(res => {
+                    console.log("Leaves API Response:", res);
+                    if (res.success) {
+                        renderStaffLeaves(res.data);
+                    } else {
+                        $('#leaveTableBody').html(`<tr><td colspan="7" class="text-center text-danger">${res.message || 'Failed to load leaves'}</td></tr>`);
+                    }
+                })
+                .catch(err => {
+                    console.error("Leaves Fetch Error:", err);
+                    $('#leaveTableBody').html('<tr><td colspan="7" class="text-center text-danger">An error occurred while fetching data.</td></tr>');
+                });
+        }
+
+        function renderStaffLeaves(data) {
+            const tbody = $('#leaveTableBody');
+            tbody.empty();
+
+            if (!data || data.length === 0) {
+                tbody.html('<tr><td colspan="7" class="text-center text-danger">No Leave History Found</td></tr>');
+                return;
+            }
+
+            data.forEach(item => {
+                const leaveType = item.leaveTypeName || item.LeaveTypeName || 'N/A';
+                const leaveDate = item.leaveDate || item.LeaveDate;
+                const applyDate = item.applyDate || item.ApplyDate;
+                const days = item.leaveDays || item.LeaveDays || 1;
+                const status = item.status || item.Status || 'Pending';
+                const id = item.applyLeaveID || item.ApplyLeaveID;
+
+                let statusBadge = 'bg-warning';
+                if (status === 'Approved') statusBadge = 'bg-success';
+                else if (status === 'Rejected' || status === 'Cancelled') statusBadge = 'bg-danger';
+
+                const row = `
+                    <tr>
+                        <td>${leaveType}</td>
+                        <td>${leaveDate ? new Date(leaveDate).toLocaleDateString() : '-'}</td>
+                        <td>${days}</td>
+                        <td>${applyDate ? new Date(applyDate).toLocaleDateString() : '-'}</td>
+                        <td><span class="badge ${statusBadge}">${status}</span></td>
+                        <td class="text-end">
+                            <button class="btn btn-icon btn-soft-primary btn-sm" onclick="viewLeave(${id})">
+                                <i class="ti ti-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+
+        function viewLeave(id) {
+            window.location.href = `/HumanResource/ApplyLeave?id=${id}`;
+        }
+
+        function renderStaffPayroll(data) {
+            const tbody = $('#payrollTableBody');
+            tbody.empty();
+
+            if (!data || data.length === 0) {
+                tbody.html('<tr><td colspan="7" class="text-center text-danger">No Payroll Data Found</td></tr>');
+                return;
+            }
+
+            let totalNet = 0;
+            let totalGross = 0;
+            let totalEarning = 0;
+            let totalDeduction = 0;
+
+            const months = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            data.forEach(item => {
+                const netVal = parseFloat(item.netSalary || item.NetSalary || 0);
+                const basicVal = parseFloat(item.basicSalary || item.BasicSalary || 0);
+                const earnVal = parseFloat(item.totalEarnings || item.TotalEarnings || 0);
+                const deductVal = parseFloat(item.totalDeductions || item.TotalDeductions || 0);
+                const pID = item.payrollID || item.PayrollID || 0;
+                const mnt = item.month || item.Month || 0;
+                const yr = item.year || item.Year || 0;
+                const stat = item.status || item.Status || 'Generated';
+                const pDate = item.paymentDate || item.PaymentDate;
+                const pMode = item.paymentMode || item.PaymentMode;
+
+                totalNet += netVal;
+                totalGross += (basicVal + earnVal);
+                totalEarning += earnVal;
+                totalDeduction += deductVal;
+
+                const statusBadge = stat === 'Paid' ? 'bg-success' : 'bg-warning';
+                const row = `
+                    <tr>
+                        <td>${pID}</td>
+                        <td>${months[mnt] || mnt}-${yr}</td>
+                        <td>${pDate ? new Date(pDate).toLocaleDateString() : '-'}</td>
+                        <td>${pMode || '-'}</td>
+                        <td><span class="badge ${statusBadge}">${stat}</span></td>
+                        <td class="fw-bold">₹ ${netVal.toFixed(2)}</td>
+                        <td class="text-end">
+                            <button class="btn btn-icon btn-soft-primary btn-sm" onclick="viewPayslip(${pID})">
+                                <i class="ti ti-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+
+            $('#pay_totalNet').text('₹ ' + totalNet.toLocaleString());
+            $('#pay_totalGross').text('₹ ' + totalGross.toLocaleString());
+            $('#pay_totalEarning').text('₹ ' + totalEarning.toLocaleString());
+            $('#pay_totalDeduction').text('₹ ' + totalDeduction.toLocaleString());
+        }
+
+        function viewPayslip(id) {
+            // You can redirect to the payroll page with a filter or open a modal
+            // For now, let's just alert
+            window.location.href = `/HumanResource/Payroll?id=${id}`;
+        }
 
         function fetchSidebarStaff() {
             fetch('/api/HumanResourceApi/GetAllStaff')

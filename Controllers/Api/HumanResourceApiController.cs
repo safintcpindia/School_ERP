@@ -179,9 +179,13 @@ namespace SchoolERP.Net.Controllers.Api
         }
 
         [HttpGet("GetAllStaff")]
-        public IActionResult GetAllStaff()
+        public IActionResult GetAllStaff(bool? isActive = null)
         {
             var data = _hrService.GetAllStaff(GetCompanyId(), GetSessionId());
+            if (isActive.HasValue)
+            {
+                data = data.Where(s => s.IsActive == isActive.Value).ToList();
+            }
             return Ok(new { success = true, data });
         }
 
@@ -358,6 +362,132 @@ namespace SchoolERP.Net.Controllers.Api
 
             var res = _hrService.MarkAsPaid(req, GetUserId());
             return Ok(new { success = res.Success, message = res.Message });
+        }
+        
+        [HttpGet("GetPayrollDetails/{id}")]
+        public IActionResult GetPayrollDetails(int id)
+        {
+            if (!_menuPerm.Has(User, "/HumanResource/Payroll", "View"))
+                return Ok(new { success = false, message = "You do not have permission to view payroll details." });
+
+            var data = _hrService.GetPayrollDetails(id);
+            if (data == null || data.Summary == null || data.Summary.PayrollID == 0)
+            {
+                string msg = "Payroll record not found.";
+                if (data?.Summary?.Note != null && data.Summary.Note.StartsWith("Error"))
+                    msg = data.Summary.Note;
+
+                return Ok(new { success = false, message = msg });
+            }
+
+            return Ok(new { success = true, data });
+        }
+
+        [HttpGet("GetStaffPayroll/{staffId}")]
+        public IActionResult GetStaffPayroll(int staffId)
+        {
+            try
+            {
+                var data = _hrService.GetStaffPayroll(staffId);
+                return Ok(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Database Error: " + ex.Message });
+            }
+        }
+
+        [HttpGet("GetStaffLeaves/{staffId}")]
+        public IActionResult GetStaffLeaves(int staffId)
+        {
+            try
+            {
+                var data = _hrService.GetStaffLeaves(staffId);
+                return Ok(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Database Error: " + ex.Message });
+            }
+        }
+
+        [HttpGet("GetStaffAttendanceHistory/{staffId}/{year}")]
+        public IActionResult GetStaffAttendanceHistory(int staffId, int year)
+        {
+            try
+            {
+                int companyId = GetCompanyId();
+                var data = _hrService.GetStaffAttendanceHistory(staffId, year, companyId);
+                return Ok(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Database Error: " + ex.Message });
+            }
+        }
+
+        [HttpGet("GetStaffTimeline/{staffId}")]
+        public IActionResult GetStaffTimeline(int staffId)
+        {
+            try
+            {
+                var data = _hrService.GetStaffTimeline(staffId);
+                return Ok(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Database Error: " + ex.Message });
+            }
+        }
+
+        [HttpPost("UpsertTimeline")]
+        public IActionResult UpsertTimeline([FromBody] HRStaffTimelineUpsertRequest req)
+        {
+            try
+            {
+                var result = _hrService.UpsertTimeline(req, GetCompanyId(), GetSessionId(), GetUserId());
+                return Ok(new { success = result.Success, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Database Error: " + ex.Message });
+            }
+        }
+
+        [HttpDelete("DeleteTimeline/{id}")]
+        public IActionResult DeleteTimeline(int id)
+        {
+            try
+            {
+                var result = _hrService.DeleteTimeline(id, GetUserId());
+                return Ok(new { success = result.Success, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Database Error: " + ex.Message });
+            }
+        }
+
+        [HttpGet("DownloadTimelineDoc/{id}")]
+        public IActionResult DownloadTimelineDoc(int id)
+        {
+            var doc = _hrService.GetTimelineDocument(id);
+            if (doc.Bytes == null) return NotFound();
+            return File(doc.Bytes, doc.ContentType, doc.FileName);
+        }
+
+        [HttpPost("ToggleStaffStatus")]
+        public IActionResult ToggleStaffStatus([FromBody] HRStaffStatusToggleRequest req)
+        {
+            try
+            {
+                var result = _hrService.ToggleStaffStatus(req.StaffId, req.IsActive, GetUserId(), req.StatusDate);
+                return Ok(new { success = result.Success, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Database Error: " + ex.Message });
+            }
         }
     }
 }

@@ -156,11 +156,31 @@ namespace SchoolERP.Net.Controllers
             var rolesRes = await _roleClient.GetAllRolesAsync();
             model.Roles = rolesRes.Success ? rolesRes.Data : new List<MstRoleViewModel>();
 
-            // Step 3: Fetch the complete list of all staff members directly from the system.
+            // Step 3: Fetch the complete list of all staff members and filter for ACTIVE ONLY
             var staffRes = await _hrClient.GetAllStaffAsync();
-            model.StaffList = staffRes.Success ? staffRes.Data : new List<HRStaffViewModel>();
+            model.StaffList = staffRes.Success ? staffRes.Data.Where(s => s.IsActive).ToList() : new List<HRStaffViewModel>();
 
             // Step 4: Open the 'Staff Directory' page.
+            return View(model);
+        }
+
+        public async Task<IActionResult> DisableStaffs()
+        {
+            var model = new HRStaffPageViewModel();
+            
+            var desigRes = await _hrClient.GetAllDesignationsAsync();
+            model.Designations = desigRes.Success ? desigRes.Data : new List<HRDesignationViewModel>();
+
+            var deptRes = await _hrClient.GetAllDepartmentsAsync();
+            model.Departments = deptRes.Success ? deptRes.Data : new List<HRDepartmentViewModel>();
+
+            var rolesRes = await _roleClient.GetAllRolesAsync();
+            model.Roles = rolesRes.Success ? rolesRes.Data : new List<MstRoleViewModel>();
+
+            var staffRes = await _hrClient.GetAllStaffAsync();
+            // Filter DISABLED ONLY
+            model.StaffList = staffRes.Success ? staffRes.Data.Where(s => !s.IsActive).ToList() : new List<HRStaffViewModel>();
+
             return View(model);
         }
 

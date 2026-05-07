@@ -196,5 +196,15 @@ namespace SchoolERP.Net.Services
         /// </summary>
         (bool Success, string Message) SaveDetailedPayroll(HRPayrollSaveRequest req, int companyId, int sessionId, int userId);
         (bool Success, string Message) MarkAsPaid(HRPayrollPaymentRequest req, int userId);
+        HRPayrollDetailsViewModel GetPayrollDetails(int payrollId);
+        List<HRPayrollViewModel> GetStaffPayroll(int staffId);
+        List<HRApplyLeaveViewModel> GetStaffLeaves(int staffId);
+        HRAttendanceHistoryViewModel GetStaffAttendanceHistory(int staffId, int year, int companyId);
+        List<HRStaffTimelineViewModel> GetStaffTimeline(int staffId);
+        HRStaffTimelineViewModel? GetTimelineByID(int id);
+        (bool Success, string Message) UpsertTimeline(HRStaffTimelineUpsertRequest req, int companyId, int sessionId, int userId);
+        (bool Success, string Message) DeleteTimeline(int id, int userId);
+        (byte[] Bytes, string FileName, string ContentType) GetTimelineDocument(int id);
+        (bool Success, string Message) ToggleStaffStatus(int staffId, bool isActive, int userId, DateTime? statusDate);
     }
 }

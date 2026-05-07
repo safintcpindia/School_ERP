@@ -157,7 +157,7 @@
             body.empty();
 
             if (data.length === 0) {
-                body.append('<tr><td colspan="9" class="text-center">No records found.</td></tr>');
+                body.append('<tr><td colspan="9" class="text-center text-danger">No records found.</td></tr>');
                 return;
             }
 
@@ -248,7 +248,80 @@
         }
 
         function viewPayslip(id) {
-            Swal.fire('Info', 'Payslip view feature coming soon!', 'info');
+            console.log("Fetching payslip for ID:", id);
+            $.ajax({
+                url: `/api/HumanResourceApi/GetPayrollDetails/${id}`,
+                type: 'GET',
+                success: function (res) {
+                    console.log("Payslip API Response:", res);
+                    if (res.success) {
+                        renderPayslip(res.data);
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                },
+                error: function(err) {
+                    console.error("Payslip API Error:", err);
+                    Swal.fire('Error', 'Failed to fetch payslip details', 'error');
+                }
+            });
+        }
+
+        function renderPayslip(data) {
+            if (!data || !data.summary) {
+                Swal.fire('Error', 'Invalid payslip data received.', 'error');
+                return;
+            }
+            const summary = data.summary;
+            const details = data.details || [];
+
+            $('#slip_staffName').text(summary.staffName);
+            $('#slip_staffCode').text(summary.staffCode);
+            $('#slip_monthYear').text(`${getMonthName(summary.month)} ${summary.year}`);
+            $('#slip_designation').text(summary.designationName || '-');
+            $('#slip_department').text(summary.departmentName || '-');
+            $('#slip_basic').text(summary.basicSalary.toFixed(2));
+            $('#slip_attendance').text(summary.attendanceDays);
+            $('#slip_net').text(summary.netSalary.toFixed(2));
+            $('#slip_status').text(summary.status);
+            
+            const earningsBody = $('#slip_earningsBody');
+            const deductionsBody = $('#slip_deductionsBody');
+            earningsBody.empty();
+            deductionsBody.empty();
+
+            let totalEarnings = 0;
+            let totalDeductions = 0;
+
+            details.forEach(item => {
+                const row = `<tr><td>${item.componentName}</td><td class="text-end">${item.amount.toFixed(2)}</td></tr>`;
+                if (item.componentType === 'Earning') {
+                    earningsBody.append(row);
+                    totalEarnings += item.amount;
+                } else {
+                    deductionsBody.append(row);
+                    totalDeductions += item.amount;
+                }
+            });
+
+            $('#slip_totalEarnings').text(totalEarnings.toFixed(2));
+            $('#slip_totalDeductions').text(totalDeductions.toFixed(2));
+            
+            $('#payslipModal').modal('show');
+        }
+
+        function getMonthName(month) {
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return months[month - 1];
+        }
+
+        function printPayslip() {
+            const printContent = document.getElementById('payslipPrintArea').innerHTML;
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            window.location.reload();
         }
 
         function viewStaffDetails(staffId) {
@@ -360,6 +433,86 @@
                     <div class="col-12">
                         <label class="form-label fw-semibold">Note</label>
                         <textarea id="pay_note" class="form-control" rows="3" placeholder="Enter payment details if any..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payslip Modal -->
+<div class="modal fade" id="payslipModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h5 class="modal-title">Payslip Details</h5>
+                <div>
+                    <button type="button" class="btn btn-warning" onclick="printPayslip()">
+                        <i class="ti ti-printer me-1"></i> Print
+                    </button>
+                    <button class="btn btn-danger" data-bs-dismiss="modal">
+                        <i class="ti ti-x me-1"></i> Close
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body" id="payslipPrintArea">
+                <div class="p-4 border rounded bg-white shadow-sm">
+                    <div class="text-center mb-4 pb-3 border-bottom">
+                        <h4 class="fw-bold mb-1 text-primary">STAFF PAYSLIP</h4>
+                        <p class="text-muted mb-0" id="slip_monthYear"></p>
+                    </div>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless mb-0">
+                                <tr><th width="40%" class="text-muted">Staff Name</th><td id="slip_staffName" class="fw-semibold"></td></tr>
+                                <tr><th class="text-muted">Staff ID</th><td id="slip_staffCode" class="fw-semibold"></td></tr>
+                                <tr><th class="text-muted">Department</th><td id="slip_department"></td></tr>
+                                <tr><th class="text-muted">Designation</th><td id="slip_designation"></td></tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless mb-0">
+                                <tr><th width="40%" class="text-muted">Basic Salary</th><td class="fw-semibold">₹ <span id="slip_basic"></span></td></tr>
+                                <tr><th class="text-muted">Attendance</th><td id="slip_attendance"></td></tr>
+                                <tr><th class="text-muted">Status</th><td><span id="slip_status" class="badge bg-success-light text-success"></span></td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold border-bottom pb-2 text-success"><i class="ti ti-circle-plus me-1"></i>Earnings</h6>
+                            <table class="table table-sm table-hover">
+                                <tbody id="slip_earningsBody"></tbody>
+                                <tfoot class="table-light">
+                                    <tr><th class="fw-bold">Total Earnings</th><td class="text-end fw-bold text-success">₹ <span id="slip_totalEarnings"></span></td></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold border-bottom pb-2 text-danger"><i class="ti ti-circle-minus me-1"></i>Deductions</h6>
+                            <table class="table table-sm table-hover">
+                                <tbody id="slip_deductionsBody"></tbody>
+                                <tfoot class="table-light">
+                                    <tr><th class="fw-bold">Total Deductions</th><td class="text-end fw-bold text-danger">₹ <span id="slip_totalDeductions"></span></td></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-primary-light rounded d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold text-primary">Net Salary</h5>
+                        <h4 class="mb-0 fw-bold text-primary">₹ <span id="slip_net"></span></h4>
+                    </div>
+                    
+                    <div class="mt-5 pt-4 d-flex justify-content-between">
+                        <div class="text-center" style="width: 180px;">
+                            <div class="border-top pt-2 mt-4 text-muted small">Authorized Signatory</div>
+                        </div>
+                        <div class="text-center" style="width: 180px;">
+                            <div class="border-top pt-2 mt-4 text-muted small">Employee Signature</div>
+                        </div>
                     </div>
                 </div>
             </div>

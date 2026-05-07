@@ -18,26 +18,26 @@
 }
 
 <!-- Page Header -->
-<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
     <div>
         <h6 class="fw-bold mb-0">Staff Directory</h6>
     </div>
     <div class="d-flex align-items-center flex-wrap gap-1">
         @if (canAdd)
         {
-            <a asp-action="AddStaff" class="btn btn-primary d-inline-flex align-items-center">
+            <a asp-action="AddStaff" class="btn btn-primary">
                 <i class="ti ti-plus me-1"></i>Add Staff
             </a>
         }
         @if (canEdit)
         {
-            <button type="button" id="btnTopEdit" class="btn btn-warning d-inline-flex align-items-center" onclick="handleEdit()" disabled>
+            <button type="button" id="btnTopEdit" class="btn btn-info" onclick="handleEdit()" disabled>
                 <i class="ti ti-edit me-1"></i>Edit
             </button>
         }
         @if (canDelete)
         {
-            <button type="button" id="btnTopDelete" class="btn btn-danger d-inline-flex align-items-center" onclick="handleDelete()" disabled>
+            <button type="button" id="btnTopDelete" class="btn btn-danger" onclick="handleDelete()" disabled>
                 <i class="ti ti-trash me-1"></i>Delete
             </button>
         }
@@ -48,12 +48,12 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card shadow-tbl-outer mb-2">
-            <div class="card-body">
+            <div class="card-body p-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <input type="text" id="txtSearch" class="form-control w-25 me-3" placeholder="Search by name or code..." onkeyup="filterStaff()" />
                     <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
                         <div class="dropdown">
-                            <a href="#" class="btn btn-white border btn-lg" data-bs-toggle="dropdown">
+                            <a href="#" class="btn btn-white border btn-lg" data-bs-toggle="dropdown" data-bs-auto-close="outside">
                                 <i class="ti ti-filter text-gray-5 me-1"></i>Filters
                             </a>
                             <div class="dropdown-menu dropdown-lg dropdown-menu-end filter-dropdown p-0">
@@ -152,7 +152,7 @@
         function loadStaff() {
             $('#list-tbody, #card-view-container').html('<tr><td colspan="7" class="text-center py-5"><div class="spinner-border text-primary"></div></td></tr>');
 
-            fetch('/api/HumanResourceApi/GetAllStaff')
+            fetch('/api/HumanResourceApi/GetAllStaff?isActive=true')
                 .then(r => r.json())
                 .then(res => {
                     if (res.success) {
@@ -196,10 +196,10 @@
                 // List Row
                 const row = `<tr>
                         <td><input type="radio" name="staffSelect" onclick="selectStaff(${s.staffID})"></td>
-                        <td><span class="fw-bold">${s.staffCode}</span></td>
+                        <td><span class="">${s.staffCode}</span></td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <a href="/HumanResource/StaffDetails/${s.staffID}" class="text-dark fw-semibold">${s.firstName} ${s.lastName || ''}</a>
+                                <a href="/HumanResource/StaffDetails/${s.staffID}" class="">${s.firstName} ${s.lastName || ''}</a>
                             </div>
                         </td>
                         <td><span class="">${roleBadges}</span></td>

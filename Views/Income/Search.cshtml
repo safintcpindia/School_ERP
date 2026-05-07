@@ -86,7 +86,7 @@
 
     @if (!string.IsNullOrEmpty(Model.SearchType))
     {
-        <div class="col-xl-12 mb-2" id="activeFilterBadges">
+        <div class="col-xl-12" id="activeFilterBadges">
             <div class="card shadow-tbl border-0 py-1 mb-2">
                 <div class="card-body p-2 d-flex flex-wrap gap-2 align-items-center">
                     <span class="text-muted small fw-bold ms-2 me-2"><i class="ti ti-filter-check me-1"></i>Active Filters:</span>
@@ -146,16 +146,16 @@
                             @if (!Model.Results.Any())
                             {
                                 <tr class="no-records">
-                                    <td colspan="5" class="text-center py-4 text-muted">No records found.</td>
+                                    <td colspan="5" class="text-center py-4 text-danger">No records found.</td>
                                 </tr>
                             }
                         </tbody>
                         @if (Model.Results.Any())
                         {
                             <tfoot>
-                                <tr class="bg-light fw-bold">
-                                    <td colspan="4" class="text-end ps-3">Grand Total</td>
-                                    <td class="text-end pe-3">@Model.TotalAmount.ToString("N2")</td>
+                                <tr class="table-light fw-bold">
+                                    <td colspan="4" class="text-end ps-3 text-dark">Grand Total</td>
+                                    <td class="text-end pe-3 text-dark">@Model.TotalAmount.ToString("N2")</td>
                                 </tr>
                             </tfoot>
                         }

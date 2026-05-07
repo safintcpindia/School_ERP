@@ -55,6 +55,7 @@ builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IVehicleAssignService, VehicleAssignService>();
 builder.Services.AddScoped<IRoutePickupPointService, RoutePickupPointService>();
 builder.Services.AddScoped<IHumanResourceService, HumanResourceService>();
+builder.Services.AddScoped<IStudentInformationService, StudentInformationService>();
 builder.Services.AddScoped<SchoolERP.Net.Helpers.PermissionHelper>();
 
 

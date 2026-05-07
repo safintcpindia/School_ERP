@@ -280,6 +280,7 @@ namespace SchoolERP.Net.Models
         public string StaffAttendanceSource { get; set; } = "Manual";
         public string StaffAttendanceNote { get; set; } = string.Empty;
         public DateTime? LastUpdated { get; set; }
+        public DateTime? StaffAttendanceDate { get; set; }
     }
 
     public class HRStaffAttendanceUpsertRequest
@@ -438,5 +439,58 @@ namespace SchoolERP.Net.Models
         public string PaymentMode { get; set; } = "Cash";
         public DateTime PaymentDate { get; set; } = DateTime.Now;
         public string? Note { get; set; }
+    }
+
+    public class HRPayrollDetailsViewModel
+    {
+        public HRPayrollViewModel Summary { get; set; } = new();
+        public List<HRPayrollDetailViewModel> Details { get; set; } = new();
+    }
+
+    public class HRAttendanceHistoryViewModel
+    {
+        public List<HRAttendanceSummary> Summaries { get; set; } = new();
+        public List<HRAttendanceDayStatus> Days { get; set; } = new();
+    }
+
+    public class HRAttendanceDayStatus
+    {
+        public int Day { get; set; }
+        public int Month { get; set; }
+        public string Status { get; set; } = string.Empty; // P, L, A, F, H
+    }
+
+    public class HRStaffTimelineViewModel
+    {
+        public int TimelineID { get; set; }
+        public int StaffID { get; set; }
+        public string TimelineTitle { get; set; } = string.Empty;
+        public DateTime TimelineDate { get; set; }
+        public string? TimelineDescription { get; set; }
+        public string? TimelineAttachDocName { get; set; }
+        public bool TimelineVisible { get; set; }
+        public DateTime CreatedOn { get; set; }
+    }
+
+    public class HRStaffTimelineUpsertRequest
+    {
+        public int TimelineID { get; set; }
+        public int StaffID { get; set; }
+        public string TimelineTitle { get; set; } = string.Empty;
+        public DateTime TimelineDate { get; set; }
+        public string? TimelineDescription { get; set; }
+        public bool TimelineVisible { get; set; }
+        
+        // Attachment
+        public string? AttachDocBase64 { get; set; }
+        public string? AttachDocName { get; set; }
+        public string? AttachDocType { get; set; }
+    }
+
+    public class HRStaffStatusToggleRequest
+    {
+        public int StaffId { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime? StatusDate { get; set; }
     }
 }

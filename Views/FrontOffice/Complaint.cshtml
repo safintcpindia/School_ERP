@@ -18,7 +18,7 @@
 }
 
 <!-- Page Header -->
-<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
     <div>
         <h6 class="fw-bold mb-0">Complaint List</h6>
     </div>
@@ -46,21 +46,59 @@
 
 <div class="row">
     <!-- Filters -->
-    <div class="col-md-12 mb-3">
-        <div class="card shadow-tbl-outer">
-            <div class="card-body py-2">
+    <div class="col-md-12">
+        <div class="card shadow-tbl-outer mb-2">
+            <div class="card-body p-3">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                    <input type="text" class="form-control w-25" id="txtSearch" placeholder="Search by name, phone...">
-                    <div class="d-flex gap-2">
-                        <select class="form-select select2" id="filterType">
-                            <option value="">All Types</option>
-                            @foreach(var t in Model.ComplaintTypes) { <option value="@t.Name">@t.Name</option> }
-                        </select>
-                        <select class="form-select select2" id="filterSource">
-                            <option value="">All Sources</option>
-                            @foreach(var s in Model.Sources) { <option value="@s.Name">@s.Name</option> }
-                        </select>
+                    <div class="position-relative border d-flex align-items-center rounded-2 px-3 ">
+                        <i class="fas fa-search search-icon-input"></i>
+                        <input type="text" class="form-control border-0 ps-2" id="txtSearchInput"
+                               placeholder="Search by name, phone..." style="min-width: 220px;">
                     </div>
+                    <!--<input type="text" class="form-control w-25" id="txtSearch" placeholder="Search by name, phone...">-->
+                    <div class="dropdown">
+                        <a href="#" id="btnFilterToggle" class="btn btn-white border rounded btn-md text-dark fs-14 align-items-center d-flex fw-normal"
+                           data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                            <i class="ti ti-filter text-gray-5 me-1"></i>Filters
+                        </a>
+                        <div class="dropdown-menu dropdown-lg dropdown-menu-end filter-dropdown p-0 shadow-tbl" id="filter-dropdown" style="">
+                            <div class="d-flex align-items-center justify-content-between border-bottom filter-header">
+                                <h6 class="mb-0 fw-bold">Select Criteria</h6>
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <!--<button type="button" class="btn btn-light btn-md me-2 fw-medium" id="btnResetFilters">Reset</button>
+                                    <a href="javascript:void(0);" class="btn btn-secondary btn-md me-2 fw-medium" id="close-filter">Close</a>-->
+                                    <button type="button" class="btn text-primary fs-6 fw-medium" id="btnApplyFilters">Filter</button>
+                                </div>
+                            </div>
+                            <form action="#">
+                                <div class="filter-body pb-0">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label mb-1">Type</label>
+                                            <select class="form-select select2" id="filterType">
+                                                <option value="">All Types</option>
+                                                @foreach (var t in Model.ComplaintTypes)
+                                                {
+                                                    <option value="@t.Name">@t.Name</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label mb-1">Sources</label>
+                                            <select class="form-select select2" id="filterSource">
+                                                <option value="">All Sources</option>
+                                                @foreach (var s in Model.Sources)
+                                                {
+                                                    <option value="@s.Name">@s.Name</option>
+                                                }
+                                            </select>
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>                       
                 </div>
             </div>
         </div>
@@ -231,7 +269,7 @@
 
     // Search & Filter
     function applyFilters() {
-        const q = document.getElementById('txtSearch').value.toLowerCase();
+            const q = document.getElementById('txtSearchInput').value.toLowerCase();
         const type = document.getElementById('filterType').value;
         const source = document.getElementById('filterSource').value;
 
@@ -250,7 +288,7 @@
         });
     }
 
-    document.getElementById('txtSearch').addEventListener('keyup', applyFilters);
+        document.getElementById('txtSearchInput').addEventListener('keyup', applyFilters);
     document.getElementById('filterType').addEventListener('change', applyFilters);
     document.getElementById('filterSource').addEventListener('change', applyFilters);
 

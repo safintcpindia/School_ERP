@@ -167,7 +167,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Class <span class="text-danger">*</span></label>
-                            <select id="ddlClass" class="form-select" onchange="loadSectionsByClass(this.value, 'ddlSections')">
+                            <select id="ddlClass" class="form-select form-control" onchange="loadSectionsByClass(this.value, 'ddlSections')">
                                 <option value="">Select Class</option>
                                 @foreach (var c in Model.Classes)
                                 {
@@ -178,14 +178,14 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Section <span class="text-danger">*</span></label>
-                            <select id="ddlSections" class="form-control select2" multiple data-placeholder="Select Sections">
+                            <select id="ddlSections" class="form-select form-control select2" multiple data-placeholder="Select Sections">
                                 @* Sections populated dynamically based on class *@
                             </select>
                             <div class="invalid-feedback" id="errDdlSections"></div>
                         </div>
                         <div class="col-md-12">
                             <label class="form-label">Subjects <span class="text-danger">*</span></label>
-                            <select id="ddlSubjects" class="form-control select2" multiple data-placeholder="Select Subjects">
+                            <select id="ddlSubjects" class="form-select form-control select2" multiple data-placeholder="Select Subjects">
                                 @foreach (var sub in Model.Subjects)
                                 {
                                     <option value="@sub.SubjectID">@sub.SubjectName</option>

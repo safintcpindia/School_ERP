@@ -4,7 +4,7 @@
 }
 
 <!-- Page Header -->
-<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
     <div>
         <h6 class="fw-bold mb-0">Staff Attendance</h6>
     </div>
@@ -164,12 +164,13 @@
 
     function renderTable(data) {
         if (!data || data.length === 0) {
-            $('#attendanceBody').html(`<tr><td colspan="8" class="text-center py-4">No staff members found.</td></tr>`);
+            $('#attendanceBody').html(`<tr><td colspan="8" class="text-center py-4 text-danger">No staff members found.</td></tr>`);
             return;
         }
 
         let html = '';
         data.forEach((item, index) => {
+            console.log(item);
             const val = item.staffAttendance;
             html += `
                 <tr data-staff-id="${item.staffID}">
@@ -201,7 +202,7 @@
                             </div>
                         </div>
                     </td>
-                    <td>${item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString() : '-'}</td>
+                                    <td>${item.staffAttendanceDate ? new Date(item.staffAttendanceDate).toLocaleDateString() : '-'}</td>
                     <td>${item.staffAttendanceSource || 'N/A'}</td>
                     <td class="text-end">
                         <input type="text" class="form-control txt-note" value="${item.staffAttendanceNote || ''}">

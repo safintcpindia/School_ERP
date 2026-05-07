@@ -44,10 +44,18 @@
 </div>
 
 <div class="row">
-    <div class="col-md-12 mb-3">
-        <div class="card shadow-tbl-outer">
-            <div class="card-body py-2">
-                <input type="text" class="form-control w-25" id="txtSearch" placeholder="Search by number/model/driver...">
+
+    <!-- Filters -->
+    <div class="col-md-12">
+        <div class="card shadow-tbl-outer mb-2">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="position-relative border d-flex align-items-center rounded-2 px-3 ">
+                        <i class="fas fa-search search-icon-input"></i>
+                        <input type="text" class="form-control border-0 ps-2" id="txtSearchInput"
+                               placeholder="Search by number,model,driver..." style="min-width: 220px;">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -139,11 +147,11 @@
                         <div class="col-md-8">
                             <h6 class="fw-bold mb-3 border-bottom pb-2">Vehicle Information</h6>
                             <div class="row row-gap-3">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label fw-bold">Vehicle Number <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="txtVehicleNumber" required maxlength="50">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label fw-bold">Model</label>
                                     <input type="text" class="form-control" id="txtVehicleModel" maxlength="100">
                                 </div>
@@ -163,8 +171,8 @@
                                     <label class="form-label fw-bold">Max Capacity</label>
                                     <input type="number" class="form-control" id="txtCapacity">
                                 </div>
-                                <div class="col-md-8">
-                                    <div class="form-check form-switch mt-4">
+                                <div class="col-md-12">
+                                    <div class="form-check form-switch mt-2">
                                         <input class="form-check-input" type="checkbox" id="chkActive" checked>
                                         <label class="form-check-label" for="chkActive">Active Status</label>
                                     </div>
@@ -173,7 +181,7 @@
 
                             <h6 class="fw-bold mb-3 border-bottom pb-2 mt-4">Driver Information</h6>
                             <div class="row row-gap-3">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <label class="form-label fw-bold">Driver Name</label>
                                     <input type="text" class="form-control" id="txtDriverName" maxlength="200">
                                 </div>
@@ -181,7 +189,7 @@
                                     <label class="form-label fw-bold">Driver Contact</label>
                                     <input type="text" class="form-control" id="txtDriverContact" maxlength="20">
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <label class="form-label fw-bold">Driver License No</label>
                                     <input type="text" class="form-control" id="txtDriverLicense" maxlength="100">
                                 </div>
@@ -197,9 +205,8 @@
                             <div class="mb-3">
                                 <input type="file" class="form-control form-control-sm" id="filePhoto" accept="image/*" onchange="previewImage(this)">
                             </div>
-
-                            <h6 class="fw-bold mb-3 border-bottom pb-2 mt-4">Notes</h6>
-                            <textarea class="form-control" id="txtNote" rows="5" placeholder="Additional notes..."></textarea>
+                           
+                            <textarea class="form-control" id="txtNote" rows="4" placeholder="Additional notes..."></textarea>
                         </div>
                     </div>
                 </form>
@@ -230,7 +237,7 @@
         }
     }
 
-    document.getElementById('txtSearch').addEventListener('keyup', function() {
+        document.getElementById('txtSearchInput').addEventListener('keyup', function () {
         const q = this.value.toLowerCase();
         document.querySelectorAll('#tblVehicles tbody tr').forEach(row => {
             if (row.classList.contains('item-row')) {

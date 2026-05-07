@@ -18,7 +18,7 @@
 </style>
 
 <!-- Page Header -->
-<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-3">
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
     <div>
         <h6 class="fw-bold mb-0">Apply Leave</h6>
     </div>
@@ -34,7 +34,7 @@
         <div class="card shadow-tbl">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table">
                         <thead class="bg-light">
                             <tr>
                                 <th class="ps-3">Staff</th>
@@ -80,9 +80,8 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="7" class="text-center py-5">
-                                        <img src="https://mybeautyparlour.com/assets/frontend/images/no-record-found.png" width="150" alt="No Record">
-                                        <p class="text-muted mt-2">No leave applications found.</p>
+                                    <td colspan="7" class="text-center py-5">                                        
+                                        <span class="text-danger mt-2">No leave applications found.</span>
                                     </td>
                                 </tr>
                             }
@@ -102,7 +101,7 @@
                 <h5 class="modal-title" id="modalTitle">Apply Leave</h5>
                 <div>
                     <button type="button" class="btn btn-success" onclick="saveLeave()">
-                        <i class="ti ti-device-floppy me-1"></i> Save
+                        <i class="ti ti-cloud me-1"></i> Save
                     </button>
                     <button class="btn btn-danger" data-bs-dismiss="modal">
                         <i class="ti ti-x me-1"></i> Close
@@ -121,7 +120,7 @@
                         <input type="hidden" id="ddlStaff" value="@Model.StaffList.First().StaffID" />
                     }
                     <div class="row g-3">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold">Leave Type <span class="text-danger">*</span></label>
                             <select id="ddlLeaveType" class="form-select select2" required onchange="showBalanceInfo()">
                                 <option value="">Select Type</option>
@@ -132,6 +131,17 @@
                             </select>
                             <div class="invalid-feedback">Please select a leave type.</div>
                         </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">From Date <span class="text-danger">*</span></label>
+                            <input type="date" id="txtFromDate" class="form-control" required onchange="clearError()">
+                            <div class="invalid-feedback">Required.</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">To Date <span class="text-danger">*</span></label>
+                            <input type="date" id="txtToDate" class="form-control" required onchange="clearError()">
+                            <div class="invalid-feedback">Required.</div>
+                        </div>
                         <div class="col-md-12" id="divBalance" style="display:none;">
                             <div class="alert alert-info py-2 px-3 mb-0 d-flex align-items-center">
                                 <i class="ti ti-info-circle me-2 fs-5"></i>
@@ -139,15 +149,9 @@
                                 <span class="ms-auto small text-muted">Total Quota: <span id="spnTotalQuota">0</span> | Used: <span id="spnUsed">0</span></span>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">From Date <span class="text-danger">*</span></label>
-                            <input type="date" id="txtFromDate" class="form-control" required onchange="clearError()">
-                            <div class="invalid-feedback">Required.</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">To Date <span class="text-danger">*</span></label>
-                            <input type="date" id="txtToDate" class="form-control" required onchange="clearError()">
-                            <div class="invalid-feedback">Required.</div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Attachment</label>
+                            <input type="file" id="fileAttachment" class="form-control" />
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Reason</label>
@@ -161,10 +165,7 @@
                                 <option value="Disapproved">Disapproved</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Attachment</label>
-                            <input type="file" id="fileAttachment" class="form-control" />
-                        </div>
+                       
                     </div>
                 </div>
                 <div class="modal-footer bg-light d-none">

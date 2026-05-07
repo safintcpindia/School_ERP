@@ -1,0 +1,32 @@
+using System.Collections.Generic;
+using SchoolERP.Net.Models;
+
+namespace SchoolERP.Net.Services
+{
+    public interface IStudentInformationService
+    {
+        List<StudentDisableReasonViewModel> GetAllDisableReasons(int companyId, int sessionId);
+        (bool Success, string Message) UpsertDisableReason(StudentDisableReasonUpsertRequest req, int companyId, int sessionId, int userId);
+        (bool Success, string Message) DeleteDisableReason(int id, int userId);
+
+        List<StudentHouseViewModel> GetAllStudentHouses(int companyId, int sessionId);
+        (bool Success, string Message) UpsertStudentHouse(StudentHouseUpsertRequest req, int companyId, int sessionId, int userId);
+        (bool Success, string Message) DeleteStudentHouse(int id, int userId);
+
+        List<StudentCategoryViewModel> GetAllStudentCategories(int companyId, int sessionId);
+        (bool Success, string Message) UpsertStudentCategory(StudentCategoryUpsertRequest req, int companyId, int sessionId, int userId);
+        (bool Success, string Message) DeleteStudentCategory(int id, int userId);
+        string GetNewStudentRollNo(int companyId, int sessionId, Dictionary<string, string> dynamicValues = null);
+        string GetNextSimpleAdmissionNo(int companyId);
+        (bool Success, string Message, int StudentID) UpsertStudentAdmission(StudentAdmissionUpsertRequest req, int companyId, int sessionId, int userId);
+        StudentDetailsViewModel GetStudentDetails(int studentId, int companyId, int sessionId);
+        List<StudentListViewModel> GetStudentList(int companyId, int sessionId, int? classId, int? sectionId, string? searchTerm);
+        (bool Success, string Message) DeleteStudent(int id, int userId);
+
+        // Timeline
+        List<StudentTimelineViewModel> GetStudentTimeline(int studentId);
+        (bool Success, string Message) UpsertStudentTimeline(StudentTimelineUpsertRequest req, int companyId, int sessionId, int userId);
+        (bool Success, string Message) DeleteStudentTimeline(int id, int userId);
+        (byte[] Bytes, string FileName, string ContentType) GetStudentTimelineDocument(int id);
+    }
+}

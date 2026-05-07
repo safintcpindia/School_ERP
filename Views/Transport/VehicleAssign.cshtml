@@ -44,13 +44,22 @@
 </div>
 
 <div class="row">
-    <div class="col-md-12 mb-3">
-        <div class="card shadow-tbl-outer">
-            <div class="card-body py-2">
-                <input type="text" class="form-control w-25" id="txtSearch" placeholder="Search by route/vehicle...">
+
+    <!-- Filters -->
+    <div class="col-md-12">
+        <div class="card shadow-tbl-outer mb-2">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="position-relative border d-flex align-items-center rounded-2 px-3 ">
+                        <i class="fas fa-search search-icon-input"></i>
+                        <input type="text" class="form-control border-0 ps-2" id="txtSearchInput"
+                               placeholder="Search by route,vehicle.." style="min-width: 220px;">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 
     <div class="col-xl-12">
         <div class="card shadow-tbl">
@@ -75,7 +84,7 @@
                                     <td class="ps-3">
                                         <input type="radio" name="selectedItem" class="form-check-input" value="@first.RouteID">
                                     </td>
-                                    <td class="fw-bold text-uppercase" style="vertical-align: top;">
+                                    <td class="">
                                         @first.RouteName
                                     </td>
                                     <td>
@@ -186,7 +195,7 @@
         if (canDelete) document.getElementById('btnDelete').disabled = false;
     }
 
-    document.getElementById('txtSearch').addEventListener('keyup', function() {
+        document.getElementById('txtSearchInput').addEventListener('keyup', function () {
         const q = this.value.toLowerCase();
         document.querySelectorAll('#tblAssignments tbody tr.item-row').forEach(row => {
             row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';

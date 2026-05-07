@@ -800,15 +800,16 @@ namespace SchoolERP.Net.Services
                 {
                     list.Add(new HRStaffAttendanceViewModel
                     {
-                        StaffID = Convert.ToInt32(r["StaffID"]),
-                        StaffCode = r["StaffCode"].ToString()!,
-                        StaffName = r["StaffName"].ToString()!,
-                        RoleName = r["RoleName"].ToString()!,
-                        StaffAttendanceID = Convert.ToInt32(r["StaffAttendanceID"]),
-                        StaffAttendance = r["StaffAttendance"].ToString()!,
-                        StaffAttendanceSource = r["StaffAttendanceSource"].ToString()!,
-                        StaffAttendanceNote = r["StaffAttendanceNote"].ToString()!,
-                        LastUpdated = r["LastUpdated"] == DBNull.Value ? null : Convert.ToDateTime(r["LastUpdated"])
+                        StaffID = r["StaffID"] == DBNull.Value ? 0 : Convert.ToInt32(r["StaffID"]),
+                        StaffCode = r["StaffCode"]?.ToString() ?? "",
+                        StaffName = r["StaffName"]?.ToString() ?? "",
+                        RoleName = r["RoleName"]?.ToString() ?? "",
+                        StaffAttendanceID = r["StaffAttendanceID"] == DBNull.Value ? 0 : Convert.ToInt32(r["StaffAttendanceID"]),
+                        StaffAttendance = r["StaffAttendance"]?.ToString() ?? "Absent",
+                        StaffAttendanceSource = r["StaffAttendanceSource"]?.ToString() ?? "",
+                        StaffAttendanceNote = r["StaffAttendanceNote"]?.ToString() ?? "",
+                        LastUpdated = r["LastUpdated"] == DBNull.Value ? null : Convert.ToDateTime(r["LastUpdated"]),
+                        StaffAttendanceDate = r["StaffAttendanceDate"] == DBNull.Value ? null : Convert.ToDateTime(r["StaffAttendanceDate"])
                     });
                 }
             }
@@ -992,25 +993,25 @@ namespace SchoolERP.Net.Services
         {
             return new HRPayrollViewModel
             {
-                PayrollID = Convert.ToInt32(r["PayrollID"]),
-                StaffID = Convert.ToInt32(r["StaffID"]),
-                StaffName = r["StaffName"].ToString()!,
-                StaffCode = r["StaffCode"].ToString()!,
-                RoleName = r.Table.Columns.Contains("RoleName") ? r["RoleName"].ToString()! : "",
-                DepartmentName = r.Table.Columns.Contains("DepartmentName") ? r["DepartmentName"].ToString()! : "",
-                DesignationName = r.Table.Columns.Contains("DesignationName") ? r["DesignationName"].ToString()! : "",
-                MobileNo = r.Table.Columns.Contains("MobileNo") ? r["MobileNo"].ToString()! : "",
-                Month = Convert.ToInt32(r["Month"]),
-                Year = Convert.ToInt32(r["Year"]),
-                BasicSalary = Convert.ToDecimal(r["BasicSalary"]),
-                TotalEarnings = Convert.ToDecimal(r["TotalEarnings"]),
-                TotalDeductions = Convert.ToDecimal(r["TotalDeductions"]),
-                NetSalary = Convert.ToDecimal(r["NetSalary"]),
-                AttendanceDays = Convert.ToDecimal(r["AttendanceDays"]),
-                Status = r["Status"].ToString()!,
-                PaymentMode = r["PaymentMode"]?.ToString(),
-                PaymentDate = r["PaymentDate"] == DBNull.Value ? null : Convert.ToDateTime(r["PaymentDate"]),
-                Note = r["Note"]?.ToString()
+                PayrollID = r["PayrollID"] == DBNull.Value ? 0 : Convert.ToInt32(r["PayrollID"]),
+                StaffID = r["StaffID"] == DBNull.Value ? 0 : Convert.ToInt32(r["StaffID"]),
+                StaffName = r["StaffName"]?.ToString() ?? "",
+                StaffCode = r["StaffCode"]?.ToString() ?? "",
+                RoleName = r.Table.Columns.Contains("RoleName") ? (r["RoleName"]?.ToString() ?? "") : "",
+                DepartmentName = r.Table.Columns.Contains("DepartmentName") ? (r["DepartmentName"]?.ToString() ?? "") : "",
+                DesignationName = r.Table.Columns.Contains("DesignationName") ? (r["DesignationName"]?.ToString() ?? "") : "",
+                MobileNo = r.Table.Columns.Contains("MobileNo") ? (r["MobileNo"]?.ToString() ?? "") : "",
+                Month = r["Month"] == DBNull.Value ? 0 : Convert.ToInt32(r["Month"]),
+                Year = r["Year"] == DBNull.Value ? 0 : Convert.ToInt32(r["Year"]),
+                BasicSalary = r["BasicSalary"] == DBNull.Value ? 0 : Convert.ToDecimal(r["BasicSalary"]),
+                TotalEarnings = r["TotalEarnings"] == DBNull.Value ? 0 : Convert.ToDecimal(r["TotalEarnings"]),
+                TotalDeductions = r["TotalDeductions"] == DBNull.Value ? 0 : Convert.ToDecimal(r["TotalDeductions"]),
+                NetSalary = r["NetSalary"] == DBNull.Value ? 0 : Convert.ToDecimal(r["NetSalary"]),
+                AttendanceDays = r.Table.Columns.Contains("AttendanceDays") && r["AttendanceDays"] != DBNull.Value ? Convert.ToDecimal(r["AttendanceDays"]) : 0,
+                Status = r["Status"]?.ToString() ?? "Generated",
+                PaymentMode = r.Table.Columns.Contains("PaymentMode") ? r["PaymentMode"]?.ToString() : null,
+                PaymentDate = r.Table.Columns.Contains("PaymentDate") && r["PaymentDate"] != DBNull.Value ? Convert.ToDateTime(r["PaymentDate"]) : null,
+                Note = r.Table.Columns.Contains("Note") ? r["Note"]?.ToString() : null
             };
         }
 
@@ -1027,6 +1028,153 @@ namespace SchoolERP.Net.Services
             }
             catch { }
             return list;
+        }
+
+        public List<HRApplyLeaveViewModel> GetStaffLeaves(int staffId)
+        {
+            var list = new List<HRApplyLeaveViewModel>();
+            var p = new[] { new SqlParameter("@StaffID", staffId) };
+            foreach (DataRow row in _db.ExecuteQuery("sp_HR_ApplyLeave_GetByStaff", p).Rows)
+                list.Add(MapApplyLeave(row));
+            return list;
+        }
+
+        public HRAttendanceHistoryViewModel GetStaffAttendanceHistory(int staffId, int year, int companyId)
+        {
+            var model = new HRAttendanceHistoryViewModel();
+            try
+            {
+                for (int m = 1; m <= 12; m++)
+                {
+                    model.Summaries.Add(FetchAttendanceSummary(staffId, m, year, companyId));
+                }
+
+                var p = new[] { 
+                    new SqlParameter("@StaffID", staffId), 
+                    new SqlParameter("@Year", year),
+                    new SqlParameter("@CompanyID", companyId)
+                };
+                foreach (DataRow row in _db.ExecuteQuery("sp_HR_Attendance_GetDailyHistory", p).Rows)
+                {
+                    model.Days.Add(new HRAttendanceDayStatus {
+                        Day = row["Day"] == DBNull.Value ? 0 : Convert.ToInt32(row["Day"]),
+                        Month = row["Month"] == DBNull.Value ? 0 : Convert.ToInt32(row["Month"]),
+                        Status = row["Status"]?.ToString() ?? ""
+                    });
+                }
+            }
+            catch { }
+            return model;
+        }
+
+        // --- Timeline ---
+
+        public List<HRStaffTimelineViewModel> GetStaffTimeline(int staffId)
+        {
+            var list = new List<HRStaffTimelineViewModel>();
+            try
+            {
+                var p = new[] { new SqlParameter("@StaffID", staffId) };
+                foreach (DataRow row in _db.ExecuteQuery("sp_HR_Timeline_GetByStaff", p).Rows)
+                {
+                    list.Add(MapTimeline(row));
+                }
+            }
+            catch { }
+            return list;
+        }
+
+        public HRStaffTimelineViewModel? GetTimelineByID(int id)
+        {
+            try
+            {
+                var p = new[] { new SqlParameter("@TimelineID", id) };
+                var dt = _db.ExecuteQuery("sp_HR_Timeline_GetByID", p);
+                return dt.Rows.Count == 0 ? null : MapTimeline(dt.Rows[0]);
+            }
+            catch { return null; }
+        }
+
+        public (bool Success, string Message) UpsertTimeline(HRStaffTimelineUpsertRequest req, int companyId, int sessionId, int userId)
+        {
+            try
+            {
+                byte[]? docBytes = !string.IsNullOrEmpty(req.AttachDocBase64) ? Convert.FromBase64String(req.AttachDocBase64) : null;
+                var p = new[] {
+                    new SqlParameter("@TimelineID", req.TimelineID),
+                    new SqlParameter("@StaffID", req.StaffID),
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@TimelineTitle", req.TimelineTitle),
+                    new SqlParameter("@TimelineDate", req.TimelineDate),
+                    new SqlParameter("@TimelineDescription", (object?)req.TimelineDescription ?? DBNull.Value),
+                    new SqlParameter("@TimelineAttachDoc", SqlDbType.VarBinary) { Value = (object?)docBytes ?? DBNull.Value },
+                    new SqlParameter("@TimelineAttahDocName", (object?)req.AttachDocName ?? DBNull.Value),
+                    new SqlParameter("@TimelineAttachDocType", (object?)req.AttachDocType ?? DBNull.Value),
+                    new SqlParameter("@TimelineVisible", req.TimelineVisible),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_HR_Timeline_Upsert", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public (bool Success, string Message) DeleteTimeline(int id, int userId)
+        {
+            try
+            {
+                var p = new[] { new SqlParameter("@TimelineID", id), new SqlParameter("@UserID", userId) };
+                var dt = _db.ExecuteQuery("sp_HR_Timeline_Delete", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public (byte[] Bytes, string FileName, string ContentType) GetTimelineDocument(int id)
+        {
+            try
+            {
+                var p = new[] { new SqlParameter("@TimelineID", id) };
+                var dt = _db.ExecuteQuery("sp_HR_Timeline_GetByID", p);
+                if (dt.Rows.Count == 0 || dt.Rows[0]["TimelineAttachDoc"] == DBNull.Value) return (null!, null!, null!);
+
+                var row = dt.Rows[0];
+                return (
+                    (byte[])row["TimelineAttachDoc"],
+                    row["TimelineAttachDocName"]?.ToString() ?? "Document.pdf",
+                    row["TimelineAttachDocType"]?.ToString() ?? "application/pdf"
+                );
+            }
+            catch { return (null!, null!, null!); }
+        }
+
+        private static HRStaffTimelineViewModel MapTimeline(DataRow r) => new()
+        {
+            TimelineID = Convert.ToInt32(r["TimelineID"]),
+            StaffID = Convert.ToInt32(r["StaffID"]),
+            TimelineTitle = r["TimelineTitle"].ToString()!,
+            TimelineDate = Convert.ToDateTime(r["TimelineDate"]),
+            TimelineDescription = r["TimelineDescription"]?.ToString(),
+            TimelineAttachDocName = r["TimelineAttachDocName"]?.ToString(),
+            TimelineVisible = Convert.ToBoolean(r["TimelineVisible"]),
+            CreatedOn = Convert.ToDateTime(r["CreatedOn"])
+        };
+
+        public (bool Success, string Message) ToggleStaffStatus(int staffId, bool isActive, int userId, DateTime? statusDate)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@StaffID", staffId),
+                    new SqlParameter("@IsActive", isActive),
+                    new SqlParameter("@UserID", userId),
+                    new SqlParameter("@StatusDate", (object?)statusDate ?? DBNull.Value)
+                };
+                var dt = _db.ExecuteQuery("sp_HR_Staff_ToggleStatus", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
         }
 
         public HRApplyLeaveViewModel? GetApplyLeaveByID(int id)
@@ -1269,6 +1417,51 @@ namespace SchoolERP.Net.Services
                         (r.Table.Columns.Contains("CompanyId") ? Convert.ToInt32(r["CompanyId"]) : 0),
             SessionID = r.Table.Columns.Contains("SessionID") ? Convert.ToInt32(r["SessionID"]) : 
                         (r.Table.Columns.Contains("SessionId") ? Convert.ToInt32(r["SessionId"]) : 0)
+        };
+
+        public HRPayrollDetailsViewModel GetPayrollDetails(int payrollId)
+        {
+            var model = new HRPayrollDetailsViewModel();
+            try
+            {
+                var p = new[] { new SqlParameter("@PayrollID", payrollId) };
+                var ds = _db.ExecuteDataSet("sp_HR_Payroll_GetByID", p);
+                
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    model.Summary = MapPayroll(ds.Tables[0].Rows[0]);
+                }
+
+                if (ds != null && ds.Tables.Count > 1)
+                {
+                    foreach (DataRow row in ds.Tables[1].Rows)
+                    {
+                        model.Details.Add(MapPayrollDetail(row));
+                    }
+                }
+            }
+            catch (Exception ex) 
+            {
+                model.Summary.Note = "Error fetching details: " + ex.Message;
+            }
+            return model;
+        }
+
+        public List<HRPayrollViewModel> GetStaffPayroll(int staffId)
+        {
+            var list = new List<HRPayrollViewModel>();
+            var p = new[] { new SqlParameter("@StaffID", staffId) };
+            foreach (DataRow row in _db.ExecuteQuery("sp_HR_Payroll_GetByStaff", p).Rows)
+                list.Add(MapPayroll(row));
+            return list;
+        }
+
+        private static HRPayrollDetailViewModel MapPayrollDetail(DataRow r) => new()
+        {
+            ComponentID = r.Table.Columns.Contains("PayrollDetailID") && r["PayrollDetailID"] != DBNull.Value ? Convert.ToInt32(r["PayrollDetailID"]) : 0,
+            ComponentName = r["ComponentName"]?.ToString() ?? "",
+            ComponentType = r["ComponentType"]?.ToString() ?? "Earning",
+            Amount = r["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(r["Amount"])
         };
     }
 }

@@ -1465,6 +1465,22 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "DeleteApplyLeave",
+    "RelativePath": "api/HumanResourceApi/DeleteApplyLeave/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
     "Method": "DeleteDepartment",
     "RelativePath": "api/HumanResourceApi/DeleteDepartment/{id}",
     "HttpMethod": "POST",
@@ -1529,6 +1545,64 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "DeleteTimeline",
+    "RelativePath": "api/HumanResourceApi/DeleteTimeline/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "DownloadTimelineDoc",
+    "RelativePath": "api/HumanResourceApi/DownloadTimelineDoc/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GeneratePayroll",
+    "RelativePath": "api/HumanResourceApi/GeneratePayroll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRPayrollGenerateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetAllApplyLeave",
+    "RelativePath": "api/HumanResourceApi/GetAllApplyLeave",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
     "Method": "GetAllDepartments",
     "RelativePath": "api/HumanResourceApi/GetAllDepartments",
     "HttpMethod": "GET",
@@ -1559,12 +1633,60 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetAllPayroll",
+    "RelativePath": "api/HumanResourceApi/GetAllPayroll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "month",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "year",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "roleId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
     "Method": "GetAllStaff",
     "RelativePath": "api/HumanResourceApi/GetAllStaff",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "isActive",
+        "Type": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetApplyLeaveByID",
+    "RelativePath": "api/HumanResourceApi/GetApplyLeaveByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -1601,6 +1723,27 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetLeaveBalance",
+    "RelativePath": "api/HumanResourceApi/GetLeaveBalance",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "staffId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "leaveTypeId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
     "Method": "GetLeaveTypeByID",
     "RelativePath": "api/HumanResourceApi/GetLeaveTypeByID/{id}",
     "HttpMethod": "GET",
@@ -1627,6 +1770,80 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetPayrollDetails",
+    "RelativePath": "api/HumanResourceApi/GetPayrollDetails/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetStaffAllLeaveBalances",
+    "RelativePath": "api/HumanResourceApi/GetStaffAllLeaveBalances",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "staffId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetStaffAttendance",
+    "RelativePath": "api/HumanResourceApi/GetStaffAttendance",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "date",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "roleId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetStaffAttendanceHistory",
+    "RelativePath": "api/HumanResourceApi/GetStaffAttendanceHistory/{staffId}/{year}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "staffId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "year",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
     "Method": "GetStaffByID",
     "RelativePath": "api/HumanResourceApi/GetStaffByID/{id}",
     "HttpMethod": "GET",
@@ -1636,6 +1853,102 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetStaffLeaves",
+    "RelativePath": "api/HumanResourceApi/GetStaffLeaves/{staffId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "staffId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetStaffPayroll",
+    "RelativePath": "api/HumanResourceApi/GetStaffPayroll/{staffId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "staffId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "GetStaffTimeline",
+    "RelativePath": "api/HumanResourceApi/GetStaffTimeline/{staffId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "staffId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "PayPayroll",
+    "RelativePath": "api/HumanResourceApi/PayPayroll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRPayrollPaymentRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "SaveDetailedPayroll",
+    "RelativePath": "api/HumanResourceApi/SaveDetailedPayroll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRPayrollSaveRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "SaveStaffAttendance",
+    "RelativePath": "api/HumanResourceApi/SaveStaffAttendance",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reqs",
+        "Type": "System.Collections.Generic.List\u00601[[SchoolERP.Net.Models.HRStaffAttendanceUpsertRequest, SchoolERP.Net, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
       }
     ],
@@ -1706,6 +2019,54 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "ToggleStaffStatus",
+    "RelativePath": "api/HumanResourceApi/ToggleStaffStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRStaffStatusToggleRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "UpdateApplyLeaveStatus",
+    "RelativePath": "api/HumanResourceApi/UpdateApplyLeaveStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRApplyLeaveStatusUpdateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "UpsertApplyLeave",
+    "RelativePath": "api/HumanResourceApi/UpsertApplyLeave",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRApplyLeaveUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
     "Method": "UpsertDepartment",
     "RelativePath": "api/HumanResourceApi/UpsertDepartment",
     "HttpMethod": "POST",
@@ -1763,6 +2124,22 @@
       {
         "Name": "req",
         "Type": "SchoolERP.Net.Models.HRStaffUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HumanResourceApiController",
+    "Method": "UpsertTimeline",
+    "RelativePath": "api/HumanResourceApi/UpsertTimeline",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.HRStaffTimelineUpsertRequest",
         "IsRequired": true
       }
     ],
@@ -2724,8 +3101,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "data",
-        "Type": "System.Object",
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.FieldToggleStatusRequest",
         "IsRequired": true
       }
     ],
@@ -2826,6 +3203,196 @@
       {
         "Name": "request",
         "Type": "SchoolERP.Net.Models.MstSmsConfigUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "DeleteDisableReason",
+    "RelativePath": "api/StudentInformationApi/DeleteDisableReason/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "DeleteStudentCategory",
+    "RelativePath": "api/StudentInformationApi/DeleteStudentCategory/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "DeleteStudentHouse",
+    "RelativePath": "api/StudentInformationApi/DeleteStudentHouse/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "DeleteTimeline",
+    "RelativePath": "api/StudentInformationApi/DeleteTimeline/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "DownloadTimelineDoc",
+    "RelativePath": "api/StudentInformationApi/DownloadTimelineDoc/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "GetAllDisableReasons",
+    "RelativePath": "api/StudentInformationApi/GetAllDisableReasons",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "GetAllStudentCategories",
+    "RelativePath": "api/StudentInformationApi/GetAllStudentCategories",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "GetAllStudentHouses",
+    "RelativePath": "api/StudentInformationApi/GetAllStudentHouses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "GetStudentTimeline",
+    "RelativePath": "api/StudentInformationApi/GetStudentTimeline/{studentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "studentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "UpsertDisableReason",
+    "RelativePath": "api/StudentInformationApi/UpsertDisableReason",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.StudentDisableReasonUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "UpsertStudentCategory",
+    "RelativePath": "api/StudentInformationApi/UpsertStudentCategory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.StudentCategoryUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "UpsertStudentHouse",
+    "RelativePath": "api/StudentInformationApi/UpsertStudentHouse",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.StudentHouseUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "UpsertTimeline",
+    "RelativePath": "api/StudentInformationApi/UpsertTimeline",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.StudentTimelineUpsertRequest",
         "IsRequired": true
       }
     ],

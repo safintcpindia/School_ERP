@@ -1,0 +1,350 @@
+
+@{
+    ViewData["Title"] = "Upload & Share Content";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+        <h6 class="fw-bold mb-0">Upload & Share Content</h6>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-1">
+        <button class="btn btn-primary d-inline-flex align-items-center" onclick="openGenModal()">
+            <i class="ti ti-link me-1"></i>Generate URL
+        </button>
+        <button class="btn btn-dark d-inline-flex align-items-center" onclick="openUploadModal()">
+            <i class="ti ti-cloud-upload me-1"></i>Upload Content
+        </button>
+        <button id="btnDelete" class="btn btn-danger d-inline-flex align-items-center" disabled onclick="deleteSelected()">
+            <i class="ti ti-trash me-1"></i>Delete Selected
+        </button>
+    </div>
+</div>
+
+<!-- start row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-tbl-outer mb-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <input type="text" id="txtSearch" class="form-control w-25" placeholder="Search by title..." onkeyup="loadData()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card shadow-tbl overflow-auto">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0" id="tblContent">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;" class="ps-3">
+                                    <input type="checkbox" class="form-check-input" id="checkAll" onchange="toggleAllCheckboxes()">
+                                </th>
+                                <th>Document / Link</th>
+                                <th>Type</th>
+                                <th>Format</th>
+                                <th>Size</th>
+                                <th>Upload By</th>
+                                <th>Created On</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-4"><div class="spinner-border text-primary"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h5 class="modal-title">Upload New Content</h5>
+                <div>
+                    <button class="btn btn-success btn-sm" onclick="saveUpload()">
+                        <i class="ti ti-device-floppy me-1"></i>Save
+                    </button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                        <i class="ti ti-x me-1"></i>Close
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="row row-gap-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Title <span class="text-danger">*</span></label>
+                            <input type="text" id="upTitle" class="form-control" required placeholder="Enter content title">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Content Type <span class="text-danger">*</span></label>
+                            <select id="upType" class="form-select form-control" required>
+                                <option value="">Select Type</option>
+                                @foreach (var t in ViewBag.ContentTypes)
+                                {
+                                    <option value="@t.ContentTypeID">@t.TypeName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Upload File</label>
+                            <input type="file" id="upFile" class="form-control" onchange="clearLink()">
+                        </div>
+                        <div class="col-md-12 text-center my-1">
+                            <span class="badge bg-light text-dark px-3 border">OR</span>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Youtube / Video Link</label>
+                            <input type="url" id="upLink" class="form-control" placeholder="https://..." oninput="clearFile()">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Generate URL Modal -->
+<div class="modal fade" id="genModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h5 class="modal-title">Generate Shareable URL</h5>
+                <div>
+                    <button class="btn btn-success btn-sm" onclick="generateLink()">
+                        <i class="ti ti-link me-1"></i>Generate
+                    </button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                        <i class="ti ti-x me-1"></i>Close
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row row-gap-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Share Title <span class="text-danger">*</span></label>
+                        <input type="text" id="genTitle" class="form-control" required placeholder="e.g., Weekly Assignments">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Share Date</label>
+                        <input type="date" id="genDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Valid Upto</label>
+                        <input type="date" id="genValid" class="form-control">
+                    </div>
+                    <div class="col-md-12">
+                        <h6 class="mb-2 fw-bold text-primary">Selected Documents (<span id="selCount">0</span>)</h6>
+                        <div id="selList" class="border rounded p-2 bg-light" style="max-height:150px; overflow-y:auto;">
+                            <span class="text-muted small">No documents selected.</span>
+                        </div>
+                    </div>
+                    <div id="resultBox" class="col-md-12 d-none">
+                        <label class="form-label text-success fw-bold">Generated Link:</label>
+                        <div class="input-group">
+                            <input type="text" id="genResult" class="form-control bg-white" readonly>
+                            <button class="btn btn-outline-primary" onclick="copyResult()">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            loadData();
+        });
+
+        function loadData() {
+            const search = $('#txtSearch').val();
+            $.get('/DownloadCenter/GetContentList', { search }, function (res) {
+                let html = '';
+                if (res.success && res.data.length > 0) {
+                    res.data.forEach(item => {
+                        html += `
+                            <tr>
+                                <td class="ps-3"><input type="checkbox" name="rowCheck" class="form-check-input content-check" value="${item.contentID}" data-title="${item.title}" onchange="updateSelection()"></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-${item.fileType == 'File' ? 'file-description' : 'brand-youtube'} fs-20 me-2 text-${item.fileType == 'File' ? 'info' : 'danger'}"></i>
+                                        <a href="${item.filePath}" target="_blank" class="fw-semibold text-dark">${item.title}</a>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">${item.contentTypeName}</span></td>
+                                <td>${item.fileType}</td>
+                                <td>${item.fileSize}</td>
+                                <td>${item.uploadBy}</td>
+                                <td>${new Date(item.createdOn).toLocaleString('en-GB')}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html = '<tr><td colspan="7" class="text-center py-4 text-muted">No content found.</td></tr>';
+                }
+                $('#listBody').html(html);
+                updateSelection();
+            });
+        }
+
+        function toggleAllCheckboxes() {
+            const isChecked = $('#checkAll').is(':checked');
+            $('.content-check').prop('checked', isChecked);
+            updateSelection();
+        }
+
+        function updateSelection() {
+            const selected = $('.content-check:checked');
+            $('#btnDelete').prop('disabled', selected.length === 0);
+            
+            let html = '';
+            selected.each(function () {
+                html += `<div class="p-1 border-bottom small"><i class="ti ti-check text-success me-1"></i> ${$(this).data('title')}</div>`;
+            });
+            $('#selList').html(html || '<span class="text-muted small">No documents selected.</span>');
+            $('#selCount').text(selected.length);
+        }
+
+        function openUploadModal() {
+            $('#uploadForm')[0].reset();
+            $('#uploadModal').modal('show');
+        }
+
+        function clearLink() { $('#upLink').val(''); }
+        function clearFile() { $('#upFile').val(''); }
+
+        function saveUpload() {
+            const title = $('#upTitle').val().trim();
+            const type = $('#upType').val();
+            const file = $('#upFile')[0].files[0];
+            const link = $('#upLink').val().trim();
+
+            if (!title || !type) {
+                showToast('Title and Type are required', 'warning');
+                return;
+            }
+
+            if (!file && !link) {
+                showToast('Please upload a file or provide a link', 'warning');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('contentTypeId', type);
+            if (file) formData.append('file', file);
+            if (link) formData.append('videoLink', link);
+
+            $.ajax({
+                url: '/DownloadCenter/SaveUploadContent',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    if (res.success) {
+                        showToast(res.message, 'success');
+                        $('#uploadModal').modal('hide');
+                        loadData();
+                    } else {
+                        Swal.fire('Error!', res.message, 'error');
+                    }
+                }
+            });
+        }
+
+        function openGenModal() {
+            const selected = $('.content-check:checked');
+            if (selected.length === 0) {
+                Swal.fire('Selection Required', 'Please select at least one document to share.', 'warning');
+                return;
+            }
+            $('#resultBox').addClass('d-none');
+            $('#genModal').modal('show');
+        }
+
+        function generateLink() {
+            const title = $('#genTitle').val().trim();
+            if (!title) {
+                showToast('Share title is required', 'warning');
+                return;
+            }
+
+            const ids = [];
+            $('.content-check:checked').each(function () {
+                ids.push(parseInt($(this).val()));
+            });
+
+            const data = {
+                title: title,
+                shareDate: $('#genDate').val(),
+                validUpto: $('#genValid').val(),
+                contentIDs: ids
+            };
+
+            $.ajax({
+                url: '/DownloadCenter/GenerateSharedLink',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (res) {
+                    if (res.success) {
+                        const publicUrl = window.location.origin + '/Public/SharedContent?token=' + res.token;
+                        $('#genResult').val(publicUrl);
+                        $('#resultBox').removeClass('d-none');
+                        showToast('Link generated successfully', 'success');
+                    } else {
+                        Swal.fire('Error!', res.message, 'error');
+                    }
+                }
+            });
+        }
+
+        function copyResult() {
+            const el = document.getElementById('genResult');
+            el.select();
+            document.execCommand('copy');
+            showToast('Link copied to clipboard', 'info');
+        }
+
+        function deleteSelected() {
+            const selected = $('.content-check:checked');
+            if (selected.length === 0) return;
+
+            Swal.fire({
+                title: 'Delete Selected?',
+                text: `You are about to delete ${selected.length} items.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete!',
+                customClass: { confirmButton: 'btn btn-danger me-2', cancelButton: 'btn btn-secondary' },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let count = 0;
+                    selected.each(function () {
+                        $.post('/DownloadCenter/DeleteContent', { id: $(this).val() }, function () {
+                            count++;
+                            if (count === selected.length) {
+                                showToast('Items deleted successfully', 'success');
+                                loadData();
+                            }
+                        });
+                    });
+                }
+            });
+        }
+    </script>
+}

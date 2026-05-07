@@ -530,7 +530,12 @@ namespace SchoolERP.Net.Services
                         ParentUsername = cols.Contains("ParentUsername") ? row["ParentUsername"]?.ToString() : (cols.Contains("PARENTUSERNAME") ? row["PARENTUSERNAME"]?.ToString() : null),
                         StudentPassword = cols.Contains("StudentPlainPassword") ? row["StudentPlainPassword"]?.ToString() : null,
                         ParentPassword = cols.Contains("ParentPlainPassword") ? row["ParentPlainPassword"]?.ToString() : null,
-                        ParentUserID = cols.Contains("PARENTUSERID") && row["PARENTUSERID"] != DBNull.Value ? Convert.ToInt32(row["PARENTUSERID"]) : null
+                        ParentUserID = cols.Contains("PARENTUSERID") && row["PARENTUSERID"] != DBNull.Value ? Convert.ToInt32(row["PARENTUSERID"]) : null,
+                        IsActive = cols.Contains("IsActive") ? Convert.ToBoolean(row["IsActive"]) : true,
+                        DisableReasonID = cols.Contains("DisableReasonID") && row["DisableReasonID"] != DBNull.Value ? Convert.ToInt32(row["DisableReasonID"]) : null,
+                        DisableReasonName = cols.Contains("DisableReasonTitle") ? row["DisableReasonTitle"]?.ToString() : null,
+                        DisableDate = cols.Contains("DisableDate") && row["DisableDate"] != DBNull.Value ? Convert.ToDateTime(row["DisableDate"]) : null,
+                        DisableNote = cols.Contains("DisableNote") ? row["DisableNote"]?.ToString() : null
                     };
                 }
 
@@ -636,7 +641,8 @@ namespace SchoolERP.Net.Services
                         CategoryName = row["StudentCategoryName"]?.ToString(),
                         MobileNo = row["MOBILENO"]?.ToString(),
                         StudentPhoto = row["STUDENTPHOTO"] != DBNull.Value ? (byte[])row["STUDENTPHOTO"] : null,
-                        StudentPhotoType = row["STUDENTPHOTOTYPE"]?.ToString()
+                        StudentPhotoType = row["STUDENTPHOTOTYPE"]?.ToString(),
+                        IsActive = row.Table.Columns.Contains("IsActive") ? Convert.ToBoolean(row["IsActive"]) : true
                     });
                 }
             }
@@ -726,6 +732,174 @@ namespace SchoolERP.Net.Services
             catch { }
             return (null!, null!, null!);
         }
+        public (bool Success, string Message) ToggleStudentStatus(StudentStatusToggleRequest req, int userId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@StudentID", req.StudentID),
+                    new SqlParameter("@IsActive", req.IsActive),
+                    new SqlParameter("@DisableReasonID", (object?)req.DisableReasonID ?? DBNull.Value),
+                    new SqlParameter("@DisableDate", (object?)req.DisableDate ?? DBNull.Value),
+                    new SqlParameter("@DisableNote", (object?)req.DisableNote ?? DBNull.Value),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_Student_ToggleStatus", p);
+                return (Convert.ToInt32(dt.Rows[0]["RESULT"]) == 1, dt.Rows[0]["MESSAGE"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public List<MultiClassStudentCardViewModel> GetMultiClassStudents(int companyId, int sessionId, int? classId, int? sectionId, string? searchTerm)
+        {
+            var students = new List<MultiClassStudentCardViewModel>();
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@ClassID", (object?)classId ?? DBNull.Value),
+                    new SqlParameter("@SectionID", (object?)sectionId ?? DBNull.Value),
+                    new SqlParameter("@SearchTerm", (object?)searchTerm ?? DBNull.Value),
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId)
+                };
+                var ds = _db.ExecuteDataSet("sp_Student_MultiClasses_SearchStudents", p);
+                if (ds.Tables.Count > 0)
+                {
+                    foreach (DataRow row in ds.Tables[0].Rows)
+                    {
+                        var student = new MultiClassStudentCardViewModel
+                        {
+                            StudentID = Convert.ToInt32(row["STUDENTID"]),
+                            RollNo = row["ROLLNO"]?.ToString(),
+                            FullName = row["FullName"]?.ToString(),
+                            PrimaryClassID = Convert.ToInt32(row["PrimaryClassID"]),
+                            PrimaryClassName = row["PrimaryClassName"]?.ToString(),
+                            PrimarySectionID = Convert.ToInt32(row["PrimarySectionID"]),
+                            PrimarySectionName = row["PrimarySectionName"]?.ToString()
+                        };
+
+                        // Fetch additional classes for this student
+                        var pSub = new[] {
+                            new SqlParameter("@StudentID", student.StudentID),
+                            new SqlParameter("@CompanyID", companyId),
+                            new SqlParameter("@SessionID", sessionId)
+                        };
+                        var dtSub = _db.ExecuteQuery("sp_Student_MultiClasses_Get", pSub);
+                        foreach (DataRow subRow in dtSub.Rows)
+                        {
+                            student.AdditionalClasses.Add(new StudentMultiClassViewModel
+                            {
+                                MultiClassID = Convert.ToInt32(subRow["MultiClassID"]),
+                                StudentID = student.StudentID,
+                                ClassID = Convert.ToInt32(subRow["ClassID"]),
+                                ClassName = subRow["ClassName"]?.ToString(),
+                                SectionID = Convert.ToInt32(subRow["SectionID"]),
+                                SectionName = subRow["SectionName"]?.ToString()
+                            });
+                        }
+                        students.Add(student);
+                    }
+                }
+            }
+            catch { }
+            return students;
+        }
+
+        public List<StudentListViewModel> GetDisabledStudentList(int companyId, int sessionId, int? classId, int? sectionId, string? searchTerm)
+        {
+            var list = new List<StudentListViewModel>();
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@COMPANYID", companyId),
+                    new SqlParameter("@SESSIONID", sessionId),
+                    new SqlParameter("@CLASSID", (object?)classId ?? DBNull.Value),
+                    new SqlParameter("@SECTIONID", (object?)sectionId ?? DBNull.Value),
+                    new SqlParameter("@SEARCHTERM", (object?)searchTerm ?? DBNull.Value)
+                };
+                var dt = _db.ExecuteQuery("sp_Student_GetDisabledList", p);
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(new StudentListViewModel
+                    {
+                        StudentID = Convert.ToInt32(row["STUDENTID"]),
+                        AdmissionNo = row["ADMISSIONNO"]?.ToString(),
+                        RollNo = row["ROLLNO"]?.ToString(),
+                        FullName = $"{row["FIRSTNAME"]} {row["MIDDLENAME"]} {row["LASTNAME"]}".Trim().Replace("  ", " "),
+                        ClassName = row["ClassName"]?.ToString(),
+                        SectionName = row["SectionName"]?.ToString(),
+                        FatherName = row["FATHERNAME"]?.ToString(),
+                        FatherPhone = row["FATHERPHONE"]?.ToString(),
+                        Gender = row["GENDER"]?.ToString(),
+                        DOB = row["DOB"] != DBNull.Value ? Convert.ToDateTime(row["DOB"]) : null,
+                        CategoryName = row["StudentCategoryName"]?.ToString(),
+                        MobileNo = row["MOBILENO"]?.ToString(),
+                        StudentPhoto = row["STUDENTPHOTO"] != DBNull.Value ? (byte[])row["STUDENTPHOTO"] : null,
+                        StudentPhotoType = row["STUDENTPHOTOTYPE"]?.ToString(),
+                        IsActive = row.Table.Columns.Contains("IsActive") ? Convert.ToBoolean(row["IsActive"]) : false,
+                        DisableReasonName = row.Table.Columns.Contains("DisableReasonName") ? row["DisableReasonName"]?.ToString() : null,
+                        DisableDate = row.Table.Columns.Contains("DisableDate") && row["DisableDate"] != DBNull.Value ? Convert.ToDateTime(row["DisableDate"]) : null,
+                        DisableNote = row.Table.Columns.Contains("DisableNote") ? row["DisableNote"]?.ToString() : null
+                    });
+                }
+            }
+            catch { }
+            return list;
+        }
+
+        public (bool Success, string Message) UpsertStudentMultiClass(StudentMultiClassUpsertRequest req, int companyId, int sessionId, int userId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@MultiClassID", req.MultiClassID),
+                    new SqlParameter("@StudentID", req.StudentID),
+                    new SqlParameter("@ClassID", req.ClassID),
+                    new SqlParameter("@SectionID", req.SectionID),
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@SessionID", sessionId),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_Student_MultiClasses_Upsert", p);
+                return (Convert.ToInt32(dt.Rows[0]["RESULT"]) == 1, dt.Rows[0]["MESSAGE"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public (bool Success, string Message) DeleteStudentMultiClass(int id, int userId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@MultiClassID", id),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_Student_MultiClasses_Delete", p);
+                return (Convert.ToInt32(dt.Rows[0]["RESULT"]) == 1, dt.Rows[0]["MESSAGE"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public (bool Success, string Message) BulkDeleteStudents(List<int> studentIds, int userId)
+        {
+            try
+            {
+                if (studentIds == null || !studentIds.Any())
+                {
+                    return (false, "No students selected for deletion.");
+                }
+
+                string ids = string.Join(",", studentIds);
+                var p = new[] {
+                    new SqlParameter("@StudentIDs", ids),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_Student_BulkDelete", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
         public (bool Success, string Message) DeleteStudent(int id, int userId)
         {
             try

@@ -132,6 +132,8 @@ namespace SchoolERP.Net.Controllers
             return Json(result);
         }
 
+        [HttpGet]
+        [HttpPost]
         public IActionResult Students(int? classId, int? sectionId, string? search)
         {
             var companyId = GetCompanyId();
@@ -239,6 +241,54 @@ namespace SchoolERP.Net.Controllers
         public IActionResult DeleteStudent(int id)
         {
             var res = _studentService.DeleteStudent(id, GetUserId());
+            return Json(new { success = res.Success, message = res.Message });
+        }
+
+        public IActionResult MultiClassStudents()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult DisabledStudents(int? classId, int? sectionId, string? search)
+        {
+            var companyId = GetCompanyId();
+            var sessionId = GetSessionId();
+
+            var model = new StudentListPageViewModel
+            {
+                Students = _studentService.GetDisabledStudentList(companyId, sessionId, classId, sectionId, search),
+                SelectedClassId = classId,
+                SelectedSectionId = sectionId,
+                SearchTerm = search
+            };
+
+            ViewBag.Classes = _classService.GetAllClasses(companyId, sessionId);
+            if (classId.HasValue)
+            {
+                ViewBag.Sections = _sectionService.GetSectionsByClass(classId.Value);
+            }
+            else
+            {
+                ViewBag.Sections = new List<MstSectionViewModel>();
+            }
+
+            return View(model);
+        }
+
+        public IActionResult BulkDelete()
+        {
+            var companyId = GetCompanyId();
+            var sessionId = GetSessionId();
+            ViewBag.Classes = _classService.GetAllClasses(companyId, sessionId);
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult BulkDeleteStudents([FromBody] List<int> ids)
+        {
+            var res = _studentService.BulkDeleteStudents(ids, GetUserId());
             return Json(new { success = res.Success, message = res.Message });
         }
     }

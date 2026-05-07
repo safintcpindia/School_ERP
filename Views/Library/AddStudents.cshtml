@@ -1,0 +1,224 @@
+
+@{
+    ViewData["Title"] = "Library Students Membership";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+        <h6 class="fw-bold mb-0">Library Students Membership</h6>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-1">
+        <a href="javascript:window.print();" class="btn btn-secondary d-inline-flex align-items-center">
+            <i class="ti ti-printer me-1"></i>Print
+        </a>
+    </div>
+</div>
+
+<!-- start row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-tbl-outer mb-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2 w-50">
+                        <select id="fClass" class="form-select form-control" onchange="loadSections()">
+                            <option value="">All Classes</option>
+                            @foreach (var c in ViewBag.Classes)
+                            {
+                                <option value="@c.ClassID">@c.ClassName</option>
+                            }
+                        </select>
+                        <select id="fSection" class="form-select form-control" onchange="loadData()">
+                            <option value="">All Sections</option>
+                        </select>
+                        <input type="text" id="txtSearch" class="form-control" placeholder="Search by name or admission no..." onkeyup="loadData()" />
+                    </div>
+                    <div class="small text-muted">Filter to view students and manage membership</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card shadow-tbl overflow-auto">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-nowrap mb-0" id="tblMembers">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;" class="ps-3">#</th>
+                                <th>Admission No</th>
+                                <th>Student Name</th>
+                                <th>Class(Section)</th>
+                                <th>Card No</th>
+                                <th>Father Name</th>
+                                <th>Registered On</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listBody">
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">Please select filters to load students.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Member Modal (Simplified) -->
+<div class="modal fade" id="cardModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h5 class="modal-title">Set Library Card Number</h5>
+                <div>
+                    <button class="btn btn-success btn-sm" onclick="saveData()">
+                        <i class="ti ti-device-floppy me-1"></i>Save
+                    </button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                        <i class="ti ti-x me-1"></i>Close
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row row-gap-3">
+                    <div class="col-md-12">
+                        <h6 class="mb-2 fw-bold text-primary">Student: <span id="spanStudent" class="text-dark"></span></h6>
+                        <label class="form-label">Library Card Number</label>
+                        <input type="text" id="txtCardNo" class="form-control" placeholder="Enter card number (optional)" oninput="$('#modalError').text('')">
+                        <div id="modalError" class="text-danger small mt-1"></div>
+                        <input type="hidden" id="hdnStudentId" value="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Optional: loadData() on load if filters have default values
+        });
+
+        function loadSections() {
+            const classId = $('#fClass').val();
+            $('#fSection').html('<option value="">All Sections</option>');
+            if (classId) {
+                $.get('/Library/GetSections', { classId }, function (res) {
+                    res.forEach(s => $('#fSection').append(`<option value="${s.sectionID}">${s.sectionName}</option>`));
+                    loadData();
+                });
+            } else {
+                loadData();
+            }
+        }
+
+        function loadData() {
+            const classId = $('#fClass').val();
+            const sectionId = $('#fSection').val();
+            const search = $('#txtSearch').val();
+
+            if (!classId && !search) {
+                $('#listBody').html('<tr><td colspan="8" class="text-center py-4 text-muted">Please select Class or enter Search term.</td></tr>');
+                return;
+            }
+
+            $.get('/Library/GetMemberList', { type: 'Student', classId, sectionId, search }, function (res) {
+                let html = '';
+                if (res.success && res.data.length > 0) {
+                    res.data.forEach((item, index) => {
+                        const isMember = item.libraryMemberID > 0;
+                        html += `
+                            <tr>
+                                <td class="ps-3">${index + 1}</td>
+                                <td>${item.admissionNo}</td>
+                                <td class="fw-semibold text-primary">${item.name}</td>
+                                <td>${item.className}</td>
+                                <td class="fw-bold">${item.libraryCardNo || '-'}</td>
+                                <td>${item.fatherName}</td>
+                                <td>${item.registeredOn ? new Date(item.registeredOn).toLocaleDateString('en-GB') : '-'}</td>
+                                <td class="text-center">
+                                    ${isMember ? 
+                                        `<button class="btn btn-outline-danger btn-sm px-3" onclick="deleteMembership(${item.studentID})">
+                                            <i class="ti ti-trash me-1"></i>Remove
+                                         </button>` : 
+                                        `<button class="btn btn-outline-success btn-sm px-3" onclick="openCardModal(${item.studentID}, '${item.name.replace("'", "\\'")}')">
+                                            <i class="ti ti-plus me-1"></i>Add
+                                         </button>`
+                                    }
+                                </td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html = '<tr><td colspan="8" class="text-center py-4 text-muted">No students found.</td></tr>';
+                }
+                $('#listBody').html(html);
+            });
+        }
+
+        function openCardModal(id, name) {
+            $('#hdnStudentId').val(id);
+            $('#spanStudent').text(name);
+            $('#txtCardNo').val('');
+            $('#modalError').text('');
+            $('#cardModal').modal('show');
+        }
+
+        function saveData() {
+            const id = $('#hdnStudentId').val();
+            const data = {
+                memberType: 'Student',
+                studentID: id,
+                libraryCardNo: $('#txtCardNo').val().trim()
+            };
+
+            $.ajax({
+                url: '/Library/AddMember',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (res) {
+                    if (res.success) {
+                        showToast(res.message, 'success');
+                        $('#cardModal').modal('hide');
+                        loadData();
+                    } else {
+                        $('#modalError').text(res.message);
+                    }
+                }
+            });
+        }
+
+        function deleteMembership(studentId) {
+            Swal.fire({
+                title: 'Cancel Membership?',
+                text: "Are you sure you want to remove this student from library membership?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, cancel it!',
+                customClass: { confirmButton: 'btn btn-danger me-2', cancelButton: 'btn btn-secondary' },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Reusing delete endpoint but passing studentId via a new parameter or logic
+                    // I updated the SP to handle @@StudentID in DELETE action
+                    $.post('/Library/DeleteMember', { id: 0, studentId: studentId }, function (res) {
+                        if (res.success) {
+                            showToast(res.message, 'success');
+                            loadData();
+                        } else {
+                            Swal.fire('Error!', res.message, 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

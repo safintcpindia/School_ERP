@@ -30,7 +30,7 @@
     <div class="col-md-12">
         <div class="card shadow-tbl-outer mb-2">
             <div class="card-body">
-                <form method="get" action="/StudentInformation/Students" id="filterForm">
+                <form method="post" action="/StudentInformation/Students" id="filterForm">
                     <div class="d-flex align-items-center justify-content-between">
                         <input type="text" name="search" class="form-control w-25 me-3" placeholder="Search by name, roll, admission..." value="@Model.SearchTerm" />
                         <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
@@ -183,6 +183,7 @@
 <!-- end row -->
 
 @section Scripts {
+    <script src="~/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
     <script>
         let selectedStudentId = 0;
 

@@ -3226,6 +3226,22 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "DeleteMultiClass",
+    "RelativePath": "api/StudentInformationApi/DeleteMultiClass/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
     "Method": "DeleteStudentCategory",
     "RelativePath": "api/StudentInformationApi/DeleteStudentCategory/{id}",
     "HttpMethod": "POST",
@@ -3320,6 +3336,32 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "GetMultiClassStudents",
+    "RelativePath": "api/StudentInformationApi/GetMultiClassStudents",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "classId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "sectionId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "searchTerm",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
     "Method": "GetStudentTimeline",
     "RelativePath": "api/StudentInformationApi/GetStudentTimeline/{studentId}",
     "HttpMethod": "GET",
@@ -3336,6 +3378,22 @@
   },
   {
     "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/StudentInformationApi/ToggleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.StudentStatusToggleRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
     "Method": "UpsertDisableReason",
     "RelativePath": "api/StudentInformationApi/UpsertDisableReason",
     "HttpMethod": "POST",
@@ -3345,6 +3403,22 @@
       {
         "Name": "req",
         "Type": "SchoolERP.Net.Models.StudentDisableReasonUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "UpsertMultiClass",
+    "RelativePath": "api/StudentInformationApi/UpsertMultiClass",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "SchoolERP.Net.Models.StudentMultiClassUpsertRequest",
         "IsRequired": true
       }
     ],

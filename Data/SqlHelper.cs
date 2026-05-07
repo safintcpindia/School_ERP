@@ -1,4 +1,5 @@
 using System.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
@@ -103,5 +104,7 @@ namespace SchoolERP.Net.Data
             }
             return cmd.ExecuteReader(CommandBehavior.CloseConnection);
         }
+
+      
     }
 }

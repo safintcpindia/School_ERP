@@ -137,5 +137,32 @@ namespace SchoolERP.Net.Controllers.Api
             if (bytes == null) return NotFound();
             return File(bytes, contentType, fileName);
         }
+        [HttpPost("ToggleStatus")]
+        public IActionResult ToggleStatus([FromBody] StudentStatusToggleRequest req)
+        {
+            var res = _studentService.ToggleStudentStatus(req, GetUserId());
+            return Ok(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpGet("GetMultiClassStudents")]
+        public IActionResult GetMultiClassStudents(int? classId, int? sectionId, string? searchTerm)
+        {
+            var data = _studentService.GetMultiClassStudents(GetCompanyId(), GetSessionId(), classId, sectionId, searchTerm);
+            return Ok(new { success = true, data });
+        }
+
+        [HttpPost("UpsertMultiClass")]
+        public IActionResult UpsertMultiClass([FromBody] StudentMultiClassUpsertRequest req)
+        {
+            var res = _studentService.UpsertStudentMultiClass(req, GetCompanyId(), GetSessionId(), GetUserId());
+            return Ok(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpPost("DeleteMultiClass/{id}")]
+        public IActionResult DeleteMultiClass(int id)
+        {
+            var res = _studentService.DeleteStudentMultiClass(id, GetUserId());
+            return Ok(new { success = res.Success, message = res.Message });
+        }
     }
 }

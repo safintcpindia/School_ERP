@@ -1,50 +1,26 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\svmim\\Downloads\\07052026\\",
+  "WorkspaceRootPath": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\views\\studentinformation\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\studentinformation\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 7-5-2026\\services\\libraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:services\\libraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\services\\studentinformationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:services\\studentinformationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 7-5-2026\\data\\sqlhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:data\\sqlhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\controllers\\studentinformationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:controllers\\studentinformationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 7-5-2026\\views\\library\\addstudents.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\library\\addstudents.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 7-5-2026\\controllers\\librarycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:controllers\\librarycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\views\\studentinformation\\studentadmission.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\studentinformation\\studentadmission.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\controllers\\api\\studentinformationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:controllers\\api\\studentinformationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\services\\ihostelservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:services\\ihostelservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\views\\studentinformation\\students.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\studentinformation\\students.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\views\\studentinformation\\studenthouse.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\studentinformation\\studenthouse.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\svmim\\downloads\\07052026\\views\\transport\\vehicles.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\transport\\vehicles.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 7-5-2026\\views\\library\\books.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\library\\books.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -54,144 +30,72 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Details.cshtml",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\StudentInformation\\Details.cshtml",
-              "RelativeDocumentMoniker": "Views\\StudentInformation\\Details.cshtml",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\StudentInformation\\Details.cshtml",
-              "RelativeToolTip": "Views\\StudentInformation\\Details.cshtml",
-              "ViewState": "AQIAAP4BAAAAAAAAAAAAABQCAAAQAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-06T03:47:42.516Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "StudentInformationController.cs",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Controllers\\StudentInformationController.cs",
-              "RelativeDocumentMoniker": "Controllers\\StudentInformationController.cs",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Controllers\\StudentInformationController.cs",
-              "RelativeToolTip": "Controllers\\StudentInformationController.cs",
-              "ViewState": "AQIAAFQAAAAAAAAAAAAQwFsAAABeAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T03:46:06.449Z",
+              "Title": "AddStudents.cshtml",
+              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Views\\Library\\AddStudents.cshtml",
+              "RelativeDocumentMoniker": "Views\\Library\\AddStudents.cshtml",
+              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Views\\Library\\AddStudents.cshtml",
+              "RelativeToolTip": "Views\\Library\\AddStudents.cshtml",
+              "ViewState": "AQIAAMIAAAAAAAAAAAAawNIAAAA9AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-07T18:18:22.05Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "StudentInformationService.cs",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Services\\StudentInformationService.cs",
-              "RelativeDocumentMoniker": "Services\\StudentInformationService.cs",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Services\\StudentInformationService.cs",
-              "RelativeToolTip": "Services\\StudentInformationService.cs",
-              "ViewState": "AQIAANkAAAAAAAAAAAAhwMcBAAAJAAAA",
+              "Title": "SqlHelper.cs",
+              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Data\\SqlHelper.cs",
+              "RelativeDocumentMoniker": "Data\\SqlHelper.cs",
+              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Data\\SqlHelper.cs",
+              "RelativeToolTip": "Data\\SqlHelper.cs",
+              "ViewState": "AQIAADUAAAAAAAAAAAAAAEAAAAAYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T03:37:29.439Z",
+              "WhenOpened": "2026-05-07T18:12:13.858Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LibraryService.cs",
+              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Services\\LibraryService.cs",
+              "RelativeDocumentMoniker": "Services\\LibraryService.cs",
+              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Services\\LibraryService.cs",
+              "RelativeToolTip": "Services\\LibraryService.cs",
+              "ViewState": "AQIAAIIAAAAAAAAAAAAuwIYAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-07T18:08:42.415Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Books.cshtml",
+              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Views\\Library\\Books.cshtml",
+              "RelativeDocumentMoniker": "Views\\Library\\Books.cshtml",
+              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Views\\Library\\Books.cshtml",
+              "RelativeToolTip": "Views\\Library\\Books.cshtml",
+              "ViewState": "AQIAAHIAAAAAAAAAAAAAADEBAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-07T18:02:08.364Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAB3AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-05-06T03:19:04.351Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "StudentHouse.cshtml",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\StudentInformation\\StudentHouse.cshtml",
-              "RelativeDocumentMoniker": "Views\\StudentInformation\\StudentHouse.cshtml",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\StudentInformation\\StudentHouse.cshtml",
-              "RelativeToolTip": "Views\\StudentInformation\\StudentHouse.cshtml",
-              "ViewState": "AQIAAF8AAAAAAAAAAAAAAHYAAAAWAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-05T12:06:33.465Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "StudentAdmission.cshtml",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\StudentInformation\\StudentAdmission.cshtml",
-              "RelativeDocumentMoniker": "Views\\StudentInformation\\StudentAdmission.cshtml",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\StudentInformation\\StudentAdmission.cshtml",
-              "RelativeToolTip": "Views\\StudentInformation\\StudentAdmission.cshtml",
-              "ViewState": "AQIAACoAAAAAAAAAAAAkwDcAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-05T11:56:29.018Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "StudentInformationApiController.cs",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Controllers\\Api\\StudentInformationApiController.cs",
-              "RelativeDocumentMoniker": "Controllers\\Api\\StudentInformationApiController.cs",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Controllers\\Api\\StudentInformationApiController.cs",
-              "RelativeToolTip": "Controllers\\Api\\StudentInformationApiController.cs",
-              "ViewState": "AQIAAHcAAAAAAAAAAAAuwIcAAABJAAAA",
+              "Title": "LibraryController.cs",
+              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Controllers\\LibraryController.cs",
+              "RelativeDocumentMoniker": "Controllers\\LibraryController.cs",
+              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 7-5-2026\\Controllers\\LibraryController.cs",
+              "RelativeToolTip": "Controllers\\LibraryController.cs",
+              "ViewState": "AQIAAEMAAAAAAAAAAAAqwFcAAAAaAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T18:42:14.91Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Students.cshtml",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\StudentInformation\\Students.cshtml",
-              "RelativeDocumentMoniker": "Views\\StudentInformation\\Students.cshtml",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\StudentInformation\\Students.cshtml",
-              "RelativeToolTip": "Views\\StudentInformation\\Students.cshtml",
-              "ViewState": "AQIAAJ0AAAAAAAAAAAAAALcAAAAQAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-06T03:56:50.777Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "IHostelService.cs",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Services\\IHostelService.cs",
-              "RelativeDocumentMoniker": "Services\\IHostelService.cs",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Services\\IHostelService.cs",
-              "RelativeToolTip": "Services\\IHostelService.cs",
-              "ViewState": "AQIAADwAAAAAAAAAAAAIwEUAAAAvAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T04:32:39.881Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AQIAAM4BAAAAAAAAAAAwwPUBAABcAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-05T11:18:59.366Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Vehicles.cshtml",
-              "DocumentMoniker": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\Transport\\Vehicles.cshtml",
-              "RelativeDocumentMoniker": "Views\\Transport\\Vehicles.cshtml",
-              "ToolTip": "C:\\Users\\svmim\\Downloads\\07052026\\Views\\Transport\\Vehicles.cshtml",
-              "RelativeToolTip": "Views\\Transport\\Vehicles.cshtml",
-              "ViewState": "AQIAALYAAAAAAAAAAAAAANMAAAAXAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-05T10:21:43.468Z"
+              "WhenOpened": "2026-05-07T18:01:12.797Z",
+              "EditorCaption": ""
             }
           ]
         }

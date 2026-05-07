@@ -1,0 +1,222 @@
+
+@{
+    ViewData["Title"] = "Bulk Delete Students";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+        <h6 class="fw-bold mb-0">Bulk Delete Students</h6>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-1">
+        <button id="btnBulkDelete" class="btn btn-danger d-inline-flex align-items-center" onclick="processBulkDelete()" disabled>
+            <i class="ti ti-trash me-1"></i>Delete Selected
+        </button>
+        <a href="javascript:window.print();" class="btn btn-secondary d-inline-flex align-items-center">
+            <i class="ti ti-printer me-1"></i>Print
+        </a>
+    </div>
+</div>
+<!-- End Page Header -->
+
+<!-- start row -->
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card shadow-tbl-outer mb-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <input type="text" id="txtSearch" class="form-control w-25 me-3" placeholder="Search by name, roll, admission..." />
+                    <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
+                        <div class="dropdown">
+                            <a href="#" class="btn btn-white border btn-lg" data-bs-toggle="dropdown">
+                                <i class="ti ti-filter text-gray-5 me-1"></i>Filters
+                            </a>
+                            <div class="dropdown-menu dropdown-lg dropdown-menu-end filter-dropdown p-0" id="filter-dropdown">
+                                <div class="d-flex align-items-center justify-content-between border-bottom filter-header py-2 px-3">
+                                    <h6 class="mb-0 fw-bold">Select Criteria</h6>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <button type="button" class="btn text-primary fs-6" onclick="fetchStudents()">Apply Filter</button>
+                                    </div>
+                                </div>
+                                <div class="filter-body pb-0 p-3">
+                                    <div class="mb-3">
+                                        <label class="form-label mb-1">Class</label>
+                                        <select id="ddlClass" class="form-select form-control select2">
+                                            <option value="">Select Class</option>
+                                            @foreach (var c in ViewBag.Classes)
+                                            {
+                                                <option value="@c.ClassID">@c.ClassName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label mb-1">Section</label>
+                                        <select id="ddlSection" class="form-select form-control select2">
+                                            <option value="">Select Section</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="fetchStudents()">
+                            <i class="ti ti-search me-1"></i>Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card shadow-tbl">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-nowrap mb-0" id="tblStudents">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;" class="ps-3">
+                                    <input type="checkbox" id="selectAll" class="form-check-input" onchange="toggleSelectAll(this)">
+                                </th>
+                                <th>Admission No</th>
+                                <th>Student Name</th>
+                                <th>Roll No.</th>
+                                <th>Class</th>
+                                <th>Father Name</th>
+                                <th>DOB</th>
+                                <th>Mobile Number</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentListBody">
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">Please select filters to load students.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#ddlClass').change(function () {
+                var classId = $(this).val();
+                $('#ddlSection').empty().append('<option value="">Select Section</option>');
+                if (classId) {
+                    $.get('/StudentInformation/GetSections', { classId: classId }, function (data) {
+                        $.each(data, function (i, item) {
+                            $('#ddlSection').append('<option value="' + item.id + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            // Enter key trigger search
+            $('#txtSearch').on('keypress', function (e) {
+                if (e.which === 13) fetchStudents();
+            });
+        });
+
+        function fetchStudents() {
+            const classId = $('#ddlClass').val();
+            const sectionId = $('#ddlSection').val();
+            const search = $('#txtSearch').val();
+
+            if (!classId && !search) {
+                showToast('Please select a class or enter a search term', 'warning');
+                return;
+            }
+
+            $('#studentListBody').html('<tr><td colspan="8" class="text-center py-4"><div class="spinner-border text-primary"></div></td></tr>');
+            $('#selectAll').prop('checked', false);
+            $('#btnBulkDelete').prop('disabled', true);
+
+            $.get('/StudentInformation/GetStudentList', { 
+                classId: classId, 
+                sectionId: sectionId, 
+                searchTerm: search 
+            }, function (data) {
+                let html = '';
+                if (data && data.length > 0) {
+                    data.forEach(s => {
+                        html += `
+                            <tr>
+                                <td class="ps-3">
+                                    <input type="checkbox" class="form-check-input student-checkbox" value="${s.studentID}" onchange="updateDeleteButton()">
+                                </td>
+                                <td>${s.admissionNo || '-'}</td>
+                                <td class="fw-semibold">${s.fullName}</td>
+                                <td>${s.rollNo || '-'}</td>
+                                <td>${$('#ddlClass option:selected').text()} (${$('#ddlSection option:selected').text() || 'All'})</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html = '<tr><td colspan="8" class="text-center py-4 text-muted">No active students found.</td></tr>';
+                }
+                $('#studentListBody').html(html);
+            });
+        }
+
+        function toggleSelectAll(source) {
+            $('.student-checkbox').prop('checked', source.checked);
+            updateDeleteButton();
+        }
+
+        function updateDeleteButton() {
+            const selectedCount = $('.student-checkbox:checked').length;
+            $('#btnBulkDelete').prop('disabled', selectedCount === 0);
+        }
+
+        function processBulkDelete() {
+            const selectedIds = [];
+            $('.student-checkbox:checked').each(function () {
+                selectedIds.push(parseInt($(this).val()));
+            });
+
+            if (selectedIds.length === 0) return;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to delete ${selectedIds.length} student(s). This action will remove them from all active lists!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete them!',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-danger me-2',
+                    cancelButton: 'btn btn-secondary'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/StudentInformation/BulkDeleteStudents',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(selectedIds),
+                        success: function (res) {
+                            if (res.success) {
+                                showToast(res.message, 'success');
+                                fetchStudents(); // Reload list
+                            } else {
+                                Swal.fire('Error!', res.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error!', 'An unexpected error occurred.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

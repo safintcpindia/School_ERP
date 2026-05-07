@@ -21,6 +21,12 @@ namespace SchoolERP.Net.Services
         (bool Success, string Message, int StudentID) UpsertStudentAdmission(StudentAdmissionUpsertRequest req, int companyId, int sessionId, int userId);
         StudentDetailsViewModel GetStudentDetails(int studentId, int companyId, int sessionId);
         List<StudentListViewModel> GetStudentList(int companyId, int sessionId, int? classId, int? sectionId, string? searchTerm);
+        (bool Success, string Message) ToggleStudentStatus(StudentStatusToggleRequest req, int userId);
+        List<MultiClassStudentCardViewModel> GetMultiClassStudents(int companyId, int sessionId, int? classId, int? sectionId, string? searchTerm);
+        List<StudentListViewModel> GetDisabledStudentList(int companyId, int sessionId, int? classId, int? sectionId, string? searchTerm);
+        (bool Success, string Message) UpsertStudentMultiClass(StudentMultiClassUpsertRequest req, int companyId, int sessionId, int userId);
+        (bool Success, string Message) DeleteStudentMultiClass(int id, int userId);
+        (bool Success, string Message) BulkDeleteStudents(List<int> studentIds, int userId);
         (bool Success, string Message) DeleteStudent(int id, int userId);
 
         // Timeline

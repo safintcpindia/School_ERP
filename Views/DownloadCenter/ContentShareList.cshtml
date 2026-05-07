@@ -1,0 +1,148 @@
+
+@{
+    ViewData["Title"] = "Content Share List";
+}
+
+<!-- Page Header -->
+<div class="d-flex align-items-sm-center justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+        <h6 class="fw-bold mb-0">Content Share List</h6>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-1">
+        <button id="btnDelete" class="btn btn-danger d-inline-flex align-items-center" disabled onclick="deleteSelected()">
+            <i class="ti ti-trash me-1"></i>Delete
+        </button>
+        <a href="javascript:window.print();" class="btn btn-secondary d-inline-flex align-items-center">
+            <i class="ti ti-printer me-1"></i>Print
+        </a>
+    </div>
+</div>
+
+<!-- start row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-tbl-outer mb-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <input type="text" id="txtSearch" class="form-control w-25" placeholder="Search by title..." onkeyup="loadData()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card shadow-tbl overflow-auto">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-nowrap mb-0" id="tblShare">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;" class="ps-3">Select</th>
+                                <th>Title</th>
+                                <th>Share URL</th>
+                                <th>Share Date</th>
+                                <th>Valid Upto</th>
+                                <th>Shared By</th>
+                                <th>Created On</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-4"><div class="spinner-border text-primary"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+    <script>
+        let selectedId = 0;
+
+        $(document).ready(function () {
+            loadData();
+        });
+
+        function loadData() {
+            const search = $('#txtSearch').val().toLowerCase();
+            selectedId = 0;
+            $('#btnDelete').prop('disabled', true);
+
+            $.get('/DownloadCenter/GetSharedLinkList', function (res) {
+                let html = '';
+                if (res.success && res.data.length > 0) {
+                    const filtered = res.data.filter(x => x.title.toLowerCase().includes(search));
+                    if (filtered.length > 0) {
+                        filtered.forEach(item => {
+                            const publicUrl = window.location.origin + '/Public/SharedContent?token=' + item.shareToken;
+                            html += `
+                                <tr onclick="selectRow(${item.sharedLinkID}, this)" style="cursor:pointer">
+                                    <td class="ps-3"><input type="radio" name="rowSelect" class="form-check-input" value="${item.sharedLinkID}"></td>
+                                    <td class="fw-semibold text-primary">${item.title}</td>
+                                    <td>
+                                        <div class="input-group input-group-sm" style="width: 250px;">
+                                            <input type="text" class="form-control bg-light" value="${publicUrl}" readonly id="url_${item.sharedLinkID}">
+                                            <button class="btn btn-outline-primary" onclick="copyUrl('${item.sharedLinkID}')"><i class="ti ti-copy"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>${item.shareDate ? new Date(item.shareDate).toLocaleDateString('en-GB') : 'N/A'}</td>
+                                    <td>${item.validUpto ? new Date(item.validUpto).toLocaleDateString('en-GB') : '<span class="text-success">Permanent</span>'}</td>
+                                    <td>${item.sharedBy}</td>
+                                    <td>${new Date(item.createdOn).toLocaleString('en-GB')}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        html = '<tr><td colspan="7" class="text-center py-4 text-muted">No matching records found.</td></tr>';
+                    }
+                } else {
+                    html = '<tr><td colspan="7" class="text-center py-4 text-muted">No shared links found.</td></tr>';
+                }
+                $('#listBody').html(html);
+            });
+        }
+
+        function selectRow(id, element) {
+            selectedId = id;
+            $(element).addClass('bg-light').siblings().removeClass('bg-light');
+            $(element).find('input[type="radio"]').prop('checked', true);
+            $('#btnDelete').prop('disabled', false);
+        }
+
+        function copyUrl(id) {
+            const el = document.getElementById('url_' + id);
+            el.select();
+            document.execCommand('copy');
+            showToast('Link copied to clipboard', 'info');
+        }
+
+        function deleteSelected() {
+            if (selectedId <= 0) return;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This shared link will be revoked and will no longer work!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                customClass: { confirmButton: 'btn btn-danger me-2', cancelButton: 'btn btn-secondary' },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post('/DownloadCenter/DeleteSharedLink', { id: selectedId }, function (res) {
+                        if (res.success) {
+                            showToast(res.message, 'success');
+                            loadData();
+                        } else {
+                            Swal.fire('Error!', res.message, 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

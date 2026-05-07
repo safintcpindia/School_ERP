@@ -142,6 +142,11 @@ namespace SchoolERP.Net.Models
         public string? StudentPassword { get; set; }
         public string? ParentPassword { get; set; }
         public int? ParentUserID { get; set; }
+        public bool IsActive { get; set; } = true;
+        public int? DisableReasonID { get; set; }
+        public string? DisableReasonName { get; set; }
+        public DateTime? DisableDate { get; set; }
+        public string? DisableNote { get; set; }
     }
 
     public class SiblingViewModel
@@ -209,6 +214,10 @@ namespace SchoolERP.Net.Models
         public string? MobileNo { get; set; }
         public byte[]? StudentPhoto { get; set; }
         public string? StudentPhotoType { get; set; }
+        public bool IsActive { get; set; }
+        public string? DisableReasonName { get; set; }
+        public DateTime? DisableDate { get; set; }
+        public string? DisableNote { get; set; }
     }
 
     public class StudentListPageViewModel
@@ -243,5 +252,44 @@ namespace SchoolERP.Net.Models
         public string? DocumentName { get; set; }
         public string? DocumentType { get; set; }
         public bool IsVisibleToStudent { get; set; } = true;
+    }
+
+    public class StudentStatusToggleRequest
+    {
+        public int StudentID { get; set; }
+        public bool IsActive { get; set; }
+        public int? DisableReasonID { get; set; }
+        public DateTime? DisableDate { get; set; }
+        public string? DisableNote { get; set; }
+    }
+
+    public class StudentMultiClassViewModel
+    {
+        public int MultiClassID { get; set; }
+        public int StudentID { get; set; }
+        public int ClassID { get; set; }
+        public string? ClassName { get; set; }
+        public int SectionID { get; set; }
+        public string? SectionName { get; set; }
+    }
+
+    public class MultiClassStudentCardViewModel
+    {
+        public int StudentID { get; set; }
+        public string? RollNo { get; set; }
+        public string? FullName { get; set; }
+        public int PrimaryClassID { get; set; }
+        public string? PrimaryClassName { get; set; }
+        public int PrimarySectionID { get; set; }
+        public string? PrimarySectionName { get; set; }
+        public List<StudentMultiClassViewModel> AdditionalClasses { get; set; } = new();
+    }
+
+    public class StudentMultiClassUpsertRequest
+    {
+        public int MultiClassID { get; set; }
+        public int StudentID { get; set; }
+        public int ClassID { get; set; }
+        public int SectionID { get; set; }
     }
 }

@@ -29,6 +29,7 @@ namespace SchoolERP.Net.Models
         public string? LibraryCardNo { get; set; }
         public string? AdmissionNo { get; set; }
         public string? Name { get; set; }
+        public string? MemberType { get; set; }
         public string? ClassName { get; set; }
         public string? FatherName { get; set; }
         public DateTime? DOB { get; set; }
@@ -67,5 +68,37 @@ namespace SchoolERP.Net.Models
         public decimal BookPrice { get; set; }
         public DateTime? PostDate { get; set; }
         public string? Description { get; set; }
+    }
+
+    public class IssueReturnViewModel
+    {
+        public int IssueReturnID { get; set; }
+        public string? BookTitle { get; set; }
+        public string? BookNo { get; set; }
+        public DateTime IssueDate { get; set; }
+        public DateTime DueReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
+        public int Status { get; set; }
+    }
+
+    public class IssueReturnUpsertRequest
+    {
+        public int? IssueReturnID { get; set; }
+        public int LibraryMemberID { get; set; }
+        public int BookID { get; set; }
+        public DateTime IssueDate { get; set; }
+        public DateTime DueReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
+    }
+
+    public class MemberDetailsViewModel
+    {
+        public int LibraryMemberID { get; set; }
+        public string? LibraryCardNo { get; set; }
+        public string? MemberType { get; set; }
+        public string? AdmissionNo { get; set; }
+        public string? MemberName { get; set; }
+        public string? Gender { get; set; }
+        public string? MobileNo { get; set; }
     }
 }

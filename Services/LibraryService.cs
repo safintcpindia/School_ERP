@@ -133,9 +133,10 @@ namespace SchoolERP.Net.Services
         // Membership
         public List<LibraryMemberViewModel> GetMemberList(string memberType, int companyId, int? classId, int? sectionId, int? departmentId, string? search)
         {
+            var action = memberType == "All" ? "LIST_ALL" : "LIST";
             var p = new[] {
-                new SqlParameter("@Action", "LIST"),
-                new SqlParameter("@MemberType", memberType),
+                new SqlParameter("@Action", action),
+                new SqlParameter("@MemberType", memberType == "All" ? (object)DBNull.Value : memberType),
                 new SqlParameter("@CompanyID", companyId),
                 new SqlParameter("@ClassID", (object?)classId ?? DBNull.Value),
                 new SqlParameter("@SectionID", (object?)sectionId ?? DBNull.Value),
@@ -153,8 +154,9 @@ namespace SchoolERP.Net.Services
                     StaffID = row.Table.Columns.Contains("StaffID") && row["StaffID"] != DBNull.Value ? Convert.ToInt32(row["StaffID"]) : null,
                     LibraryCardNo = row["LibraryCardNo"].ToString(),
                     AdmissionNo = row["AdmissionNo"].ToString(),
-                    Name = memberType=="Student"? row["StudentName"].ToString() : row["StaffName"].ToString(),
-                    ClassName = row["ClassName"].ToString(),
+                    Name = memberType != "All" ? row["StudentName"].ToString() : row["MemberName"].ToString(),
+                    MemberType = row.Table.Columns.Contains("MemberType") ? row["MemberType"].ToString() : memberType,
+                    ClassName = memberType != "All" ? row["ClassName"].ToString() : row["ClassDepartment"].ToString(),
                     FatherName = row.Table.Columns.Contains("FatherName") ? row["FatherName"].ToString() : "",
                     DOB = row.Table.Columns.Contains("DOB") && row["DOB"] != DBNull.Value ? Convert.ToDateTime(row["DOB"]) : null,
                     Gender = row["Gender"].ToString(),
@@ -240,6 +242,90 @@ namespace SchoolERP.Net.Services
                 return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
             }
             catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        // Issue/Return
+        public List<IssueReturnViewModel> GetIssuedBooks(int memberId, int companyId)
+        {
+            var p = new[] {
+                new SqlParameter("@Action", "LIST"),
+                new SqlParameter("@LibraryMemberID", memberId),
+                new SqlParameter("@CompanyID", companyId)
+            };
+            var dt = _db.ExecuteQuery("sp_Library_IssueReturn_CRUD", p);
+            var list = new List<IssueReturnViewModel>();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new IssueReturnViewModel
+                {
+                    IssueReturnID = Convert.ToInt32(row["IssueReturnID"]),
+                    BookTitle = row["BookTitle"].ToString(),
+                    BookNo = row["BookNo"].ToString(),
+                    IssueDate = Convert.ToDateTime(row["IssueDate"]),
+                    DueReturnDate = Convert.ToDateTime(row["DueReturnDate"]),
+                    ReturnDate = row["ReturnDate"] != DBNull.Value ? Convert.ToDateTime(row["ReturnDate"]) : null,
+                    Status = Convert.ToInt32(row["Status"])
+                });
+            }
+            return list;
+        }
+
+        public (bool Success, string Message) IssueBook(IssueReturnUpsertRequest req, int companyId, int userId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@Action", "SAVE"),
+                    new SqlParameter("@LibraryMemberID", req.LibraryMemberID),
+                    new SqlParameter("@BookID", req.BookID),
+                    new SqlParameter("@IssueDate", req.IssueDate),
+                    new SqlParameter("@DueReturnDate", req.DueReturnDate),
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_Library_IssueReturn_CRUD", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public (bool Success, string Message) ReturnBook(int issueId, DateTime returnDate, int companyId, int userId)
+        {
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@Action", "RETURN"),
+                    new SqlParameter("@IssueReturnID", issueId),
+                    new SqlParameter("@ReturnDate", returnDate),
+                    new SqlParameter("@CompanyID", companyId),
+                    new SqlParameter("@UserID", userId)
+                };
+                var dt = _db.ExecuteQuery("sp_Library_IssueReturn_CRUD", p);
+                return (Convert.ToInt32(dt.Rows[0]["Result"]) == 1, dt.Rows[0]["Message"].ToString()!);
+            }
+            catch (Exception ex) { return (false, ex.Message); }
+        }
+
+        public MemberDetailsViewModel GetMemberDetails(int memberId, int companyId)
+        {
+            var p = new[] {
+                new SqlParameter("@Action", "GET_MEMBER_DETAILS"),
+                new SqlParameter("@LibraryMemberID", memberId),
+                new SqlParameter("@CompanyID", companyId)
+            };
+            var dt = _db.ExecuteQuery("sp_Library_IssueReturn_CRUD", p);
+            if (dt.Rows.Count == 0) return null;
+            var row = dt.Rows[0];
+            return new MemberDetailsViewModel
+            {
+                LibraryMemberID = Convert.ToInt32(row["LibraryMemberID"]),
+                LibraryCardNo = row["LibraryCardNo"].ToString(),
+                MemberType = row["MemberType"].ToString(),
+                AdmissionNo = row["AdmissionNo"].ToString(),
+                MemberName = row["MemberName"].ToString(),
+                Gender = row["Gender"].ToString(),
+                MobileNo = row["MobileNo"].ToString()
+            };
         }
     }
 }

@@ -142,5 +142,45 @@ namespace SchoolERP.Net.Controllers
             var sections = _sectionService.GetSectionsByClass(classId);
             return Json(sections);
         }
+
+        public IActionResult Member()
+        {
+            return View();
+        }
+
+        public IActionResult Issue(int id)
+        {
+            if (id <= 0) return RedirectToAction("Member");
+            ViewBag.LibraryMemberID = id;
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetMemberDetails(int id)
+        {
+            var data = _service.GetMemberDetails(id, GetCompanyId());
+            return Json(new { success = data != null, data });
+        }
+
+        [HttpGet]
+        public IActionResult GetIssuedBooks(int memberId)
+        {
+            var data = _service.GetIssuedBooks(memberId, GetCompanyId());
+            return Json(new { success = true, data });
+        }
+
+        [HttpPost]
+        public IActionResult IssueBook([FromBody] IssueReturnUpsertRequest req)
+        {
+            var res = _service.IssueBook(req, GetCompanyId(), GetUserId());
+            return Json(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpPost]
+        public IActionResult ReturnBook(int issueId, DateTime returnDate)
+        {
+            var res = _service.ReturnBook(issueId, returnDate, GetCompanyId(), GetUserId());
+            return Json(new { success = res.Success, message = res.Message });
+        }
     }
 }

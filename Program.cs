@@ -58,6 +58,9 @@ builder.Services.AddScoped<IHumanResourceService, HumanResourceService>();
 builder.Services.AddScoped<IStudentInformationService, StudentInformationService>();
 builder.Services.AddScoped<IDownloadCenterService, DownloadCenterService>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IStudentLeaveService, StudentLeaveService>();
+builder.Services.AddScoped<IAlumniEventService, AlumniEventService>();
 builder.Services.AddScoped<SchoolERP.Net.Helpers.PermissionHelper>();
 
 

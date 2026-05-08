@@ -1,0 +1,183 @@
+@{
+    ViewData["Title"] = "Attendance Report";
+}
+
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+    <div>
+        <h4 class="fw-bold mb-0">Attendance Report</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item">Attendance</li>
+                <li class="breadcrumb-item active" aria-current="page">Report</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-1">
+        <button onclick="window.print()" class="btn btn-primary d-inline-flex align-items-center">
+            <i class="ti ti-printer me-1"></i>Print Report
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <div class="dropdown">
+                            <a href="#" class="btn btn-white border dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                <i class="ti ti-filter me-1"></i>Filters
+                            </a>
+                            <div class="dropdown-menu dropdown-lg dropdown-menu-end p-0" id="filter-dropdown" style="min-width: 300px;">
+                                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0 fw-bold">Select Criteria</h6>
+                                    <button type="button" id="btnFilterSearch" class="btn btn-primary btn-sm">Filter</button>
+                                </div>
+                                <div class="p-3">
+                                    <form id="filterForm">
+                                        <div class="mb-3">
+                                            <label class="form-label">Class<span class="text-danger">*</span></label>
+                                            <select id="classSelect" class="form-select select2" required>
+                                                <option value="">Select Class</option>
+                                                @if (ViewBag.ClassList != null)
+                                                {
+                                                    foreach (var c in ViewBag.ClassList)
+                                                    {
+                                                        <option value="@c.ClassID">@c.ClassName</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Section<span class="text-danger">*</span></label>
+                                            <select id="sectionSelect" class="form-select select2" required>
+                                                <option value="">Select Section</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Date<span class="text-danger">*</span></label>
+                                            <input type="date" id="attendanceDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Admission No</th>
+                                <th>Roll No</th>
+                                <th>Student Name</th>
+                                <th>Attendance</th>
+                                <th>Date</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="ti ti-info-circle fs-2 d-block mb-2"></i>
+                                    Select filters and click Filter to load report.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({ dropdownParent: $('#filter-dropdown') });
+
+            $('#classSelect').on('change', function () {
+                const classId = $(this).val();
+                if (classId) {
+                    $.get('/Attendance/GetSectionsByClass', { classId: classId }, function (res) {
+                        if (res.success) {
+                            let html = '<option value="">Select Section</option>';
+                            res.data.forEach(s => {
+                                html += `<option value="${s.sectionID}">${s.sectionName}</option>`;
+                            });
+                            $('#sectionSelect').html(html).trigger('change');
+                        }
+                    });
+                }
+            });
+
+            $('#btnFilterSearch').on('click', function () {
+                loadReport();
+            });
+
+            // Prevent dropdown closure when interacting with select2
+            $('#filter-dropdown').on('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+
+        function loadReport() {
+            const classId = $('#classSelect').val();
+            const sectionId = $('#sectionSelect').val();
+            const date = $('#attendanceDate').val();
+
+            if (!classId || !sectionId || !date) {
+                showToast('Please select class, section and date', 'error');
+                return;
+            }
+
+            $('#reportTableBody').html('<tr><td colspan="7" class="text-center py-5"><div class="spinner-border text-primary"></div></td></tr>');
+
+            $.get('/Attendance/GetAttendanceList', { classId: classId, sectionId: sectionId, date: date }, function (res) {
+                if (res.success) {
+                    let html = '';
+                    if (res.data.length === 0) {
+                        html = '<tr><td colspan="7" class="text-center py-5 text-danger">No attendance records found for selected criteria.</td></tr>';
+                    } else {
+                        res.data.forEach((s, index) => {
+                            console.log(s);
+                            let statusBadge = '';
+                            switch (s.attendanceStatus) {
+                                case 1: statusBadge = '<span class="badge bg-success">Present</span>'; break;
+                                case 2: statusBadge = '<span class="badge bg-warning">Late</span>'; break;
+                                case 3: statusBadge = '<span class="badge bg-danger">Absent</span>'; break;
+                                case 4: statusBadge = '<span class="badge bg-info">Half Day</span>'; break;
+                                case 5: statusBadge = '<span class="badge bg-secondary">Holiday</span>'; break;
+                                default: statusBadge = '<span class="badge bg-light text-dark">N/A</span>';
+                            }
+
+                            html += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${s.admissionNo}</td>
+                                    <td>${s.rollNo || '-'}</td>
+                                    <td class="fw-medium">${s.studentName}</td>
+                                    <td>${statusBadge}</td>
+                                    <td>${date}</td>
+                                    <td class="text-muted">${s.note || '-'}</td>
+                                </tr>`;
+                        });
+                    }
+                    $('#reportTableBody').html(html);
+                    bootstrap.Dropdown.getInstance($('[data-bs-toggle="dropdown"]')[0]).hide();
+                }
+            });
+        }
+    </script>
+}

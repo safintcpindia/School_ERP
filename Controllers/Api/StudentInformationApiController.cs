@@ -151,6 +151,13 @@ namespace SchoolERP.Net.Controllers.Api
             return Ok(new { success = true, data });
         }
 
+        [HttpGet("GetStudentList")]
+        public IActionResult GetStudentList(int? classId, int? sectionId, string? searchTerm)
+        {
+            var data = _studentService.GetStudentList(GetCompanyId(), GetSessionId(), classId, sectionId, searchTerm);
+            return Ok(new { success = true, data });
+        }
+
         [HttpPost("UpsertMultiClass")]
         public IActionResult UpsertMultiClass([FromBody] StudentMultiClassUpsertRequest req)
         {

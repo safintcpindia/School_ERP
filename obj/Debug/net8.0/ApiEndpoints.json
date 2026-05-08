@@ -1209,6 +1209,91 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HomeworkApiController",
+    "Method": "Delete",
+    "RelativePath": "api/HomeworkApi/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HomeworkApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/HomeworkApi/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "includeDeleted",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HomeworkApiController",
+    "Method": "GetByID",
+    "RelativePath": "api/HomeworkApi/GetByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HomeworkApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/HomeworkApi/ToggleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.HomeworkApiController",
+    "Method": "Upsert",
+    "RelativePath": "api/HomeworkApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.HomeworkUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SchoolERP.Net.Controllers.Api.HostelApiController",
     "Method": "DeleteHostel",
     "RelativePath": "api/HostelApi/DeleteHostel/{id}",
@@ -3209,6 +3294,106 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentCertificateApiController",
+    "Method": "Delete",
+    "RelativePath": "api/StudentCertificateApi/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentCertificateApiController",
+    "Method": "Generate",
+    "RelativePath": "api/StudentCertificateApi/Generate",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "studentId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "certificateId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentCertificateApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/StudentCertificateApi/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentCertificateApiController",
+    "Method": "GetByID",
+    "RelativePath": "api/StudentCertificateApi/GetByID/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentCertificateApiController",
+    "Method": "ToggleStatus",
+    "RelativePath": "api/StudentCertificateApi/ToggleStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "isActive",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentCertificateApiController",
+    "Method": "Upsert",
+    "RelativePath": "api/StudentCertificateApi/Upsert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SchoolERP.Net.Models.StudentCertificateUpsertRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
     "Method": "DeleteDisableReason",
     "RelativePath": "api/StudentInformationApi/DeleteDisableReason/{id}",
@@ -3338,6 +3523,32 @@
     "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
     "Method": "GetMultiClassStudents",
     "RelativePath": "api/StudentInformationApi/GetMultiClassStudents",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "classId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "sectionId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "searchTerm",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchoolERP.Net.Controllers.Api.StudentInformationApiController",
+    "Method": "GetStudentList",
+    "RelativePath": "api/StudentInformationApi/GetStudentList",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

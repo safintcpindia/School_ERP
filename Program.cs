@@ -61,6 +61,8 @@ builder.Services.AddScoped<ILibraryService, LibraryService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IStudentLeaveService, StudentLeaveService>();
 builder.Services.AddScoped<IAlumniEventService, AlumniEventService>();
+builder.Services.AddScoped<IHomeworkService, HomeworkService>();
+builder.Services.AddScoped<IStudentCertificateService, StudentCertificateService>();
 builder.Services.AddScoped<SchoolERP.Net.Helpers.PermissionHelper>();
 
 
@@ -218,6 +220,16 @@ builder.Services.AddHttpClient<IRoutePickupPointClientService, RoutePickupPointC
 });
 
 builder.Services.AddHttpClient<IHumanResourceClientService, HumanResourceClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IHomeworkClientService, HomeworkClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IStudentCertificateClientService, StudentCertificateClientService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 });

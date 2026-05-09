@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jrCFwjrMWTA=",
+  "dgSpecHash": "gHk8CQT2q/s=",
   "success": true,
-  "projectFilePath": "D:\\School ERP Project\\09-05-2026\\School_ERP\\SchoolERP.Net.csproj",
+  "projectFilePath": "D:\\School ERP Project\\09-05-2026\\New folder\\School_ERP\\SchoolERP.Net.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\svmim\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\svmim\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

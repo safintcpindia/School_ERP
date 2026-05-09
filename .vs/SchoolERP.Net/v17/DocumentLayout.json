@@ -1,10 +1,18 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\School ERP Project\\09-05-2026\\School_ERP\\",
+  "WorkspaceRootPath": "D:\\School ERP Project\\09-05-2026\\New folder\\School_ERP\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|d:\\school erp project\\09-05-2026\\school_erp\\views\\studentinformation\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|d:\\school erp project\\09-05-2026\\new folder\\school_erp\\views\\studentinformation\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\studentinformation\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|d:\\school erp project\\09-05-2026\\new folder\\school_erp\\views\\homework\\add.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\homework\\add.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|d:\\school erp project\\09-05-2026\\new folder\\school_erp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,17 +22,43 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Add.cshtml",
+              "DocumentMoniker": "D:\\School ERP Project\\09-05-2026\\New folder\\School_ERP\\Views\\Homework\\Add.cshtml",
+              "RelativeDocumentMoniker": "Views\\Homework\\Add.cshtml",
+              "ToolTip": "D:\\School ERP Project\\09-05-2026\\New folder\\School_ERP\\Views\\Homework\\Add.cshtml",
+              "RelativeToolTip": "Views\\Homework\\Add.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-09T10:52:41.113Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\School ERP Project\\09-05-2026\\New folder\\School_ERP\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "D:\\School ERP Project\\09-05-2026\\New folder\\School_ERP\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-09T10:51:37.389Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Details.cshtml",
-              "DocumentMoniker": "D:\\School ERP Project\\09-05-2026\\School_ERP\\Views\\StudentInformation\\Details.cshtml",
+              "DocumentMoniker": "D:\\School ERP Project\\09-05-2026\\New folder\\School_ERP\\Views\\StudentInformation\\Details.cshtml",
               "RelativeDocumentMoniker": "Views\\StudentInformation\\Details.cshtml",
-              "ToolTip": "D:\\School ERP Project\\09-05-2026\\School_ERP\\Views\\StudentInformation\\Details.cshtml",
+              "ToolTip": "D:\\School ERP Project\\09-05-2026\\New folder\\School_ERP\\Views\\StudentInformation\\Details.cshtml",
               "RelativeToolTip": "Views\\StudentInformation\\Details.cshtml",
-              "ViewState": "AQIAADMBAAAAAAAAAAAuwD4BAACmAAAA",
+              "ViewState": "AQIAAHUAAAAAAAAAAAAawEQAAAAUAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-05-09T08:32:38.419Z",
               "EditorCaption": ""

@@ -1,4 +1,6 @@
 @model List<SchoolERP.Net.Models.FieldModel>
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @{
     Layout = "_Layout";
 }
@@ -46,7 +48,7 @@
                                             <tr>
                                                 <td>@field.FieldName</td>
                                                 <td class="text-end pe-4">
-                                                    <div class="form-check form-switch d-inline-block">
+                                                    <div class="form-check form-switch d-inline-block" asp-permission="Edit" asp-permission-url="/Settings">
                                                         <input class="form-check-input" type="checkbox" @(field.IsActive ? "checked" : "") 
                                                                onclick="toggleStatus(@field.FieldId, this.checked)">
                                                     </div>
@@ -84,7 +86,7 @@
                                             <tr>
                                                 <td>@field.FieldName</td>
                                                 <td class="text-end pe-4">
-                                                    <div class="form-check form-switch d-inline-block">
+                                                    <div class="form-check form-switch d-inline-block" asp-permission="Edit" asp-permission-url="/Settings">
                                                         <input class="form-check-input" type="checkbox" @(field.IsActive ? "checked" : "") 
                                                                onclick="toggleStatus(@field.FieldId, this.checked)">
                                                     </div>

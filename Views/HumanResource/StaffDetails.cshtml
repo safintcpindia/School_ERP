@@ -1,5 +1,7 @@
 @model SchoolERP.Net.Models.HRStaffViewModel
 @using System.Linq
+@using SchoolERP.Net.Helpers
+@inject PermissionHelper PermHelper
 @{
     ViewData["Title"] = "Staff Profile - " + Model.FirstName + " " + Model.LastName;
 
@@ -25,16 +27,18 @@
                         <h6 class="fw-bold mb-0">Staff Profile</h6>
                     </div>
                     <div class="d-flex align-items-center flex-wrap gap-1">
-                        <a asp-action="AddStaff" asp-route-id="@Model.StaffID" class="btn btn-warning d-inline-flex align-items-center me-1"><i class="ti ti-edit me-1"></i> Edit</a>
+                        <a asp-action="AddStaff" asp-route-id="@Model.StaffID" class="btn btn-warning d-inline-flex align-items-center me-1" asp-permission="Edit" asp-permission-url="/HumanResource/StaffDetails">
+                            <i class="ti ti-edit me-1"></i> Edit
+                        </a>
                         @if (Model.IsActive)
                         {
-                            <button type="button" class="btn btn-danger d-inline-flex align-items-center me-1" onclick="toggleStaffStatus(false)">
+                            <button type="button" class="btn btn-danger d-inline-flex align-items-center me-1" onclick="toggleStaffStatus(false)" asp-permission="Edit" asp-permission-url="/HumanResource/StaffDetails">
                                 <i class="ti ti-user-x me-1"></i> Disable
                             </button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-success d-inline-flex align-items-center me-1" onclick="toggleStaffStatus(true)">
+                            <button type="button" class="btn btn-success d-inline-flex align-items-center me-1" onclick="toggleStaffStatus(true)" asp-permission="Edit" asp-permission-url="/HumanResource/StaffDetails">
                                 <i class="ti ti-user-check me-1"></i> Enable
                             </button>
                         }
@@ -252,19 +256,19 @@
                                                         <div class="d-flex align-items-center">
                                                             <input type="text" class="form-control flex-fill me-3" placeholder="Search...">
                                                             <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
-                                                                <button class="btn btn-icon btn-outline-primary" title="Copy">
+                                                                <button class="btn btn-icon btn-outline-primary" title="Copy" asp-permission="Export" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-copy fs-5"></i>
                                                                 </button>
-                                                                <button class="btn btn-icon btn-outline-secondary" title="Excel">
+                                                                <button class="btn btn-icon btn-outline-secondary" title="Excel" asp-permission="Export" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-file-excel fs-5"></i>
                                                                 </button>
-                                                                <button class="btn btn-icon btn-outline-info" title="CSV">
+                                                                <button class="btn btn-icon btn-outline-info" title="CSV" asp-permission="Export" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-file-barcode fs-5"></i>
                                                                 </button>
-                                                                <button class="btn btn-icon btn-outline-danger" title="Pdf">
+                                                                <button class="btn btn-icon btn-outline-danger" title="Pdf" asp-permission="Export" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-file-type-pdf fs-5"></i>
                                                                 </button>
-                                                                <button class="btn btn-icon btn-outline-success" title="Print">
+                                                                <button class="btn btn-icon btn-outline-success" title="Print" asp-permission="Print" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-printer fs-5"></i>
                                                                 </button>
                                                             </div>
@@ -309,19 +313,19 @@
                                                         <div class="d-flex align-items-center">
                                                             <input type="text" class="form-control flex-fill me-3" placeholder="Search...">
                                                             <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
-                                                                <button class="btn btn-icon btn-outline-primary" title="Copy">
+                                                                <button class="btn btn-icon btn-outline-primary" title="Copy" asp-permission="Export" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-copy fs-5"></i>
                                                                 </button>
-                                                                <button class="btn btn-icon btn-outline-secondary" title="Excel">
+                                                                <button class="btn btn-icon btn-outline-secondary" title="Excel" asp-permission="Export" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-file-excel fs-5"></i>
                                                                 </button>
-                                                                <button class="btn btn-icon btn-outline-info" title="CSV">
+                                                                <button class="btn btn-icon btn-outline-info" title="CSV" asp-permission="Export" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-file-barcode fs-5"></i>
                                                                 </button>
-                                                                <button class="btn btn-icon btn-outline-danger" title="Pdf">
+                                                                <button class="btn btn-icon btn-outline-danger" title="Pdf" asp-permission="Export" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-file-type-pdf fs-5"></i>
                                                                 </button>
-                                                                <button class="btn btn-icon btn-outline-success" title="Print">
+                                                                <button class="btn btn-icon btn-outline-success" title="Print" asp-permission="Print" asp-permission-url="/HumanResource/StaffDetails">
                                                                     <i class="ti ti-printer fs-5"></i>
                                                                 </button>
                                                             </div>
@@ -552,7 +556,21 @@
                                     <div class="tab-pane" id="timeline">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <div class="d-flex align-items-center justify-content-between mb-3"><h5 class="fw-bold mb-0">Staff Timeline</h5><div class="d-flex align-items-center gap-1"><button class="btn btn-primary btn-sm d-inline-flex align-items-center" onclick="showAddTimelineModal()"><i class="ti ti-plus me-1"></i> Add</button><button id="btnEditTimeline" class="btn btn-warning btn-sm d-inline-flex align-items-center" onclick="handleEditTimeline()" disabled><i class="ti ti-edit me-1"></i> Edit</button><button id="btnDeleteTimeline" class="btn btn-danger btn-sm d-inline-flex align-items-center" onclick="handleDeleteTimeline()" disabled><i class="ti ti-trash me-1"></i> Delete</button></div></div><div id="timelineContainer"></div>
+                                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                                    <h5 class="fw-bold mb-0">Staff Timeline</h5>
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        <button class="btn btn-primary btn-sm d-inline-flex align-items-center" onclick="showAddTimelineModal()" asp-permission="Add" asp-permission-url="/HumanResource/StaffDetails">
+                                                            <i class="ti ti-plus me-1"></i> Add
+                                                        </button>
+                                                        <button id="btnEditTimeline" class="btn btn-warning btn-sm d-inline-flex align-items-center" onclick="handleEditTimeline()" disabled asp-permission="Edit" asp-permission-url="/HumanResource/StaffDetails">
+                                                            <i class="ti ti-edit me-1"></i> Edit
+                                                        </button>
+                                                        <button id="btnDeleteTimeline" class="btn btn-danger btn-sm d-inline-flex align-items-center" onclick="handleDeleteTimeline()" disabled asp-permission="Delete" asp-permission-url="/HumanResource/StaffDetails">
+                                                            <i class="ti ti-trash me-1"></i> Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div id="timelineContainer"></div>
                                             </div>
                                         </div>
                                     </div>

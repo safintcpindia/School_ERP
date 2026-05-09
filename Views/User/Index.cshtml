@@ -10,14 +10,6 @@
 @inject PermissionHelper PermHelper
 @{
     Layout = "_Layout";
-    int currentUserId = 0;
-    if (User.Identity != null && User.Identity.IsAuthenticated)
-    {
-        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
-        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
-    }
-    if (currentUserId > 0)
-        PermHelper.LoadPermissions(currentUserId);
 }
 
 <link rel="stylesheet" href="~/css/treeview.css" />
@@ -104,21 +96,15 @@
     </div>
     <div class="d-flex flex-wrap align-items-center gap-1">
        
-        @if(PermHelper.HasPermissionByUrl("/User", "Add")) {
-            <button class="btn btn-primary" id="btnAddUser" onclick="openAddModal()">
-                <i class="ti ti-plus me-1"></i>Add
-            </button>
-        }
-        @if(PermHelper.HasPermissionByUrl("/User", "Edit")) {
-            <button id="btnEdit" class="btn btn-info" disabled onclick="editSelected()">
-                <i class="ti ti-pencil me-1"></i>Edit
-            </button>
-        }
-        @if(PermHelper.HasPermissionByUrl("/User", "Delete")) {
-            <button id="btnDelete" class="btn btn-danger" disabled onclick="deleteSelected()">
-                <i class="ti ti-trash me-1"></i>Delete
-            </button>
-        }
+        <button class="btn btn-primary" id="btnAddUser" onclick="openAddModal()" asp-permission="Add" asp-permission-url="/User">
+            <i class="ti ti-plus me-1"></i>Add
+        </button>
+        <button id="btnEdit" class="btn btn-info" disabled onclick="editSelected()" asp-permission="Edit" asp-permission-url="/User">
+            <i class="ti ti-pencil me-1"></i>Edit
+        </button>
+        <button id="btnDelete" class="btn btn-danger" disabled onclick="deleteSelected()" asp-permission="Delete" asp-permission-url="/User">
+            <i class="ti ti-trash me-1"></i>Delete
+        </button>
     </div>
 </div>
 

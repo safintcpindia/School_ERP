@@ -12,15 +12,8 @@
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Subject Management";
-    int currentUserId = 0;
-    if (User.Identity != null && User.Identity.IsAuthenticated)
-    {
-        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
-        if (idClaim != null) int.TryParse(idClaim.Value, out currentUserId);
-    }
-    if (currentUserId > 0)
-        PermHelper.LoadPermissions(currentUserId);
-        
+    
+    // Permission variables for JS
     var canAdd = PermHelper.HasPermissionByUrl("/Academics/Subject", "Add");
     var canEdit = PermHelper.HasPermissionByUrl("/Academics/Subject", "Edit");
     var canDelete = PermHelper.HasPermissionByUrl("/Academics/Subject", "Delete");
@@ -31,24 +24,15 @@
         <h6 class="fw-bold mb-0">Subject Management</h6>
     </div>
     <div class="d-flex flex-wrap align-items-center gap-1">
-        @if (canAdd)
-        {
-            <button class="btn btn-primary shadow-sm" id="btnAddSubject" onclick="openAddModal()">
-                <i class="ti ti-plus me-1"></i>Add
-            </button>
-        }
-        @if (canEdit)
-        {
-            <button id="btnEdit" class="btn btn-info shadow-sm" disabled onclick="editSelected()">
-                <i class="ti ti-pencil me-1"></i>Edit
-            </button>
-        }
-        @if (canDelete)
-        {
-            <button id="btnDelete" class="btn btn-danger shadow-sm" disabled onclick="deleteSelected()">
-                <i class="ti ti-trash me-1"></i>Delete
-            </button>
-        }
+        <button class="btn btn-primary shadow-sm" id="btnAddSubject" onclick="openAddModal()" asp-permission="Add" asp-permission-url="/Academics/Subject">
+            <i class="ti ti-plus me-1"></i>Add
+        </button>
+        <button id="btnEdit" class="btn btn-info shadow-sm" disabled onclick="editSelected()" asp-permission="Edit" asp-permission-url="/Academics/Subject">
+            <i class="ti ti-pencil me-1"></i>Edit
+        </button>
+        <button id="btnDelete" class="btn btn-danger shadow-sm" disabled onclick="deleteSelected()" asp-permission="Delete" asp-permission-url="/Academics/Subject">
+            <i class="ti ti-trash me-1"></i>Delete
+        </button>
     </div>
 </div>
 

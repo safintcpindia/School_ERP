@@ -269,120 +269,88 @@
                     <div class="tab-pane" id="attendance">
                         <div class="row">
                             <div class="col-xl-4">
-                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <p class="mb-0">Total Present</p>
-                                        <h6 class="fw-bold mb-0 badge bg-primary rounded-pill">856</h6>
-
-                                    </div>
+                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3 text-center">
+                                    <p class="mb-1 text-muted small">Total Present</p>
+                                    <h5 class="fw-bold mb-0 text-primary" id="att_total_present">0</h5>
                                 </div>
                             </div>
 
                             <div class="col-xl-4">
-                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <p class="mb-0">Total Late</p>
-                                        <h6 class="fw-bold mb-0 badge bg-primary rounded-pill">0</h6>
-
-                                    </div>
+                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3 text-center">
+                                    <p class="mb-1 text-muted small">Total Late</p>
+                                    <h5 class="fw-bold mb-0 text-warning" id="att_total_late">0</h5>
                                 </div>
                             </div>
 
                             <div class="col-xl-4">
-                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <p class="mb-0">Total Absent</p>
-                                        <h6 class="fw-bold mb-0 badge bg-primary rounded-pill">0</h6>
-
-                                    </div>
+                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3 text-center">
+                                    <p class="mb-1 text-muted small">Total Absent</p>
+                                    <h5 class="fw-bold mb-0 text-danger" id="att_total_absent">0</h5>
                                 </div>
                             </div>
 
                             <div class="col-xl-4">
-                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <p class="mb-0">Total Half Day</p>
-                                        <h6 class="fw-bold mb-0 badge bg-primary rounded-pill">0</h6>
-
-                                    </div>
+                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3 text-center">
+                                    <p class="mb-1 text-muted small">Total Half Day</p>
+                                    <h5 class="fw-bold mb-0 text-info" id="att_total_halfday">0</h5>
                                 </div>
                             </div>
 
                             <div class="col-xl-4">
-                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <p class="mb-0">Total Holiday</p>
-                                        <h6 class="fw-bold mb-0 badge bg-primary rounded-pill">0</h6>
-
-                                    </div>
+                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3 text-center">
+                                    <p class="mb-1 text-muted small">Total Holiday</p>
+                                    <h5 class="fw-bold mb-0 text-success" id="att_total_holiday">0</h5>
                                 </div>
                             </div>
 
-
+                            <div class="col-xl-4">
+                                <div class="card shadow-sm flex-fill w-100 mb-3 p-3 text-center">
+                                    <p class="mb-1 text-muted small">Total Leave</p>
+                                    <h5 class="fw-bold mb-0 text-secondary" id="att_total_leave">0</h5>
+                                </div>
+                            </div>
 
                             <div class="col-xl-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <div class="d-flex align-items-center">
-                                            <select name="" id="" class="form-select form-control flex-fill me-3">
-                                                <option value="">Select Year</option>
-                                                <option value="">2024</option>
-                                                <option value="">2025</option>
-                                                <option value="">2026</option>
-                                            </select>
-                                            <div class="d-flex align-items-center flex-wrap gap-2 flex-shrink-0">
-                                                <button class="btn btn-icon btn-outline-primary" title="Present">
-                                                    P
-                                                </button>
-                                                <button class="btn btn-icon btn-outline-secondary" title="Late">
-                                                    L
-                                                </button>
-                                                <button class="btn btn-icon btn-outline-info" title="Absent">
-                                                    A
-                                                </button>
-                                                <button class="btn btn-icon btn-outline-danger" title="Half Day">
-                                                    F
-                                                </button>
-                                                <button class="btn btn-icon btn-outline-success" title="Holiday">
-                                                    H
-                                                </button>
+                                <div class="card shadow-none border">
+                                    <div class="card-header bg-light py-2">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <label class="mb-0 fw-bold small">Year:</label>
+                                                <select id="att_year_select" class="form-select form-select-sm" style="width: 100px;" onchange="fetchStudentAttendance()">
+                                                    @for (int y = DateTime.Now.Year; y >= DateTime.Now.Year - 5; y--)
+                                                    {
+                                                        <option value="@y">@y</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="d-flex align-items-center flex-wrap gap-1 flex-shrink-0">
+                                                <span class="badge bg-primary">P</span>
+                                                <span class="badge bg-warning text-dark">L</span>
+                                                <span class="badge bg-danger">A</span>
+                                                <span class="badge bg-info text-dark">F</span>
+                                                <span class="badge bg-success">H</span>
+                                                <span class="badge bg-secondary">V</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body">
-
+                                    <div class="card-body p-0">
                                         <div class="table-responsive">
-                                            <table class="table mb-0">
+                                            <table class="table table-bordered table-sm mb-0 text-center" id="att_history_table">
                                                 <thead>
-                                                    <tr>
-                                                        <th>Date</th>
-                                                        <th>Jan</th>
-                                                        <th>Feb</th>
-                                                        <th>March</th>
-                                                        <th>Aprl</th>
-                                                        <th>June</th>
-                                                        <th>July</th>
-                                                        <th>Aug</th>
-                                                        <th>Sept</th>
-                                                        <th>Oct</th>
-                                                        <th>Nov</th>
-                                                        <th>Dec</th>
+                                                    <tr class="bg-light">
+                                                        <th style="width: 50px;">Day</th>
+                                                        <th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
+                                                        <th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td colspan="13" class="text-center text-danger">No Data Found</td>
-                                                    </tr>
+                                                <tbody id="att_history_body">
+                                                    <!-- Dynamic Content -->
                                                 </tbody>
                                             </table>
                                         </div>
-
                                     </div>
-                                    <!-- end card-body -->
                                 </div>
-                                <!-- end card -->
                             </div>
-
                         </div>
                     </div>
                     <div class="tab-pane" id="docs">
@@ -600,10 +568,100 @@
                 fetchStudentTimeline();
             });
 
+            // Fetch attendance data when tab is clicked
+            $(document).on('shown.bs.tab', 'a[href="#attendance"]', function (e) {
+                fetchStudentAttendance();
+            });
+
             if (window.location.hash === '#timeline') {
                 fetchStudentTimeline();
             }
+            if (window.location.hash === '#attendance') {
+                fetchStudentAttendance();
+            }
         });
+
+        function fetchStudentAttendance() {
+            const studentId = @Model.BasicInfo.StudentID;
+            const year = $('#att_year_select').val();
+            
+            console.log("Fetching attendance for Student ID:", studentId, "Year:", year);
+            
+            // Show loading state in body
+            $('#att_history_body').html('<tr><td colspan="13" class="text-center py-4"><span class="spinner-border spinner-border-sm"></span> Loading...</td></tr>');
+
+            fetch(`/api/StudentInformationApi/GetStudentAttendanceHistory/${studentId}/${year}`)
+                .then(r => r.json())
+                .then(res => {
+                    console.log("Attendance API Response:", res);
+                    if (res.success && res.data) {
+                        renderAttendanceHistory(res.data);
+                    } else {
+                        $('#att_history_body').html(`<tr><td colspan="13" class="text-center text-danger py-4">${res.message || 'No data found.'}</td></tr>`);
+                    }
+                })
+                .catch(err => {
+                    console.error("Attendance Fetch Error:", err);
+                    $('#att_history_body').html('<tr><td colspan="13" class="text-center text-danger py-4">Failed to load attendance. Check console for details.</td></tr>');
+                });
+        }
+
+        function renderAttendanceHistory(data) {
+            // Handle both camelCase and PascalCase
+            const summaries = data.summaries || data.Summaries || [];
+            const days = data.days || data.Days || [];
+
+            console.log("Processing Summaries:", summaries);
+            console.log("Processing Days:", days);
+
+            // 1. Update Summaries
+            const summary = summaries.reduce((acc, curr) => {
+                acc.present += (curr.present || curr.Present || 0);
+                acc.late += (curr.late || curr.Late || 0);
+                acc.absent += (curr.absent || curr.Absent || 0);
+                acc.halfDay += (curr.halfDay || curr.HalfDay || 0);
+                acc.holiday += (curr.holiday || curr.Holiday || 0);
+                acc.leave += (curr.leave || curr.Leave || 0);
+                return acc;
+            }, { present: 0, late: 0, absent: 0, halfDay: 0, holiday: 0, leave: 0 });
+
+            $('#att_total_present').text(summary.present);
+            $('#att_total_late').text(summary.late);
+            $('#att_total_absent').text(summary.absent);
+            $('#att_total_halfday').text(summary.halfDay);
+            $('#att_total_holiday').text(summary.holiday);
+            $('#att_total_leave').text(summary.leave);
+
+            // 2. Render Calendar Table (Days 1-31)
+            let html = '';
+            const daysMap = {};
+            days.forEach(d => {
+                const dayNum = d.day || d.Day;
+                const monthNum = d.month || d.Month;
+                const statusStr = d.status || d.Status;
+                daysMap[`${dayNum}-${monthNum}`] = statusStr;
+            });
+
+            for (let day = 1; day <= 31; day++) {
+                html += `<tr><td class="bg-light fw-bold small">${day}</td>`;
+                for (let month = 1; month <= 12; month++) {
+                    const status = daysMap[`${day}-${month}`] || '';
+                    let badgeClass = '';
+                    switch (status) {
+                        case 'P': badgeClass = 'bg-primary'; break;
+                        case 'L': badgeClass = 'bg-warning text-dark'; break;
+                        case 'A': badgeClass = 'bg-danger'; break;
+                        case 'F': badgeClass = 'bg-info text-dark'; break;
+                        case 'H': badgeClass = 'bg-success'; break;
+                        case 'V': badgeClass = 'bg-secondary'; break;
+                        default: badgeClass = '';
+                    }
+                    html += `<td class="p-1">${status ? `<span class="badge ${badgeClass}" style="width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; font-size:9px; padding:0;">${status}</span>` : '<span class="text-muted opacity-25">-</span>'}</td>`;
+                }
+                html += '</tr>';
+            }
+            $('#att_history_body').html(html);
+        }
 
         function fetchStudentTimeline() {
             const studentId = @Model.BasicInfo.StudentID;

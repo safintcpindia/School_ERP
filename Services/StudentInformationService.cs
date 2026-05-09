@@ -624,8 +624,28 @@ namespace SchoolERP.Net.Services
                     new SqlParameter("@SEARCHTERM", (object?)searchTerm ?? DBNull.Value)
                 };
                 var dt = _db.ExecuteQuery("SP_STUDENT_LIST_GET", p);
+                
+                // Determine the correct IsActive column name once
+                string activeCol = null;
+                if (dt.Columns.Contains("IsActive")) activeCol = "IsActive";
+                else if (dt.Columns.Contains("isActive")) activeCol = "isActive";
+                else if (dt.Columns.Contains("StudentStatus")) activeCol = "StudentStatus";
+                else if (dt.Columns.Contains("ISACTIVE")) activeCol = "ISACTIVE";
+                else if (dt.Columns.Contains("IsDisabled")) activeCol = "IsDisabled";
+
                 foreach (DataRow row in dt.Rows)
                 {
+                    bool isActive = true;
+                    if (activeCol != null)
+                    {
+                        if (activeCol == "IsDisabled")
+                            isActive = !Convert.ToBoolean(row[activeCol]);
+                        else
+                            isActive = Convert.ToBoolean(row[activeCol]);
+                    }
+                    
+                    if (!isActive) continue; // Skip disabled students
+
                     list.Add(new StudentListViewModel
                     {
                         StudentID = Convert.ToInt32(row["STUDENTID"]),
@@ -642,7 +662,7 @@ namespace SchoolERP.Net.Services
                         MobileNo = row["MOBILENO"]?.ToString(),
                         StudentPhoto = row["STUDENTPHOTO"] != DBNull.Value ? (byte[])row["STUDENTPHOTO"] : null,
                         StudentPhotoType = row["STUDENTPHOTOTYPE"]?.ToString(),
-                        IsActive = row.Table.Columns.Contains("IsActive") ? Convert.ToBoolean(row["IsActive"]) : true
+                        IsActive = isActive
                     });
                 }
             }

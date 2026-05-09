@@ -13,17 +13,36 @@ namespace SchoolERP.Net.Controllers.Api
         private readonly IStudentInformationService _studentService;
         private readonly ICompanyService _companyService;
         private readonly ISessionService _sessionService;
+        private readonly IAttendanceService _attendanceService;
 
-        public StudentInformationApiController(IStudentInformationService studentService, ICompanyService companyService, ISessionService sessionService)
+        public StudentInformationApiController(IStudentInformationService studentService, 
+            ICompanyService companyService, 
+            ISessionService sessionService,
+            IAttendanceService attendanceService)
         {
             _studentService = studentService;
             _companyService = companyService;
             _sessionService = sessionService;
+            _attendanceService = attendanceService;
         }
 
         private int GetUserId() => int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("UserId")?.Value, out var id) ? id : 0;
         private int GetCompanyId() => _companyService.GetUserCurrentCompany(GetUserId()) ?? 0;
         private int GetSessionId() => _sessionService.GetUserCurrentSession(GetUserId()) ?? 0;
+
+        [HttpGet("GetStudentAttendanceHistory/{studentId}/{year}")]
+        public IActionResult GetStudentAttendanceHistory(int studentId, int year)
+        {
+            try
+            {
+                var data = _attendanceService.GetStudentAttendanceHistory(studentId, year, GetCompanyId());
+                return Ok(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
 
         [HttpGet("GetAllDisableReasons")]
         public IActionResult GetAllDisableReasons()
@@ -142,6 +161,20 @@ namespace SchoolERP.Net.Controllers.Api
         {
             var res = _studentService.ToggleStudentStatus(req, GetUserId());
             return Ok(new { success = res.Success, message = res.Message });
+        }
+
+        [HttpGet("GetByID/{id}")]
+        public IActionResult GetByID(int id)
+        {
+            try
+            {
+                var data = _studentService.GetStudentDetails(id, GetCompanyId(), GetSessionId());
+                return Ok(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Error: " + ex.Message });
+            }
         }
 
         [HttpGet("GetMultiClassStudents")]

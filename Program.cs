@@ -63,6 +63,8 @@ builder.Services.AddScoped<IStudentLeaveService, StudentLeaveService>();
 builder.Services.AddScoped<IAlumniEventService, AlumniEventService>();
 builder.Services.AddScoped<IHomeworkService, HomeworkService>();
 builder.Services.AddScoped<IStudentCertificateService, StudentCertificateService>();
+builder.Services.AddScoped<IStudentIDCardService, StudentIDCardService>();
+builder.Services.AddScoped<IStaffIDCardService, StaffIDCardService>();
 builder.Services.AddScoped<SchoolERP.Net.Helpers.PermissionHelper>();
 
 
@@ -234,6 +236,16 @@ builder.Services.AddHttpClient<IStudentCertificateClientService, StudentCertific
     client.BaseAddress = new Uri(apiBaseUrl);
 });
 
+builder.Services.AddHttpClient<IStudentIDCardClientService, StudentIDCardClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+
+builder.Services.AddHttpClient<IStaffIDCardClientService, StaffIDCardClientService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
 
 // Configure Global Authorization Policy
 builder.Services.AddAuthorization(options =>

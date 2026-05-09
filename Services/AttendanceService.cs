@@ -66,5 +66,52 @@ namespace SchoolERP.Net.Services
             }
             catch (Exception ex) { return (false, ex.Message); }
         }
+
+        public StudentAttendanceHistoryViewModel GetStudentAttendanceHistory(int studentId, int year, int companyId)
+        {
+            var res = new StudentAttendanceHistoryViewModel();
+            try
+            {
+                var p = new[] {
+                    new SqlParameter("@Action", "GET_HISTORY"),
+                    new SqlParameter("@StudentID", studentId),
+                    new SqlParameter("@Year", year),
+                    new SqlParameter("@CompanyID", companyId)
+                };
+                var ds = _db.ExecuteDataSet("sp_Attendance_Student_CRUD", p);
+                if (ds.Tables.Count > 0)
+                {
+                    foreach (DataRow row in ds.Tables[0].Rows)
+                    {
+                        res.Summaries.Add(new StudentAttendanceSummary
+                        {
+                            Month = Convert.ToInt32(row["Month"]),
+                            MonthName = row["MonthName"].ToString()!,
+                            Year = Convert.ToInt32(row["Year"]),
+                            Present = Convert.ToInt32(row["Present"]),
+                            Late = Convert.ToInt32(row["Late"]),
+                            Absent = Convert.ToInt32(row["Absent"]),
+                            HalfDay = Convert.ToInt32(row["HalfDay"]),
+                            Holiday = Convert.ToInt32(row["Holiday"]),
+                            Leave = Convert.ToInt32(row["Leave"])
+                        });
+                    }
+                }
+                if (ds.Tables.Count > 1)
+                {
+                    foreach (DataRow row in ds.Tables[1].Rows)
+                    {
+                        res.Days.Add(new StudentAttendanceDayStatus
+                        {
+                            Day = Convert.ToInt32(row["Day"]),
+                            Month = Convert.ToInt32(row["Month"]),
+                            Status = row["Status"].ToString()!
+                        });
+                    }
+                }
+            }
+            catch { }
+            return res;
+        }
     }
 }

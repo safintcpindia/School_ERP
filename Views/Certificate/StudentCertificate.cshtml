@@ -111,10 +111,10 @@
 
                     <div class="col-md-12">
                         <label class="form-label fw-semibold">Body Text <span class="text-danger">*</span></label>
-                        <textarea id="BodyText" name="BodyText"></textarea>
+                        <textarea id="BodyText" name="BodyText" class="form-control"></textarea>
                         <div class="mt-2 p-2 bg-light rounded border small text-muted">
                             <strong>Available Placeholders:</strong> 
-                            [name], [dob], [present_address], [guardian], [created_at], [admission_no], [roll_no], [class], [section], [gender], [admission_date], [category], [cast], [father_name], [mother_name], [religion], [email], [phone]
+                            [name], [dob], [present_address], [guardian], [created_at], [admission_no], [roll_no], [class], [section], [gender], [admission_date], [category], [cast], [father_name], [mother_name], [religion], [email], [phone], [student_photo]
                         </div>
                     </div>
 
@@ -233,7 +233,7 @@
                 HeaderLeftText: $('#HeaderLeftText').val(),
                 HeaderCenterText: $('#HeaderCenterText').val(),
                 HeaderRightText: $('#HeaderRightText').val(),
-                BodyText: certificateEditor ? certificateEditor.getData() : '',
+                BodyText: $("#BodyText").val(),
                 FooterLeftText: $('#FooterLeftText').val(),
                 FooterCenterText: $('#FooterCenterText').val(),
                 FooterRightText: $('#FooterRightText').val(),
@@ -249,6 +249,7 @@
             };
 
             if (!data.CertificateName || !data.BodyText) {
+                
                 alert('Please fill all mandatory fields.');
                 return;
             }
@@ -280,9 +281,8 @@
                     $('#HeaderLeftText').val(data.headerLeftText);
                     $('#HeaderCenterText').val(data.headerCenterText);
                     $('#HeaderRightText').val(data.headerRightText);
-                    if (certificateEditor) {
-                        certificateEditor.setData(data.bodyText || '');
-                    }
+                    $('#BodyText').val(data.bodyText);
+                    
                     $('#FooterLeftText').val(data.footerLeftText);
                     $('#FooterCenterText').val(data.footerCenterText);
                     $('#FooterRightText').val(data.footerRightText);

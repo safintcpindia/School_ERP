@@ -1,34 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\",
+  "WorkspaceRootPath": "D:\\School ERP Project\\09-05-2026\\School_ERP\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 8-5-2026\\views\\certificate\\generatecertificate.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\certificate\\generatecertificate.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 8-5-2026\\views\\certificate\\studentcertificate.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\certificate\\studentcertificate.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 8-5-2026\\services\\studentcertificateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:services\\studentcertificateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 8-5-2026\\controllers\\api\\studentcertificateapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:controllers\\api\\studentcertificateapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 8-5-2026\\services\\clients\\istudentcertificateclientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:services\\clients\\istudentcertificateclientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 8-5-2026\\controllers\\api\\studentinformationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:controllers\\api\\studentinformationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|c:\\users\\dell\\downloads\\schoolerp 8-5-2026\\controllers\\certificatecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:controllers\\certificatecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|d:\\school erp project\\09-05-2026\\school_erp\\views\\studentinformation\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CBD8A2FD-7F24-4059-B2D7-96B19D450AE1}|SchoolERP.Net.csproj|solutionrelative:views\\studentinformation\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -43,92 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "GenerateCertificate.cshtml",
-              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Views\\Certificate\\GenerateCertificate.cshtml",
-              "RelativeDocumentMoniker": "Views\\Certificate\\GenerateCertificate.cshtml",
-              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Views\\Certificate\\GenerateCertificate.cshtml",
-              "RelativeToolTip": "Views\\Certificate\\GenerateCertificate.cshtml",
-              "ViewState": "AQIAAKUAAAAAAAAAAAAawLYAAAApAAAA",
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "D:\\School ERP Project\\09-05-2026\\School_ERP\\Views\\StudentInformation\\Details.cshtml",
+              "RelativeDocumentMoniker": "Views\\StudentInformation\\Details.cshtml",
+              "ToolTip": "D:\\School ERP Project\\09-05-2026\\School_ERP\\Views\\StudentInformation\\Details.cshtml",
+              "RelativeToolTip": "Views\\StudentInformation\\Details.cshtml",
+              "ViewState": "AQIAADMBAAAAAAAAAAAuwD4BAACmAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-08T16:56:35.27Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "StudentInformationApiController.cs",
-              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Controllers\\Api\\StudentInformationApiController.cs",
-              "RelativeDocumentMoniker": "Controllers\\Api\\StudentInformationApiController.cs",
-              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Controllers\\Api\\StudentInformationApiController.cs",
-              "RelativeToolTip": "Controllers\\Api\\StudentInformationApiController.cs",
-              "ViewState": "AQIAAHYAAAAAAAAAAAAAwEgAAAAtAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T16:40:42.122Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "IStudentCertificateClientService.cs",
-              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Services\\Clients\\IStudentCertificateClientService.cs",
-              "RelativeDocumentMoniker": "Services\\Clients\\IStudentCertificateClientService.cs",
-              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Services\\Clients\\IStudentCertificateClientService.cs",
-              "RelativeToolTip": "Services\\Clients\\IStudentCertificateClientService.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAuwAoAAAA7AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T15:58:47.838Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "StudentCertificateService.cs",
-              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Services\\StudentCertificateService.cs",
-              "RelativeDocumentMoniker": "Services\\StudentCertificateService.cs",
-              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Services\\StudentCertificateService.cs",
-              "RelativeToolTip": "Services\\StudentCertificateService.cs",
-              "ViewState": "AQIAACsAAAAAAAAAAAAAADQAAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T15:53:21.72Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "StudentCertificateApiController.cs",
-              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Controllers\\Api\\StudentCertificateApiController.cs",
-              "RelativeDocumentMoniker": "Controllers\\Api\\StudentCertificateApiController.cs",
-              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Controllers\\Api\\StudentCertificateApiController.cs",
-              "RelativeToolTip": "Controllers\\Api\\StudentCertificateApiController.cs",
-              "ViewState": "AQIAAGQAAAAAAAAAAAAhwG0AAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T18:02:40.948Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "StudentCertificate.cshtml",
-              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Views\\Certificate\\StudentCertificate.cshtml",
-              "RelativeDocumentMoniker": "Views\\Certificate\\StudentCertificate.cshtml",
-              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Views\\Certificate\\StudentCertificate.cshtml",
-              "RelativeToolTip": "Views\\Certificate\\StudentCertificate.cshtml",
-              "ViewState": "AQIAADEBAAAAAAAAAAAAAHEAAAAuAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-08T16:06:59.86Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "CertificateController.cs",
-              "DocumentMoniker": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Controllers\\CertificateController.cs",
-              "RelativeDocumentMoniker": "Controllers\\CertificateController.cs",
-              "ToolTip": "C:\\Users\\DELL\\Downloads\\SchoolERP 8-5-2026\\Controllers\\CertificateController.cs",
-              "RelativeToolTip": "Controllers\\CertificateController.cs",
-              "ViewState": "AQIAAA8AAAAAAAAAAADwvxwAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T15:40:46.54Z",
+              "WhenOpened": "2026-05-09T08:32:38.419Z",
               "EditorCaption": ""
             }
           ]

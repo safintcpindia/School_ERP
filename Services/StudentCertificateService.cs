@@ -82,6 +82,17 @@ namespace SchoolERP.Net.Services
 
         public (int Result, string Message) Upsert(StudentCertificateUpsertRequest request, int userId, int companyId, int sessionId)
         {
+            if (request.CertificateID > 0 && (request.BackgroundImage == null || request.BackgroundImage.Length == 0))
+            {
+                var existing = GetByID(request.CertificateID);
+                if (existing != null && existing.BackgroundImage != null)
+                {
+                    request.BackgroundImage = existing.BackgroundImage;
+                    request.BackgroundImageType = existing.BackgroundImageType;
+                    request.BackgroundImageName = existing.BackgroundImageName;
+                }
+            }
+
             var p = new[]
             {
                 new SqlParameter("@CertificateID", request.CertificateID),
@@ -199,6 +210,21 @@ namespace SchoolERP.Net.Services
                 { "[cast]", GetVal("CASTE") },
                 { "[created_at]", DateTime.Now.ToString("dd-MM-yyyy") }
             };
+
+            // Handle Student Photo
+            string studentPhotoHtml = "";
+            if (template.EnableStudentPhoto)
+            {
+                byte[] photo = row.Table.Columns.Contains("STUDENTPHOTO") && row["STUDENTPHOTO"] != DBNull.Value ? (byte[])row["STUDENTPHOTO"] : null;
+                string photoType = row.Table.Columns.Contains("STUDENTPHOTOTYPE") && row["STUDENTPHOTOTYPE"] != DBNull.Value ? row["STUDENTPHOTOTYPE"].ToString() : "image/png";
+
+                if (photo != null && photo.Length > 0)
+                {
+                    string base64 = Convert.ToBase64String(photo);
+                    studentPhotoHtml = $"<img src=\"data:{photoType};base64,{base64}\" style=\"width:100px; height:auto; border:1px solid #ccc;\" alt=\"Student Photo\" />";
+                }
+            }
+            body = body.Replace("[student_photo]", studentPhotoHtml, StringComparison.OrdinalIgnoreCase);
 
             foreach (var item in map)
             {

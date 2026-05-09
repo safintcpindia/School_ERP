@@ -292,4 +292,30 @@ namespace SchoolERP.Net.Models
         public int ClassID { get; set; }
         public int SectionID { get; set; }
     }
+
+    public class StudentAttendanceHistoryViewModel
+    {
+        public List<StudentAttendanceSummary> Summaries { get; set; } = new();
+        public List<StudentAttendanceDayStatus> Days { get; set; } = new();
+    }
+
+    public class StudentAttendanceSummary
+    {
+        public int Month { get; set; }
+        public string MonthName { get; set; } = string.Empty;
+        public int Year { get; set; }
+        public int Present { get; set; }
+        public int Late { get; set; }
+        public int Absent { get; set; }
+        public int HalfDay { get; set; }
+        public int Holiday { get; set; }
+        public int Leave { get; set; }
+    }
+
+    public class StudentAttendanceDayStatus
+    {
+        public int Day { get; set; }
+        public int Month { get; set; }
+        public string Status { get; set; } = string.Empty; // P, L, A, F, H
+    }
 }
